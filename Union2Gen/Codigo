@@ -1,0 +1,1 @@
+gcc ert_main.c Diesel_csi_sf.c rt_nonfinite.c rtGetInf.c rtGetNaN.c -lm -lwiringPi

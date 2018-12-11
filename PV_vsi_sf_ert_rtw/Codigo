@@ -1,0 +1,1 @@
+gcc ert_main.c PV_vsi_sf.c PV_vsi_sf_data.c rt_nonfinite.c rtGetInf.c rtGetNaN.c -lm -lwiringPi
