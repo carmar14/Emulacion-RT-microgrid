@@ -783,7 +783,7 @@ int_T main(int_T argc, const char *argv[])
     {
 		printf("Cannot initialize the MCP3204 ADC.\n");
 		printf("%s\n",error);
-		exit(1);
+		exit(1); 
     }
     
   

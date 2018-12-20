@@ -24,6 +24,7 @@ int pm, qm, vl, soc;
 bool pinra=false;
 bool bi1 = false, bi2 = false,bi3 = false, bi4 = false;
 int cont=0;
+int vl2=0;
 char frst, scnd, thrd, frth;
 //bool v = false, bi3 = false;
 
@@ -82,9 +83,9 @@ void sendToRasp() {
 
 void receiveRaspData() {
   memset(&aa,0,sizeof(aa));
-  while (Serial.available() <= 0) {//Serial.println(2);
+  //while (Serial.available() <= 0) {//Serial.println(2);
     //delay(1);
-  }
+  //}
   //digitalWrite(ledPin,LOW);
   //a = "";
   while (Serial.available() > 0) {
@@ -132,8 +133,9 @@ void loop() {
   //i1=analogRead(A0);
   //sendToRasp(); 
   receiveRaspData();
-  vl=map(vl, -200000, 200000, 0, 4095);
-  analogWrite(DAC1,vl);
+  vl2=map(vl, -200000, 200000, 0, 4095);
+  analogWrite(DAC0,vl2);
+  //analogWrite(DAC1,2000);
   //digitalWrite(27, LOW);
   
   //digitalWrite(27, LOW);

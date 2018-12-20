@@ -2,6 +2,9 @@
 #include <DueTimer.h>
 
 
+//0 Para tension en carga
+
+
 //Leave defined if you use native port, comment if using programming port
 //#define Serial SerialUSB
 //
@@ -98,11 +101,12 @@ void receiveRaspData() {
       //while(Serial.available()){Serial.read();}
       //digitalWrite(ledPin,HIGH);
       frst = a.charAt(0);
+      frth=a.charAt(22);
       
       //Serial.println(head);
 //      delay(2000);
       //digitalWrite(27,LOW);
-      if (frst == 'v') {
+      if (frst == 'v'&& frth=='e') {
         //Serial.print(a);
         flag=1;
         
@@ -149,13 +153,13 @@ void loop() {
   analogWrite(DAC0,vl2);
   //analogWrite(DAC0,2000);
   //digitalWrite(27, LOW);
-  
+  delay(13);
   
   //digitalWrite(27, LOW);
   //cont=cont+1;
   //while( cont==3){}
   /*if(conteo==1050){
+  delay(1);
     digitalWrite(ledPin,HIGH);
   }*/
-  delay(1);
 }

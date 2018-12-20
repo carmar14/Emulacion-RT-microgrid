@@ -27,6 +27,66 @@ RT_MODEL_control_terciario_T control_terciario_M_;
 RT_MODEL_control_terciario_T *const control_terciario_M = &control_terciario_M_;
 static void rate_scheduler(void);
 
+//-------Funciones para asignar entradas-------------
+void set_soc(double soc){
+	control_terciario_U.soc=soc;
+} 
+	
+void set_Pm(double Pm){
+	control_terciario_U.Pm=Pm;
+}
+void set_Qm(double Qm){
+	control_terciario_U.Qm=Qm;
+}
+
+void set_kbP(double kbP){
+	control_terciario_U.kbP=kbP;
+} 
+	
+void set_kdP(double kdP){
+	control_terciario_U.kdP=kdP;
+}
+
+void set_kbQ(double kbQ){
+	control_terciario_U.kbQ=kbQ;
+} 
+	
+void set_kdQ(double kdQ){
+	control_terciario_U.kdQ=kdQ;
+}
+
+void set_Pdmax(double Pdmax){
+	control_terciario_U.Pdmax=Pdmax;
+}
+
+void set_Pbmax(double Pbmax){
+	control_terciario_U.Pbmax=Pbmax;
+}
+
+void set_Qdmax(double Qdmax){
+	control_terciario_U.Qdmax=Qdmax;
+}
+
+void set_Qbmax(double Qbmax){
+	control_terciario_U.Qbmax=Qbmax;
+}
+
+//-----Funciones para obtener valores de las salidas-------
+double get_Pb(void){
+	return control_terciario_Y.Pb;
+}
+double get_Qb(void){
+	return control_terciario_Y.Qb;
+}
+
+double get_Pd(void){
+	return control_terciario_Y.Pd;
+}
+
+double get_Qd(void){
+	return control_terciario_Y.Qd;
+}
+
 /*
  *   This function updates active task flag for each subrate.
  * The function is called at model base rate, hence the

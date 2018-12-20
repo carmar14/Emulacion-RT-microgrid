@@ -76,7 +76,10 @@
 	 char var2s[7];
 	 char var3s[7];
 	 int fd;
+	 int fd2;
 	 int Vloada=0;
+	 int Pma=0;
+	 int Qma=0;
 	 char buffer[8];
 	 
 	  //===============================================================
@@ -228,9 +231,17 @@ static inline void tsnorm(struct timespec *ts)
 	
 	var2=MCP3204_getValue(ad_MCP3204);
 	//var2=MCP3204_analogValue(ad_MCP3204);
-	var3=var2;
+	//var3=var2;
 	
-	  
+	if (MCP3204_convert(fileDescriptor,singleEnded,CH2,&ad_MCP3204,error))
+	{
+		printf("Error during conversion.\n");
+		printf("%s\n",error);
+		exit(1);
+	}
+	
+	
+	var3=MCP3204_getValue(ad_MCP3204);  
 	  /*if (var==1){
 		  int q=0;
 		  //Acomodar en arreglo de caracteres los datos recibidos
@@ -281,7 +292,7 @@ static inline void tsnorm(struct timespec *ts)
 	  
 	  
 	  //printf ("i1: %d i2: %d i3: %d\n",var1,var2,var3);
-	  i1=0.0;//(var1*k1)+vx1;
+	  i1=(var1*k1)+vx1;
 	  //i1=i1/10.0;
 	  i2=(var2*k2)+vx2;
 	  //i2=i2/10.0;
@@ -330,8 +341,8 @@ static inline void tsnorm(struct timespec *ts)
 	  Qm=get_Qm();
 	  Vload=get_Vload();
 	  
-	  //printf("La potencia P medida es: %3.2f \n",Pm);
-	  //printf("La potencia Q medida es: %3.2f \n",Qm);
+	  printf("La potencia P medida es: %3.2f \n",Pm);
+	  printf("La potencia Q medida es: %3.2f \n",Qm);
 	  printf("Voltaje : %3.2f \n",Vload);
 	  
 	  if (min>Vload) min=Vload;
@@ -342,6 +353,8 @@ static inline void tsnorm(struct timespec *ts)
 	  //Pma=Pm*10;
 	  //Qma=Qm*10;
 	  Vloada=Vload*10;
+	  Pma=Pm*10;
+	  Qma=Qm*10;
 	  //Vloada=-456;
 	  //if(Vloada>2300){
 		  //Vloada=2300;
@@ -352,17 +365,20 @@ static inline void tsnorm(struct timespec *ts)
 	  
 	  memset(buffer,0,sizeof(buffer));
 	   //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
-	   sprintf(buffer,"v%07d\n",Vloada);
-	   
+	   //sprintf(buffer,"v%07d\n",Vloada);
+	   sprintf(buffer,"v%07d%07d%07de\n",Vloada,Pma,Qma);
 	   //while(pinr==0){
 		   serialPuts(fd,buffer);
+		   serialPuts(fd2,buffer);
 		   //serialFlush(fd);
 		   //pinr=digitalRead(2);
 		   //printf("so\n");
-		   printf("El dato es: %s \n",buffer);
-	   //}
+		   //printf("El dato es: %s \n",buffer);
+	   //}    
 	   serialFlush(fd);
 	   tcflush(fd, TCIOFLUSH);
+	   serialFlush(fd2);
+	   tcflush(fd2, TCIOFLUSH);
 	   pinr=0;
 	   digitalWrite(1,LOW);
 	   var=0;
@@ -432,6 +448,10 @@ static inline void tsnorm(struct timespec *ts)
 	  fd=serialOpen ("/dev/ttyACM0", 115200);
 	  serialClose(fd);
 	  fd=serialOpen ("/dev/ttyACM0", 115200);
+	  
+	  fd2=serialOpen ("/dev/ttyACM1", 115200);
+	  serialClose(fd2);
+	  fd2=serialOpen ("/dev/ttyACM1", 115200);
 	  
 	  sleep(1);
 	  

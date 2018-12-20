@@ -125,14 +125,14 @@ void receiveRaspData() {
   //while(Serial.available()){Serial.read();}
 }
 
-void loop() {
+void loop() { 
  
   
   //digitalWrite(8, LOW);
   //i1=analogRead(A0);
   //sendToRasp(); 
   receiveRaspData();
-  vl2=map(vl, -500, 500, 0, 4095);
+  vl2=map(vl, -600, 600, 0, 4095);
   analogWrite(DAC1,vl2);
   //digitalWrite(27, LOW);
   

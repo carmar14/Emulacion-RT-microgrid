@@ -181,6 +181,26 @@ void rt_OneStep(void)
 	
 	var1=MCP3204_getValue(ad_MCP3204);
 	
+	if (MCP3204_convert(fileDescriptor,singleEnded,CH1,&ad_MCP3204,error))
+	{
+		printf("Error during conversion1.\n");
+		printf("%s\n",error);
+		exit(1);
+	}
+	
+	
+	var2=MCP3204_getValue(ad_MCP3204);
+	
+	if (MCP3204_convert(fileDescriptor,singleEnded,CH2,&ad_MCP3204,error))
+	{
+		printf("Error during conversion1.\n");
+		printf("%s\n",error);
+		exit(1);
+	}
+	
+	
+	var3=MCP3204_getValue(ad_MCP3204);
+	
 	//printf("Digital value of the sensor reading: %d\n",var1);
   
   //printf("Trama de arduino: %s\n",read_buffer);
@@ -208,6 +228,10 @@ void rt_OneStep(void)
   //double vx=-2300;
   double k=(2*170)/2248.0;
   double vx=-170-(502*2*170)/2248.0;
+  double k2=0.5;
+  double vx2=-0.5*500;
+  double k3=2.0;
+  double vx3=-2*500.0;
   
   vdc=500;   //Proveniente de la fuente de generación
   //vload=171*sin(2*3.14*120*tiempo);//var1*k+vx; //Proveniente de la carga
@@ -216,8 +240,11 @@ void rt_OneStep(void)
   //if (tiempo>=0.0167) tiempo=0;
   if (tiempo>=0.0083) tiempo=0;
   //vload=vload/10.0;
-  pref=500.0;  //Proveniente del control terciario
-  qref=3500.0; //Proveniente del control terciario
+  //pref=100.0;//var2*k2+vx2;//500.0;  //Proveniente del control terciario
+  //qref=1000.0;//var3*k3+vx3;//3500.0; //Proveniente del control terciario
+  
+  pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
+  qref=var3*k3+vx3;
   
   set_Vdc_bio(vdc);
   set_Vload(vload);
@@ -233,8 +260,12 @@ void rt_OneStep(void)
   i1=get_I_bio();
   double mpc1=get_MPC1();
   printf("El vload es : %3.2f \n",vload);
+  printf("La potencia P es: %3.2f \n",pref);
+  printf("La potencia Q es: %3.2f \n", qref);
   printf("La corriente del inversor 1 es: %3.2f \n",i1);
   printf("La accion de control 1 del mpc  es: %3.2f \n", mpc1);
+  
+  
   
   //----------Serial----------------------
   //-----------Escritura-envio---------------------
@@ -292,6 +323,9 @@ int_T main(int_T argc, const char *argv[])
   /* default interval = 50000ns = 50us
    * cycle duration = 100us
    */
+   
+  printf("Iniciando \n");
+   
   int interval=4*1000000;		//en ns   ->  20000=20us
   
 	if(argc>=2 && atoi(argv[1])>0)
@@ -351,6 +385,7 @@ int_T main(int_T argc, const char *argv[])
 		}
 
   /* Initialize model */
+  
   BIO_csi_sf_initialize();
   int k=0;
   int estado=0;

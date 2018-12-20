@@ -82,6 +82,24 @@ extern void control_terciario_initialize(void);
 extern void control_terciario_step(void);
 extern void control_terciario_terminate(void);
 
+//-------Funciones para asignar entradas-------------
+extern void set_soc(double);
+extern void set_Pm(double);
+extern void set_Qm(double);
+extern void set_kbP(double);
+extern void set_kdP(double);
+extern void set_kbQ(double);
+extern void set_kdQ(double);
+extern void set_Pdmax(double);
+extern void set_Pbmax(double);
+extern void set_Qdmax(double);
+extern void set_Qbmax(double);
+//-----Funciones para obtener valores de las salidas-------
+extern double get_Pb(void);
+extern double get_Qb(void);
+extern double get_Pd(void);
+extern double get_Qd(void);
+
 /* Real-time Model object */
 extern RT_MODEL_control_terciario_T *const control_terciario_M;
 

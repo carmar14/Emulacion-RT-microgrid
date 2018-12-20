@@ -137,7 +137,8 @@ void loop() {
   receiveRaspData();
   //vl2=map(vl, -450, 440, 0, 4095);
   vl2=map(vl, -600, 600, 0, 4095);
-  analogWrite(DAC1,vl2);
+  analogWrite(DAC0,vl2);
+  //analogWrite(DAC0,1000);
   //digitalWrite(27, LOW);
   
   //digitalWrite(27, LOW);

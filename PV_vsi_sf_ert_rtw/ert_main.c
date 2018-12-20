@@ -1,4 +1,4 @@
-// compile with "gcc ert_main.c PV_vsi_sf.c PV_vsi_sf_data.c libmcp3204.c rt_nonfinite.c rtGetInf.c rtGetNaN.c -lm -lwiringPi -lrt -Wall"
+// compile with "gcc ert_main.c PV_vsi_sf.c PV_vsi_sf_data.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall -lpthread
 /*
  * File: ert_main.c
  *
@@ -210,6 +210,7 @@ void rt_OneStep(void)
 //-------Salidas------
   i3=get_I_pv();
   soc=get_SOC();
+  printf("La dato es: %d \n",var3);
   printf("La corriente del inversor 3 es: %3.2f \n",i3);
   printf("El estado de la bateria es: %3.2f \n",soc);
   printf ("La tensión en la carga es :%3.2f \n",vload3); 
@@ -298,7 +299,7 @@ int_T main(int_T argc, const char *argv[])
   if (MCP3204_init(&fileDescriptor,"/dev/spidev1.2",&ad_MCP3204,mode_SPI_00,4.08,error))
 		{
 			printf("Cannot initialize the MCP3204 ADC.\n");
-			printf("%s\n",error);
+			printf("%s\n",error); 
 			exit(1);
 		}
 
