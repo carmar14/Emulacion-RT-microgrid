@@ -245,11 +245,13 @@ void rt_OneStep(void)
   
   pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
   qref=var3*k3+vx3;
+  pref=500;
+  qref=3500;
   
   set_Vdc_bio(vdc);
   set_Vload(vload);
-  set_Qref_bio(pref);
-  set_Pref_bio(qref);
+  set_Qref_bio(qref);
+  set_Pref_bio(pref);
 
   /* Step the model for base rate */
   BIO_csi_sf_step();

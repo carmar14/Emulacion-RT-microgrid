@@ -155,7 +155,8 @@ void loop() {
   
   //vl2=map(vl, -1000, 1000, 0, 4095);
   pm2=map(pm,0,10000,0,4095);
-  qm2=map(qm,-27000,0,0,4095);analogWrite(DAC0,pm2);
+  qm2=map(qm,-27000,0,0,4095);
+  analogWrite(DAC0,pm2);
   analogWrite(DAC1,qm2);
   
   //analogWrite(DAC0,2000);

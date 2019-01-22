@@ -164,17 +164,6 @@ void rt_OneStep(void)
   */
   var=1;
   
-  if (MCP3204_convert(fileDescriptor,singleEnded,CH0,&ad_MCP3204,error))
-	{
-		printf("Error during conversion1.\n");
-		printf("%s\n",error);
-		exit(1);
-	}
-	
-	
-	var1=MCP3204_getValue(ad_MCP3204);
-  
-  
   if (MCP3204_convert(fileDescriptor,singleEnded,CH1,&ad_MCP3204,error))
 	{
 		printf("Error during conversion1.\n");
@@ -183,17 +172,7 @@ void rt_OneStep(void)
 	}
 	
 	
-	var2=MCP3204_getValue(ad_MCP3204);
-	
-  if (MCP3204_convert(fileDescriptor,singleEnded,CH2,&ad_MCP3204,error))
-	{
-		printf("Error during conversion1.\n");
-		printf("%s\n",error);
-		exit(1);
-	}
-	
-	
-	var3=MCP3204_getValue(ad_MCP3204);
+	var1=MCP3204_getValue(ad_MCP3204);
   
   //printf("Trama de arduino: %s\n",read_buffer);
   
@@ -217,16 +196,11 @@ void rt_OneStep(void)
   
   double k=(2*170)/2248.0;
   double vx=-170-(502*2*170)/2248.0;
-  double k2=0.5;
-  double vx2=-0.5*500;
-  double k3=2.0;
-  double vx3=-2*500.0;
+  //double k=(2220+2150)/4095;
+  //double vx=-2150;
   
-  //Pref_d=100.0;//var2*k2+vx2;//500;
-  //Qref_d=1000.0;//var3*k3+vx3;//3500;
-  
-  Pref_d=var2*k2+vx2;//500;
-  Qref_d=var3*k3+vx3;//3500;
+  Pref_d=500;
+  Qref_d=3500;
   Vload=var1*k+vx;
   //Vload=Vload/10.0;
   par=1.4;
@@ -246,8 +220,6 @@ void rt_OneStep(void)
   Idie=get_I_die();
   printf("La corriente del inversor 3 es: %3.2f \n",Idie);
   printf("La tension es : %3.2f \n",Vload);
-  printf("La potencia P es : %3.2f \n",Pref_d);
-  printf("La potencia Q es : %3.2f \n",Qref_d);
   if (min>Idie) min=Idie;
   if (max<Idie) max=Idie;
 	

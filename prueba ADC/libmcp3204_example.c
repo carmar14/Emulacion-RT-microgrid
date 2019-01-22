@@ -55,8 +55,8 @@ int main()
 	if (min>MCP3204_getValue(ad_MCP3204)) min=MCP3204_getValue(ad_MCP3204);
 	if (max<MCP3204_getValue(ad_MCP3204)) max=MCP3204_getValue(ad_MCP3204);
 	
-	printf("Valor minimo: %d\n", min);
-	printf("Valor maximo: %d\n", max);
+	printf("Valor minimo: %d\n",MCP3204_getValue(ad_MCP3204));
+	//printf("Valor maximo: %d\n", max);
 	
     }
 	
