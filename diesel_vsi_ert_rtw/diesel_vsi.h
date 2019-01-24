@@ -219,6 +219,16 @@ extern void diesel_vsi_initialize(void);
 extern void diesel_vsi_step(void);
 extern void diesel_vsi_terminate(void);
 
+//-------Funciones para asignar entradas-------------
+extern void set_Vload(double);
+extern void set_par(double);
+extern void set_flujo(double);
+
+//-----Funciones para obtener valores de las salidas-------
+extern double get_I_die(void);
+extern double get_flujo(void);
+extern double get_vdc(void);
+
 /* Real-time Model object */
 extern RT_MODEL_diesel_vsi_T *const diesel_vsi_M;
 

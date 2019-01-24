@@ -35,6 +35,33 @@ ExtY_diesel_vsi_T diesel_vsi_Y;
 RT_MODEL_diesel_vsi_T diesel_vsi_M_;
 RT_MODEL_diesel_vsi_T *const diesel_vsi_M = &diesel_vsi_M_;
 
+
+//-------Funciones para asignar entradas-------------
+void set_Vload(double Vload){
+	diesel_vsi_U.Vload=Vload;
+}
+
+void set_par(double par){
+	diesel_vsi_U.par=par;
+}
+
+void set_flujo(double flujo){
+	diesel_vsi_U.Vref=flujo;
+}
+
+//-----Funciones para obtener valores de las salidas-------
+double get_I_die(void){
+	return diesel_vsi_Y.i2;
+}
+
+double get_flujo(void){
+	return diesel_vsi_Y.flujo;
+}
+
+double get_vdc(void){
+	return diesel_vsi_Y.vdc;
+}
+
 /*
  * Time delay interpolation routine
  *
