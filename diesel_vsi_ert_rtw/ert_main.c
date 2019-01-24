@@ -25,7 +25,8 @@
 #include <unistd.h>
 #include <termios.h>
 #include <wiringPi.h>
-#include <ncurses.h>
+#include <stdint.h>
+//#include <ncurses.h>
 #include "libmcp3204.h"
 
 /*
@@ -72,8 +73,12 @@ char var1s[7];
 char var2s[7];
 char var3s[7];
 int fd;
+int fd2;
 int i2a=0;
+int caudala=0;
 char buffer[8];
+char buffer2[8];
+double tiempo=0.0;
 
 //===============================================================
 //-------Variables para graficar
@@ -224,9 +229,12 @@ void rt_OneStep(void)
     Pref_d=500;
     Qref_d=3500;
     Vload=var1*k+vx;
+    //Vload=170*sin(2*3.14*60*tiempo);
+    tiempo=tiempo+0.0001;
+    if (tiempo>=0.017) tiempo =0;
     //Vload=Vload/10.0;
-    par=1.4;
-    flujo=1;
+    par=0.1;//1.4;
+    flujo=1000;
     
     //set_Pref_d(Pref_d);
     //set_Qref_d(Qref_d);
@@ -259,6 +267,7 @@ void rt_OneStep(void)
     //Pma=Pm*10;
     //Qma=Qm*10;
     i2a=Idie*10;
+    caudala=caudal*10;
     
     memset(buffer,0,sizeof(buffer));
     //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
@@ -271,6 +280,21 @@ void rt_OneStep(void)
     //}
     serialFlush(fd);
     tcflush(fd, TCIOFLUSH);
+    
+    //Datos del caudal Bayona
+    memset(buffer2,0,sizeof(buffer2));
+    //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
+    sprintf(buffer2,"v%07d\n",caudala);
+    //while(pinr==0){
+    serialPuts(fd2,buffer2);
+    serialFlush(fd2);
+    //pinr=digitalRead(2);
+    //printf("El dato pin es: %d \n",pinr);
+    //}
+    serialFlush(fd2);
+    tcflush(fd2, TCIOFLUSH);
+    
+    
     pinr=0;
     
     var=0;
@@ -334,9 +358,13 @@ int_T main(int_T argc, const char *argv[])
     
     //Serial
     
-    fd=serialOpen ("/dev/ttyACM0", 115200);
+    fd=serialOpen ("/dev/ttyACM1", 115200);
     serialClose(fd);
-    fd=serialOpen ("/dev/ttyACM0", 115200);
+    fd=serialOpen ("/dev/ttyACM1", 115200);
+    
+    fd2=serialOpen ("/dev/ttyACM0", 9600);
+    serialClose(fd2);
+    fd2=serialOpen ("/dev/ttyACM0", 9600);
     
     sleep(1);
     
