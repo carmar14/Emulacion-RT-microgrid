@@ -203,8 +203,8 @@ void rt_OneStep(void)
     Qref_d=3500;
     Vload=var1*k+vx;
     //Vload=Vload/10.0;
-    par=1.4;
-    flujo=1;
+    par=0.1;//1.4;
+    flujo=1000;//1;
     
     set_Pref_d(Pref_d);
     set_Qref_d(Qref_d);

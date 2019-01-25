@@ -1,6 +1,6 @@
 
 #include <DueTimer.h>
-
+//0 DIesel
 
 //Leave defined if you use native port, comment if using programming port
 //#define Serial SerialUSB
@@ -133,6 +133,7 @@ void loop() {
   //sendToRasp(); 
   receiveRaspData();
   vl2=map(vl, -500, 500, 0, 4095);
+  vl2=map(vl, -20000, 20000, 0, 4095);
   analogWrite(DAC1,vl2);
   //digitalWrite(27, LOW);
   

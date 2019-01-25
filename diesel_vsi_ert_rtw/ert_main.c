@@ -358,13 +358,13 @@ int_T main(int_T argc, const char *argv[])
     
     //Serial
     
-    fd=serialOpen ("/dev/ttyACM1", 115200);
+    fd=serialOpen ("/dev/ttyACM0", 115200);  //0 Para la corriente del generador diesel
     serialClose(fd);
-    fd=serialOpen ("/dev/ttyACM1", 115200);
+    fd=serialOpen ("/dev/ttyACM0", 115200);
     
-    fd2=serialOpen ("/dev/ttyACM0", 9600);
+    fd2=serialOpen ("/dev/ttyACM1", 9600);
     serialClose(fd2);
-    fd2=serialOpen ("/dev/ttyACM0", 9600);
+    fd2=serialOpen ("/dev/ttyACM1", 9600);
     
     sleep(1);
     
