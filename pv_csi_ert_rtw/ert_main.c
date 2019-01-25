@@ -231,10 +231,14 @@ void rt_OneStep(void)
     double k=(2*170)/2248.0;
     double vx=-170-(502*2*170)/2248.0;
     //-----OJO Ajustar dependiendo del ADC
-    double k1=(2*50)/2207.0;
-    double vx1=-50-(556*2*50)/2207.0;
-    double k2=(2*50)/2203.0;
-    double vx2=-50-(543*2*50)/2203.0;
+    double k1=0.5;
+    double vx1=-0.5*500;
+    double k2=2.0;
+    double vx2=-2.0*500;
+    //double k1=(2*50)/2207.0;
+    //double vx1=-50-(556*2*50)/2207.0;
+    //double k2=(2*50)/2203.0;
+    //double vx2=-50-(543*2*50)/2203.0;
     double k3=(2*90)/2207.0;
     double vx3=-90-(556*2*90)/2207.0;
     double k4=(2*90)/2207.0;
@@ -245,8 +249,8 @@ void rt_OneStep(void)
     //vload=vload/10.0;
     Prefd=var1*k1+vx1;
     Qrefd=var2*k2+vx2;
-    Prefd=500;
-    Qrefd=3500;
+    //Prefd=500;
+    //Qrefd=3500;
     
     set_Idc_PV(ipv);
     set_Vload(vload3);
