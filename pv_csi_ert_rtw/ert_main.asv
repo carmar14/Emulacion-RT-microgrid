@@ -268,43 +268,38 @@ void rt_OneStep(void)
     
     //Paneles solares
     //Read each line into the buffer
-    if (contador==15*60*1000/4){
-        fgets(buffer, BUFFER_SIZE, input_file);	//First line for the labels
-
-        while(fgets(buffer, BUFFER_SIZE, input_file) != NULL){
-            //fgets(buffer, BUFFER_SIZE, input_file);
-            // Gets each token as a string and prints it
-            year=strtok(buffer, delimiter_characters);
-            printf("year: %s\n",year);
-            day = strtok(NULL, delimiter_characters);
-            printf("day: %s\n",day);
-            time = strtok(NULL, delimiter_characters);
-            printf("time: %s\n",time);
-            outhum = strtok(NULL, delimiter_characters);
-            printf("outhum: %s\n",outhum);
-            windspd = strtok(NULL, delimiter_characters);
-            printf("windspd: %s\n",windspd);
-            rain = strtok(NULL, delimiter_characters);
-            printf("rain: %s\n",rain);
-            solarrad = strtok(NULL, delimiter_characters);
-            printf("solarrad: %s\n",solarrad);
-            tempout = strtok(NULL, delimiter_characters);
-            printf("tempout: %s\n",tempout);
-            consumpt = strtok(NULL, delimiter_characters);
-            printf("consumption: %s\n",consumpt);
-            while(last_token != NULL){
-                printf("%s\n",last_token);
-                last_token = strtok(NULL, delimiter_characters);
-            }
-        }
+    fgets(buffer, BUFFER_SIZE, input_file);	//First line for the labels
     
+    while(fgets(buffer, BUFFER_SIZE, input_file) != NULL){
+        //fgets(buffer, BUFFER_SIZE, input_file);
+        // Gets each token as a string and prints it
+        year=strtok(buffer, delimiter_characters);
+        printf("year: %s\n",year);
+        day = strtok(NULL, delimiter_characters);
+        printf("day: %s\n",day);
+        time = strtok(NULL, delimiter_characters);
+        printf("time: %s\n",time);
+        outhum = strtok(NULL, delimiter_characters);
+        printf("outhum: %s\n",outhum);
+        windspd = strtok(NULL, delimiter_characters);
+        printf("windspd: %s\n",windspd);
+        rain = strtok(NULL, delimiter_characters);
+        printf("rain: %s\n",rain);
+        solarrad = strtok(NULL, delimiter_characters);
+        printf("solarrad: %s\n",solarrad);
+        tempout = strtok(NULL, delimiter_characters);
+        printf("tempout: %s\n",tempout);
+        consumpt = strtok(NULL, delimiter_characters);
+        printf("consumption: %s\n",consumpt);
+        while(last_token != NULL){
+            printf("%s\n",last_token);
+            last_token = strtok(NULL, delimiter_characters);
+        }
     }
     if(ferror(input_file)){
         perror("The following error ocurred");
     }
     fclose(input_file);
-    
-     
     n=1.12;
     Vg=1.12;
     Ns=36;
@@ -318,9 +313,9 @@ void rt_OneStep(void)
     Xv = I0_T1*q/(n*k*T1) * exp(q*Voc_T1/(n*k*T1));
     dVdI_Voc = - 1.15/Ns / 2;
     Rs = - dVdI_Voc - 1/Xv;
-    Tac= atof(tempout) ; //Lectura desde el txt
+    Tac=  ; //Lectura desde el txt
     Va=0.5;
-    Suns=atof(solarrad) ; //Lectura desde el txt
+    Suns= ; //Lectura desde el txt
     TaK = 273 + TaC;
     IL_T1 = Isc_T1 * Suns;
     IL = IL_T1 + K0*(TaK - T1);
