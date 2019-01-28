@@ -320,7 +320,7 @@ void rt_OneStep(void)
     Vg=1.12;
     Ns=36;
     T1=273+25;
-    Voc_T1=21.06/Ns;
+    Voc_T1=21.06/Ns;  
     Isc_T1=3.3;//3.8;
     Voc_T2=19/Ns;//17.05/Ns;
     Isc_T2=3.4;//3.92;
