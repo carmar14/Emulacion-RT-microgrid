@@ -52,12 +52,12 @@ double Suns,TaC,Va,Temp,Volt,Irra;
 //Datos del txt
 const char *delimiter_characters = "\t";
 const char *filename = "perfiles_meteo_consum/myData7_5min.txt";
-FILE *input_file = fopen(filename, "r");
+FILE *input_file; //= fopen(filename, "r");
 char buffer[BUFFER_SIZE];
 char *last_token;
 char *year;
 char *day;
-char *time;
+char *times;
 char *outhum;
 char *windspd;
 char *rain;
@@ -268,41 +268,52 @@ void rt_OneStep(void)
     
     //Paneles solares
     //Read each line into the buffer
-    if (contador==15*60*1000/4){
-        fgets(buffer, BUFFER_SIZE, input_file);	//First line for the labels
-
-        while(fgets(buffer, BUFFER_SIZE, input_file) != NULL){
+    
+    if (contador==15*60*1000/4 || contador==0){
+		
+        
+		fgets(buffer, BUFFER_SIZE, input_file);	//Second line for the labels
+		
+		puts(buffer);
+        //while(fgets(buffer, BUFFER_SIZE, input_file) != NULL){
             //fgets(buffer, BUFFER_SIZE, input_file);
             // Gets each token as a string and prints it
             year=strtok(buffer, delimiter_characters);
-            printf("year: %s\n",year);
+            //printf("year: %s\n",year);
             day = strtok(NULL, delimiter_characters);
-            printf("day: %s\n",day);
-            time = strtok(NULL, delimiter_characters);
-            printf("time: %s\n",time);
+            //printf("day: %s\n",day);
+            times = strtok(NULL, delimiter_characters);
+            //printf("time: %s\n",times);
             outhum = strtok(NULL, delimiter_characters);
-            printf("outhum: %s\n",outhum);
+            //printf("outhum: %s\n",outhum);
             windspd = strtok(NULL, delimiter_characters);
-            printf("windspd: %s\n",windspd);
+            //printf("windspd: %s\n",windspd);
             rain = strtok(NULL, delimiter_characters);
-            printf("rain: %s\n",rain);
+            //printf("rain: %s\n",rain);
             solarrad = strtok(NULL, delimiter_characters);
             printf("solarrad: %s\n",solarrad);
             tempout = strtok(NULL, delimiter_characters);
             printf("tempout: %s\n",tempout);
             consumpt = strtok(NULL, delimiter_characters);
             printf("consumption: %s\n",consumpt);
-            while(last_token != NULL){
+            /*while(last_token != NULL){
                 printf("%s\n",last_token);
                 last_token = strtok(NULL, delimiter_characters);
-            }
-        }
+            }*/
+        //}
     
     }
+    else{
+		contador=0;
+	}
+    
+    contador=contador+1;
+    
+    
     if(ferror(input_file)){
         perror("The following error ocurred");
     }
-    fclose(input_file);
+    //fclose(input_file);
     
      
     n=1.12;
@@ -316,9 +327,10 @@ void rt_OneStep(void)
     K0=(Isc_T2 - Isc_T1)/(T2 - T1);
     I0_T1=Isc_T1/(exp(q*Voc_T1/(n*k*T1))-1);
     Xv = I0_T1*q/(n*k*T1) * exp(q*Voc_T1/(n*k*T1));
+    printf("Numero: %3.7f \n",q*Voc_T1);//exp(q*Voc_T1/(n*k*T1))-1);
     dVdI_Voc = - 1.15/Ns / 2;
     Rs = - dVdI_Voc - 1/Xv;
-    Tac= atof(tempout) ; //Lectura desde el txt
+    TaC= atof(tempout) ; //Lectura desde el txt
     Va=0.5;
     Suns=atof(solarrad) ; //Lectura desde el txt
     TaK = 273 + TaC;
@@ -327,6 +339,7 @@ void rt_OneStep(void)
     I0= I0_T1*pow((TaK/T1),(3/n))*exp(-q*Vg/(n*k)*((1/TaK)-(1/T1)));
     Vt_Ta = A * k * TaK / q;
     Vc = Va/Ns;
+    printf("Aqui estoy\n");
     
     for (int j=1;j<=5;j++){
         Ia=Ia- (IL - Ia - I0*( exp((Vc+Ia*Rs)/Vt_Ta) -1))/(-1 - (I0*( exp((Vc+Ia*Rs)/Vt_Ta) -1))*Rs/Vt_Ta);
@@ -357,10 +370,15 @@ void rt_OneStep(void)
 //-------Salidas------
     i3=get_I_pv();
     soc=get_SOC();
+    printf("La irradianza es: %3.2f \n",Suns);
+    printf("La temperatura es: %3.2f \n",TaC);
     printf("La dato es: %d \n",var3);
+    printf("La corriente de panel solar es: %3.2f \n",ipv);
     printf("La corriente del inversor 3 es: %3.2f \n",i3);
     printf("El estado de la bateria es: %3.2f \n",soc);
     printf ("La tensión en la carga es :%3.2f \n",vload3);
+    
+    delay(1000);
     
     i3a=i3*10;
     
@@ -420,11 +438,15 @@ int_T main(int_T argc, const char *argv[])
     Rs = - dVdI_Voc - 1/Xv;
     A=1;
     
+    
+    
     //Verificando txt de datos
     //FILE *input_file = fopen(filename, "r");
+    input_file = fopen(filename, "r");
     if (input_file == NULL){
         fprintf(stderr, "Unable to open file %s\n",filename);
-    }else{
+    }
+    fgets(buffer, BUFFER_SIZE, input_file);	//First line for the labels
         
         //Para RT
         struct timespec t;

@@ -229,7 +229,7 @@ extern void pv_csi_terminate(void);
 extern void set_Idc_PV(double);
 extern void set_Vload(double);
 extern void set_Pref(double);
-extern void set_Pref(double);
+extern void set_Qref(double);
 //-----Funciones para obtener valores de las salidas-------
 extern double get_I_pv(void);
 extern double get_SOC(void);

@@ -22,6 +22,7 @@ int main(){
 	char *tempout;
 	char *consumpt;
 	
+	
 	if (input_file == NULL){
 		fprintf(stderr, "Unable to open file %s\n",filename);
 	}else{
