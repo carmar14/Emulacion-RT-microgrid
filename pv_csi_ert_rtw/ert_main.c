@@ -46,8 +46,8 @@
 //Variables creadas por el programador
 //Emulacion de panel
 #define BUFFER_SIZE 1024
-long double Vg,Vc,n,Ns,T1,Voc_T1,Isc_T1,Isc_T2,T2,Voc_T2,Ics_T2,TaK,K0,IL_T1,IL,I0,I0_T1,Xv,dVdI_Voc,k,q,Rs,A,Vt_Ta,Ia;
-long double Suns,TaC,Va,Temp,Volt,Irra;
+double Vg,Vc,n,Ns,T1,Voc_T1,Isc_T1,Isc_T2,T2,Voc_T2,Ics_T2,TaK,K0,IL_T1,IL,I0,I0_T1,Xv,dVdI_Voc,k,q,Rs,A,Vt_Ta,Ia;
+double Suns,TaC,Va,Temp,Volt,Irra;
 
 //Datos del txt
 const char *delimiter_characters = "\t";
@@ -65,6 +65,7 @@ char *solarrad;
 char *tempout;
 char *consumpt;
 int contador;
+int contador2=0;
 
 //------Entradas-------
 double ipv=0.0;
@@ -269,9 +270,9 @@ void rt_OneStep(void)
     //Paneles solares
     //Read each line into the buffer
     
-    if (contador==15*60*1000/4 || contador==0){
+    if (contador==15*60*1000/4 || contador2==0){
         
-        
+        contador2=1;
         fgets(buffer, BUFFER_SIZE, input_file);	//Second line for the labels
         
         puts(buffer);
@@ -332,7 +333,7 @@ void rt_OneStep(void)
     Rs = - dVdI_Voc - 1/Xv;*/
     TaC= atof(tempout) ; //Lectura desde el txt
     Va=0.5;
-    Suns=atof(solarrad) ; //Lectura desde el txt
+    Suns=atof(solarrad)/1000.0 ; //Lectura desde el txt
     TaK = 273 + TaC;
     IL_T1 = Isc_T1 * Suns;
     IL = IL_T1 + K0*(TaK - T1);
@@ -378,7 +379,7 @@ void rt_OneStep(void)
     printf("El estado de la bateria es: %3.2f \n",soc);
     printf ("La tensión en la carga es :%3.2f \n",vload3);
     
-    delay(1000);
+    //delay(1000);
     
     i3a=i3*10;
     
