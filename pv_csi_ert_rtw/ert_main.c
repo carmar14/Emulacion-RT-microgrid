@@ -46,8 +46,8 @@
 //Variables creadas por el programador
 //Emulacion de panel
 #define BUFFER_SIZE 1024
-double Vg,Vc,n,Ns,T1,Voc_T1,Isc_T1,Isc_T2,T2,Voc_T2,Ics_T2,TaK,K0,IL_T1,IL,I0,I0_T1,Xv,dVdI_Voc,k,q,Rs,A,Vt_Ta,Ia;
-double Suns,TaC,Va,Temp,Volt,Irra;
+long double Vg,Vc,n,Ns,T1,Voc_T1,Isc_T1,Isc_T2,T2,Voc_T2,Ics_T2,TaK,K0,IL_T1,IL,I0,I0_T1,Xv,dVdI_Voc,k,q,Rs,A,Vt_Ta,Ia;
+long double Suns,TaC,Va,Temp,Volt,Irra;
 
 //Datos del txt
 const char *delimiter_characters = "\t";
