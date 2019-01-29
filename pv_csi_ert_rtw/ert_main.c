@@ -270,42 +270,42 @@ void rt_OneStep(void)
     //Read each line into the buffer
     
     if (contador==15*60*1000/4 || contador==0){
-		
         
-		fgets(buffer, BUFFER_SIZE, input_file);	//Second line for the labels
-		
-		puts(buffer);
+        
+        fgets(buffer, BUFFER_SIZE, input_file);	//Second line for the labels
+        
+        puts(buffer);
         //while(fgets(buffer, BUFFER_SIZE, input_file) != NULL){
-            //fgets(buffer, BUFFER_SIZE, input_file);
-            // Gets each token as a string and prints it
-            year=strtok(buffer, delimiter_characters);
-            //printf("year: %s\n",year);
-            day = strtok(NULL, delimiter_characters);
-            //printf("day: %s\n",day);
-            times = strtok(NULL, delimiter_characters);
-            //printf("time: %s\n",times);
-            outhum = strtok(NULL, delimiter_characters);
-            //printf("outhum: %s\n",outhum);
-            windspd = strtok(NULL, delimiter_characters);
-            //printf("windspd: %s\n",windspd);
-            rain = strtok(NULL, delimiter_characters);
-            //printf("rain: %s\n",rain);
-            solarrad = strtok(NULL, delimiter_characters);
-            printf("solarrad: %s\n",solarrad);
-            tempout = strtok(NULL, delimiter_characters);
-            printf("tempout: %s\n",tempout);
-            consumpt = strtok(NULL, delimiter_characters);
-            printf("consumption: %s\n",consumpt);
-            /*while(last_token != NULL){
-                printf("%s\n",last_token);
-                last_token = strtok(NULL, delimiter_characters);
-            }*/
+        //fgets(buffer, BUFFER_SIZE, input_file);
+        // Gets each token as a string and prints it
+        year=strtok(buffer, delimiter_characters);
+        //printf("year: %s\n",year);
+        day = strtok(NULL, delimiter_characters);
+        //printf("day: %s\n",day);
+        times = strtok(NULL, delimiter_characters);
+        //printf("time: %s\n",times);
+        outhum = strtok(NULL, delimiter_characters);
+        //printf("outhum: %s\n",outhum);
+        windspd = strtok(NULL, delimiter_characters);
+        //printf("windspd: %s\n",windspd);
+        rain = strtok(NULL, delimiter_characters);
+        //printf("rain: %s\n",rain);
+        solarrad = strtok(NULL, delimiter_characters);
+        printf("solarrad: %s\n",solarrad);
+        tempout = strtok(NULL, delimiter_characters);
+        printf("tempout: %s\n",tempout);
+        consumpt = strtok(NULL, delimiter_characters);
+        printf("consumption: %s\n",consumpt);
+        /*while(last_token != NULL){
+         * printf("%s\n",last_token);
+         * last_token = strtok(NULL, delimiter_characters);
+         * }*/
         //}
-    
+        
     }
     else{
-		contador=0;
-	}
+        contador=0;
+    }
     
     contador=contador+1;
     
@@ -315,12 +315,12 @@ void rt_OneStep(void)
     }
     //fclose(input_file);
     
-     
-    n=1.12;
+    
+    /*n=1.12;
     Vg=1.12;
     Ns=36;
     T1=273+25;
-    Voc_T1=21.06/Ns;  
+    Voc_T1=21.06/Ns;
     Isc_T1=3.3;//3.8;
     Voc_T2=19/Ns;//17.05/Ns;
     Isc_T2=3.4;//3.92;
@@ -329,7 +329,7 @@ void rt_OneStep(void)
     Xv = I0_T1*q/(n*k*T1) * exp(q*Voc_T1/(n*k*T1));
     printf("Numero: %3.7f \n",q*Voc_T1);//exp(q*Voc_T1/(n*k*T1))-1);
     dVdI_Voc = - 1.15/Ns / 2;
-    Rs = - dVdI_Voc - 1/Xv;
+    Rs = - dVdI_Voc - 1/Xv;*/
     TaC= atof(tempout) ; //Lectura desde el txt
     Va=0.5;
     Suns=atof(solarrad) ; //Lectura desde el txt
@@ -437,6 +437,7 @@ int_T main(int_T argc, const char *argv[])
     dVdI_Voc = - 1.15/Ns / 2;
     Rs = - dVdI_Voc - 1/Xv;
     A=1;
+    printf("Numero: %3.2f \n",I0_T1);
     
     
     
@@ -447,102 +448,102 @@ int_T main(int_T argc, const char *argv[])
         fprintf(stderr, "Unable to open file %s\n",filename);
     }
     fgets(buffer, BUFFER_SIZE, input_file);	//First line for the labels
-        
-        //Para RT
-        struct timespec t;
-        struct sched_param param;
-        /* default interval = 50000ns = 50us
-         * cycle duration = 100us
-         */
-        int interval=4*1000000;		//en ns   ->  20000=20us
-        
-        
-        /* Unused arguments */
-        (void)(argc);
-        (void)(argv);
-        
-        //Grafica
-        
-        
-        temp = fopen("data.temp", "w");
-        
-        gnuplotPipe = popen ("gnuplot -persistent", "w");
-        
-        fprintf(gnuplotPipe,"set grid \n");
-        
-        //Serial
-        
-        fd3=serialOpen ("/dev/ttyACM0", 115200);
-        serialClose(fd3);
-        fd3=serialOpen ("/dev/ttyACM0", 115200);
-        
-        sleep(1);
-        
-        //------------GPIO---------------------
-        wiringPiSetup();
-        pinMode(0, OUTPUT);
-        pinMode(1, OUTPUT);
-        pinMode(3, OUTPUT);
-        //wiringPiISR(2, INT_EDGE_RISING, &lectura);
-        pinMode(2, INPUT);
-        digitalWrite(3,HIGH);
-        digitalWrite(1,LOW);
-        
-        int estado=0;
-        
-        if (MCP3204_init(&fileDescriptor,"/dev/spidev1.2",&ad_MCP3204,mode_SPI_00,4.08,error))
-        {
-            printf("Cannot initialize the MCP3204 ADC.\n");
-            printf("%s\n",error);
-            exit(1);
-        }
-        
-        
-        /* Initialize model */
-        pv_csi_initialize();
-        
-        /* get current time */
-        clock_gettime(0,&t);
-        /* start after one second */
-        t.tv_sec++;
-        
-        
-        
-        /* Simulating the model step behavior (in non real-time) to
-         *  simulate model behavior at stop time.
-         */
-        while ((rtmGetErrorStatus(pv_csi_M) == (NULL)) && !rtmGetStopRequested
-                (pv_csi_M)) {
-            
-            /* wait untill next shot */
-            clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
-            /* do the stuff */
-            if(estado==0){
-                estado=1;
-                
-            }else{
-                estado=0;
-            }
-            digitalWrite (21, estado) ;
-            rt_OneStep();
-            t.tv_nsec+=interval;
-            tsnorm(&t);
-            
-        }
-        
-        /* Disable rt_OneStep() here */
-        
-        /* Terminate model */
-        pv_csi_terminate();
-        return 0;
+    
+    //Para RT
+    struct timespec t;
+    struct sched_param param;
+    /* default interval = 50000ns = 50us
+     * cycle duration = 100us
+     */
+    int interval=4*1000000;		//en ns   ->  20000=20us
+    
+    
+    /* Unused arguments */
+    (void)(argc);
+    (void)(argv);
+    
+    //Grafica
+    
+    
+    temp = fopen("data.temp", "w");
+    
+    gnuplotPipe = popen ("gnuplot -persistent", "w");
+    
+    fprintf(gnuplotPipe,"set grid \n");
+    
+    //Serial
+    
+    fd3=serialOpen ("/dev/ttyACM0", 115200);
+    serialClose(fd3);
+    fd3=serialOpen ("/dev/ttyACM0", 115200);
+    
+    sleep(1);
+    
+    //------------GPIO---------------------
+    wiringPiSetup();
+    pinMode(0, OUTPUT);
+    pinMode(1, OUTPUT);
+    pinMode(3, OUTPUT);
+    //wiringPiISR(2, INT_EDGE_RISING, &lectura);
+    pinMode(2, INPUT);
+    digitalWrite(3,HIGH);
+    digitalWrite(1,LOW);
+    
+    int estado=0;
+    
+    if (MCP3204_init(&fileDescriptor,"/dev/spidev1.2",&ad_MCP3204,mode_SPI_00,4.08,error))
+    {
+        printf("Cannot initialize the MCP3204 ADC.\n");
+        printf("%s\n",error);
+        exit(1);
     }
     
-    /*
-     * File trailer for generated code.
-     *
-     * [EOF]
+    
+    /* Initialize model */
+    pv_csi_initialize();
+    
+    /* get current time */
+    clock_gettime(0,&t);
+    /* start after one second */
+    t.tv_sec++;
+    
+    
+    
+    /* Simulating the model step behavior (in non real-time) to
+     *  simulate model behavior at stop time.
      */
+    while ((rtmGetErrorStatus(pv_csi_M) == (NULL)) && !rtmGetStopRequested
+            (pv_csi_M)) {
+        
+        /* wait untill next shot */
+        clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
+        /* do the stuff */
+        if(estado==0){
+            estado=1;
+            
+        }else{
+            estado=0;
+        }
+        digitalWrite (21, estado) ;
+        rt_OneStep();
+        t.tv_nsec+=interval;
+        tsnorm(&t);
+        
+    }
     
+    /* Disable rt_OneStep() here */
     
-    
+    /* Terminate model */
+    pv_csi_terminate();
+    return 0;
+}
+
+/*
+ * File trailer for generated code.
+ *
+ * [EOF]
+ */
+
+
+
 

@@ -48,7 +48,8 @@ dVdI_Voc = - 1.15/Ns / 2;
 Rs = - dVdI_Voc - 1/Xv;
 //Vt_Ta = A * k * TaK / q; 
 Serial.begin(115200);
- 
+Serial.println(I0_T1);
+delay(5000);
  xTaskCreate(panel, NULL,configMINIMAL_STACK_SIZE , NULL, 1, NULL);
 
 
