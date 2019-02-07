@@ -1,13 +1,11 @@
-// compile with "gcc ert_main.c pv_csi.c pv_csi_data.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall -lpthread
-
 /*
  * File: ert_main.c
  *
- * Code generated for Simulink model 'pv_csi'.
+ * Code generated for Simulink model 'cargaRLC_variable'.
  *
- * Model version                  : 1.9
+ * Model version                  : 1.10
  * Simulink Coder version         : 8.14 (R2018a) 06-Feb-2018
- * C/C++ source code generated on : Thu Jan 17 15:53:47 2019
+ * C/C++ source code generated on : Wed Feb  6 16:17:24 2019
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -17,7 +15,7 @@
 
 #include <stddef.h>
 #include <stdio.h>                     /* This ert_main.c example uses printf/fflush */
-#include "pv_csi.h"                    /* Model's header file */
+#include "cargaRLC_variable.h"         /* Model's header file */
 #include "rtwtypes.h"
 #include <wiringSerial.h>
 #include <stdlib.h>
@@ -28,8 +26,6 @@
 #include <wiringPi.h>
 #include <ncurses.h>
 #include "libmcp3204.h"
-
-
 
 /*
  * Associating rt_OneStep with a real-time clock or interrupt service routine
@@ -44,10 +40,9 @@
  */
 
 //Variables creadas por el programador
-//Emulacion de panel
+
+#define MSGISIZE 26
 #define BUFFER_SIZE 1024
-double Vg,Vc,n,Ns,T1,Voc_T1,Isc_T1,Isc_T2,T2,Voc_T2,Ics_T2,TaK,K0,IL_T1,IL,I0,I0_T1,Xv,dVdI_Voc,k,q,Rs,A,Vt_Ta,Ia;
-double Suns,TaC,Va,Temp,Volt,Irra;
 
 //Datos del txt
 const char *delimiter_characters = "\t";
@@ -68,20 +63,26 @@ char *consumptq;
 int contador;
 int contador2=0;
 
+
 //------Entradas-------
-double ipv=0.0;
-double vload3=0.0;
-double Prefd=0.0;
-double Qrefd=0.0;
+double i1=0.0;
+double i2=0.0;
+double i3=0.0;
+double P=0.0;
+double Q=0.0;
 MCP3204 ad_MCP3204;
 int fileDescriptor;
 char error[55];
 
 //------Salidas--------
-double i3=0.0;
-double soc=0.0;
+double Pm=0.0;
+double Qm=0.0;
+double Vload=0.0;
+double min=5000;
+double max=0.0;
 
-#define MSGISIZE 9
+double tiempo=0.0;
+
 
 //Comunicacion
 int  bytes_read = 0;
@@ -92,14 +93,15 @@ char read_buffer[MSGISIZE];   /* Buffer to store the data received              
 int var1=0;
 int var2=0;
 int var3=0;
-int var4=0;
 char var1s[7];
 char var2s[7];
 char var3s[7];
-char var4s[7];
-int fd3;
-int i3a=0;
-char buffer3[8];
+int fd;
+int fd2;
+int Vloada=0;
+int Pma=0;
+int Qma=0;
+char buffer[8];
 
 //===============================================================
 //-------Variables para graficar
@@ -113,6 +115,23 @@ FILE *	gnuplotPipe;
 double in=0;
 //===============================================================
 
+
+int i;
+int k;
+
+// 39 datos
+// Dt = 427us (idealmente) para 60Hz
+int senw[] = {2048,	2377,	2697,	3000,	3278,
+3525,	3733,	3898,	4015,	4081,
+4094,	4055,	3963,	3822,	3634,
+3406,	3143,	2851,	2538,	2213,
+1883,	1558,	1245,	953,	690,
+462,	274,	133,	41,	2,
+15, 81,	198,	363,	571,
+818, 1096,	1399,	1719};
+
+
+
 //--------------Para RT-----------------
 #include <time.h>
 #include <sched.h>
@@ -121,7 +140,6 @@ double in=0;
 #define NSEC_PER_SEC    1000000000
 
 //--------------------------------------
-
 
 void rt_OneStep(void);
 
@@ -155,7 +173,7 @@ void rt_OneStep(void)
     
     /* Check for overrun */
     if (OverrunFlag) {
-        rtmSetErrorStatus(pv_csi_M, "Overrun");
+        rtmSetErrorStatus(cargaRLC_variable_M, "Overrun");
         return;
     }
     
@@ -165,31 +183,49 @@ void rt_OneStep(void)
     /* Re-enable timer or interrupt here */
     /* Set model inputs here */
     
-    //------Entradas-------
+    //------- entradas-------------
     digitalWrite(0,LOW);
-    /*tcflush(fd, TCIOFLUSH);
-     * var=0;
-     * //(read_buffer,0,sizeof(read_buffer));
-     * //printf("Va leer 2\n");
-     * memset(&bufferAux,0,sizeof(bufferAux));
-     * //printf("Va leer\n");
-     * //sprintf(read_buffer,"b%07dd%07de\n",Pma,Qma);
-     * while(serialDataAvail(fd)==0){}
-     *
-     * memset(read_buffer,0,sizeof(read_buffer));
-     * //printf("Captó dato serial\n");
-     *
-     * //Nuevooooooooo
-     * while(read_buffer[0]!='f' && read_buffer[MSGISIZE-1]!='e'){
+    //tcflush(fd, TCIOFLUSH);
+    
+    var=0;
+    //(read_buffer,0,sizeof(read_buffer));
+    //printf("Va leer 2\n");
+    //memset(&bufferAux,0,sizeof(bufferAux));
+    //printf("Va leer\n");
+    //sprintf(read_buffer,"b%07dd%07de\n",Pma,Qma);
+    //while(serialDataAvail(fd)==0){}
+    
+    
+    
+    //memset(read_buffer,0,sizeof(read_buffer));
+    //printf("Captó dato serial\n");
+    
+    
+    //Nuevooooooooo
+    /*while(read_buffer[0]!='f' || read_buffer[MSGISIZE-1]!='e'){
      * bytes_read=read(fd,&read_buffer,MSGISIZE);
+     * //printf("Ard msg: %s \n",read_buffer);
      * serialFlush(fd);
      * tcflush(fd, TCIOFLUSH);
+     * //fflush(stdin);
+     * //fflush(stdout);
+     *
      * }
+     * digitalWrite(1,HIGH);
+     *
      *
      * //Nuevoooooo
      * digitalWrite(0,HIGH);
      * serialFlush(fd);
-     * tcflush(fd, TCIOFLUSH);*/
+     * tcflush(fd, TCIOFLUSH);
+     * //fflush(stdin);
+     * //fflush(stdout);
+     * digitalWrite(0,LOW);*/
+    
+    var=1;
+    //printf("Trama de arduino: %s\n",read_buffer);
+    
+    //Lectura ADC
     
     if (MCP3204_convert(fileDescriptor,singleEnded,CH0,&ad_MCP3204,error))
     {
@@ -199,77 +235,115 @@ void rt_OneStep(void)
     }
     
     
-    var1=MCP3204_getValue(ad_MCP3204); // Referencia de potencia activa Prefd
+    var1=MCP3204_getValue(ad_MCP3204);
+    printf("Valor adc1: %d \n", var1);
     
-    if (MCP3204_convert(fileDescriptor,singleEnded,CH2,&ad_MCP3204,error))
-    {
-        printf("Error during conversion1.\n");
-        printf("%s\n",error);
-        exit(1);
-    }
     
-    var2=MCP3204_getValue(ad_MCP3204); // Referencia de potencia reactiva Qrefd
+    //var1=MCP3204_analogValue(ad_MCP3204);
     
     if (MCP3204_convert(fileDescriptor,singleEnded,CH1,&ad_MCP3204,error))
     {
-        printf("Error during conversion1.\n");
+        printf("Error during conversion.\n");
         printf("%s\n",error);
         exit(1);
     }
     
     
-    var3=MCP3204_getValue(ad_MCP3204);  // Variable de tension en la carga leida por el arduino
+    var2=MCP3204_getValue(ad_MCP3204);
+    //var2=MCP3204_analogValue(ad_MCP3204);
+    //var3=var2;
     
-    if (MCP3204_convert(fileDescriptor,singleEnded,CH3,&ad_MCP3204,error))
+    if (MCP3204_convert(fileDescriptor,singleEnded,CH2,&ad_MCP3204,error))
     {
-        printf("Error during conversion1.\n");
+        printf("Error during conversion.\n");
         printf("%s\n",error);
         exit(1);
     }
     
-    var4=MCP3204_getValue(ad_MCP3204); //Variable de corriente entregada por el panel
     
-    
-    
-    var=1;
-    /*printf("Trama de arduino: %s\n",read_buffer);
-     *
-     * if (var==1){
+    var3=MCP3204_getValue(ad_MCP3204);
+    /*if (var==1){
      * int q=0;
      * //Acomodar en arreglo de caracteres los datos recibidos
      * for(q=0; q<7;q++){
-     * var1s[q]=read_buffer[q+1]; //Primer dato
-     * //var2s[q]=read_buffer[q+10]; //Segundo dato
-     * //var3s[q]=read_buffer[q+18]; //Tercer dato
+     * var1s[q]=read_buffer[q+2]; //Primer dato
+     * var2s[q]=read_buffer[q+10]; //Segundo dato
+     * var3s[q]=read_buffer[q+18]; //Tercer dato
      * }
-     * var1=atoi(var1s);//Primer dato en numero
+     * //var1=atof(var1s)/10.0; //Primer dato en numero
      * //var2=atof(var2s)/10.0; //Segundo dato en numero
      * //var3=atof(var3s)/10.0; //Segundo dato en numero
-     *
-     * //var3=atof(var3s)/10.0; //Segundo dato en numero
-     * //printf ("El numero1  es :%d \n",var1);
-     * //printf ("El numero2  es :%3.2f \n",var2);
-     * //printf ("El numero3  es :%3.2f \n",var3);
+     * var1=atoi(var1s); //Primer dato en numero
+     * var2=atoi(var2s); //Segundo dato en numero
+     * var3=atoi(var3s); //Segundo dato en numero*/
+    
+    
+    
+    //var3=atof(var3s)/10.0; //Segundo dato en numero
+    //printf ("El numero1  es :%d \n",var1);
+    //printf ("El numero2  es :%d \n",var2);
+    //printf ("El numero3  es :%d \n",var3);
+    
+    /*
+     * double k1=(440+450)/4095.0;
+     * double vx1=-450;
+     * double k2=(1220+1155)/4095.0;
+     * double vx2=-1155;
+     * double k3=(1650+1655)/4095.0;
+     * double vx3=-1655;
      */
     
-    double k=(2*170)/2248.0;
-    double vx=-170-(502*2*170)/2248.0;
-    //-----OJO Ajustar dependiendo del ADC
-    double k1=0.5;
-    double vx1=-0.5*500;
-    double k2=2.0;
-    double vx2=-2.0*500;
-    //double k1=(2*50)/2207.0;
-    //double vx1=-50-(556*2*50)/2207.0;
-    //double k2=(2*50)/2203.0;
-    //double vx2=-50-(543*2*50)/2203.0;
+    
+    //double k1=(1500+1500)/4095.0;
+    //double vx1=-1500;
+    //double k2=(1500+1500)/4095.0;
+    //double vx2=-1500;
+    
+    //double k=(2*170)/2248.0;
+    //double vx=-170-(502*2*170)/2248.0;
+    
+    double k1=(2*50)/2207.0;
+    double vx1=-50-(556*2*50)/2207.0;
+    double k2=(2*50)/2203.0;
+    double vx2=-50-(543*2*50)/2203.0;
     double k3=(2*90)/2207.0;
     double vx3=-90-(556*2*90)/2207.0;
-    double k4=(2*90)/2207.0;
-    double vx4=-90-(556*2*90)/2207.0;
     
-    //Paneles solares
-    //Read each line into the buffer
+    
+    /* double k2=(2*300)/2203.0;
+     * double vx2=-300-(543*2*300)/2203.0;
+     * double k3=(2*50)/2207.0;
+     * double vx3=-50-(556*2*50)/2207.0;
+     */
+    
+    //printf ("i1: %d i2: %d i3: %d\n",var1,var2,var3);
+    i1=(var1*k1)+vx1;
+    //i1=i1/10.0;
+    i2=(var2*k2)+vx2;
+    //i2=i2/10.0;
+    //i1=40*sin(2*3.14*60*tiempo);
+    //i2=40*sin(2*3.14*60*tiempo);
+    i3=var3*k3+vx3;//90*sin(2*3.14*60*tiempo);//(var3*k3)+vx3;
+    
+    tiempo=tiempo+0.0001;
+    if (tiempo==0.0168) tiempo=0.0;
+    //i3=i3/10.0;
+    //Variables prubea generadores
+    //i1=(16.67*2)*var1/4095.0-16.67;
+    
+    //i1=(16.67*2)*var1/255.0-16.67;
+    //i2=i1;
+    //i3=i1;
+    //printf("Valor adc 1: %d \n", var1);
+    //printf("Valor adc 2: %d \n", var2);
+    
+    
+    
+    //if (min>var1) min=var1;
+    //if (max<var1) max=var1;
+    
+    printf("Valor minimo: %3.2f \n", min);
+    printf("Valor maximo: %3.2f \n", max);
     
     if (contador==15*60*1000/4 || contador2==0){
         
@@ -317,94 +391,81 @@ void rt_OneStep(void)
     if(ferror(input_file)){
         perror("The following error ocurred");
     }
-    //fclose(input_file);
     
+    P=atof(consumptp);
+    Q=atof(consumptq);
     
-    /*n=1.12;
-    Vg=1.12;
-    Ns=36;
-    T1=273+25;
-    Voc_T1=21.06/Ns;
-    Isc_T1=3.3;//3.8;
-    Voc_T2=19/Ns;//17.05/Ns;
-    Isc_T2=3.4;//3.92;
-    K0=(Isc_T2 - Isc_T1)/(T2 - T1);
-    I0_T1=Isc_T1/(exp(q*Voc_T1/(n*k*T1))-1);
-    Xv = I0_T1*q/(n*k*T1) * exp(q*Voc_T1/(n*k*T1));
-    printf("Numero: %3.7f \n",q*Voc_T1);//exp(q*Voc_T1/(n*k*T1))-1);
-    dVdI_Voc = - 1.15/Ns / 2;
-    Rs = - dVdI_Voc - 1/Xv;*/
-    TaC= atof(tempout) ; //Lectura desde el txt
-    Va=0.5;
-    Suns=atof(solarrad)/1000.0 ; //Lectura desde el txt
-    TaK = 273 + TaC;
-    IL_T1 = Isc_T1 * Suns;
-    IL = IL_T1 + K0*(TaK - T1);
-    I0= I0_T1*pow((TaK/T1),(3/n))*exp(-q*Vg/(n*k)*((1/TaK)-(1/T1)));
-    Vt_Ta = A * k * TaK / q;
-    Vc = Va/Ns;
-    printf("Aqui estoy\n");
+    set_i1(i1);
+    set_i2(i2);
+    set_i3(i3);
+    set_P(P);
+    set_Q(Q);
     
-    for (int j=1;j<=5;j++){
-        Ia=Ia- (IL - Ia - I0*( exp((Vc+Ia*Rs)/Vt_Ta) -1))/(-1 - (I0*( exp((Vc+Ia*Rs)/Vt_Ta) -1))*Rs/Vt_Ta);
-    }
+    //set_i1((senw[i]-2048)*0.0391);
+    //set_i2((senw[i]-2048)*0.0391);
+    //set_i3((senw[i]-2048)*0.0391);
     
+    printf ("i1: %f i2: %f i3: %f p: %f q: %f\n",i1,i2,i3,P,Q);
     
-    
-    ipv=1.5;//500;   //Proveniente de la fuente de generación PV
-    ipv=Ia;
-    
-    
-    vload3=var3*k+vx; //Proveniente de la carga
-    //vload=vload/10.0;
-    Prefd=var1*k1+vx1;
-    Qrefd=var2*k2+vx2;
-    //Prefd=500;
-    //Qrefd=3500;
-    
-    set_Idc_PV(ipv);
-    set_Vload(vload3);
-    set_Pref(Prefd);
-    set_Qref(Qrefd);
     /* Step the model for base rate */
-    pv_csi_step();
+    cargaRLC_variable_step();
     
     /* Get model outputs here */
+    /* Get model outputs here */
+    //----- salidas-------
+    Pm=get_Pm();
+    Qm=get_Qm();
+    Vload=get_Vload();
     
-//-------Salidas------
-    i3=get_I_pv();
-    soc=get_SOC();
-    printf("La irradianza es: %3.2f \n",Suns);
-    printf("La temperatura es: %3.2f \n",TaC);
-    printf("La dato es: %d \n",var3);
-    printf("La corriente de panel solar es: %3.2f \n",ipv);
-    printf("La corriente del inversor 3 es: %3.2f \n",i3);
-    printf("El estado de la bateria es: %3.2f \n",soc);
-    printf ("La tensión en la carga es :%3.2f \n",vload3);
+    printf("La potencia P medida es: %3.2f \n",Pm);
+    printf("La potencia Q medida es: %3.2f \n",Qm);
+    printf("Voltaje : %3.2f \n",Vload);
     
-    //delay(1000);
+    if (min>Vload) min=Vload;
+    if (max<Vload) max=Vload;
     
-    i3a=i3*10;
-    
-    memset(buffer3,0,sizeof(buffer3));
-    //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
-    sprintf(buffer3,"v%07d\n",i3a);
-    //while(pinr==0){
-    serialPuts(fd3,buffer3);
-    serialFlush(fd3);
-    //pinr=digitalRead(2);
-    //printf("El dato pin es: %d \n",pinr);
+    //----------Serial----------------------
+    //-----------Escritura-envio---------------------
+    //Pma=Pm*10;
+    //Qma=Qm*10;
+    Vloada=Vload*10;
+    Pma=Pm*10;
+    Qma=Qm*10;
+    //Vloada=-456;
+    //if(Vloada>2300){
+    //Vloada=2300;
+    //}else if(Vloada<-2300){
+    //Vloada=-2300;
     //}
-    serialFlush(fd3);
-    tcflush(fd3, TCIOFLUSH);
+    
+    
+    memset(buffer,0,sizeof(buffer));
+    //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
+    //sprintf(buffer,"v%07d\n",Vloada);
+    sprintf(buffer,"v%07d%07d%07de\n",Vloada,Pma,Qma);
+    //while(pinr==0){
+    serialPuts(fd,buffer);
+    serialPuts(fd2,buffer);
+    //serialFlush(fd);
+    //pinr=digitalRead(2);
+    //printf("so\n");
+    //printf("El dato es: %s \n",buffer);
+    //}
+    serialFlush(fd);
+    tcflush(fd, TCIOFLUSH);
+    serialFlush(fd2);
+    tcflush(fd2, TCIOFLUSH);
     pinr=0;
-    
+    digitalWrite(1,LOW);
     var=0;
-    
+    //printf("Ready for next loop\n");
     //-----------Grafica---------------------
     //in+=0.0001;
-    //fprintf(temp, "%3.2f %3.2f %3.2f %3.2f %3.2f %3.2f \n",i1,i2,i3,Vload,Pm,Qm);
-    fprintf(temp, "%3.2f %3.2f %3.2f %3.2f \n",i3,vload3,Prefd,Qrefd);
+    
+    //fprintf(temp, "%d %d \n",var1,var2);
+    fprintf(temp, "%3.2f %3.2f %3.2f %3.2f %3.2f %3.2f \n",i1,i2,i3,Vload,Pm,Qm);
+    
+    
     //}
     
     /* Indicate task complete */
@@ -423,36 +484,6 @@ void rt_OneStep(void)
  */
 int_T main(int_T argc, const char *argv[])
 {
-    //Para emulacion de arreglo de paneles
-    Va=0;
-    q=1.6*pow(10,-19);
-    k=1.38*pow(10,-23);
-    n=1.12;
-    Vg=1.12;
-    Ns=36;
-    T1=273+25;
-    Voc_T1=21.06/Ns;
-    Isc_T1=3.3;//3.8;
-    Voc_T2=19/Ns;//17.05/Ns;
-    Isc_T2=3.4;//3.92;
-    K0=(Isc_T2 - Isc_T1)/(T2 - T1);
-    I0_T1=Isc_T1/(exp(q*Voc_T1/(n*k*T1))-1);
-    Xv = I0_T1*q/(n*k*T1) * exp(q*Voc_T1/(n*k*T1));
-    dVdI_Voc = - 1.15/Ns / 2;
-    Rs = - dVdI_Voc - 1/Xv;
-    A=1;
-    printf("Numero: %3.2f \n",I0_T1);
-    
-    
-    
-    //Verificando txt de datos
-    //FILE *input_file = fopen(filename, "r");
-    input_file = fopen(filename, "r");
-    if (input_file == NULL){
-        fprintf(stderr, "Unable to open file %s\n",filename);
-    }
-    fgets(buffer, BUFFER_SIZE, input_file);	//First line for the labels
-    
     //Para RT
     struct timespec t;
     struct sched_param param;
@@ -461,6 +492,20 @@ int_T main(int_T argc, const char *argv[])
      */
     int interval=4*1000000;		//en ns   ->  20000=20us
     
+    if(argc>=2 && atoi(argv[1])>0)
+    {
+        printf("using realtime, priority: %d\n",atoi(argv[1]));
+        param.sched_priority = atoi(argv[1]);
+        /* enable realtime fifo scheduling */
+        if(sched_setscheduler(0, SCHED_FIFO, &param)==-1){
+            perror("sched_setscheduler failed");
+            exit(-1);
+        }
+    }
+    if(argc>=3){
+        interval=atoi(argv[2]);
+        printf("using realtime, priority: %d\n",interval);
+    }
     
     /* Unused arguments */
     (void)(argc);
@@ -477,11 +522,20 @@ int_T main(int_T argc, const char *argv[])
     
     //Serial
     
-    fd3=serialOpen ("/dev/ttyACM0", 115200);
-    serialClose(fd3);
-    fd3=serialOpen ("/dev/ttyACM0", 115200);
+    
+    fd=serialOpen ("/dev/ttyACM0", 115200);
+    serialClose(fd);
+    fd=serialOpen ("/dev/ttyACM0", 115200);
+    
+    fd2=serialOpen ("/dev/ttyACM1", 115200);
+    serialClose(fd2);
+    fd2=serialOpen ("/dev/ttyACM1", 115200);
     
     sleep(1);
+    
+    
+    
+    
     
     //------------GPIO---------------------
     wiringPiSetup();
@@ -493,8 +547,6 @@ int_T main(int_T argc, const char *argv[])
     digitalWrite(3,HIGH);
     digitalWrite(1,LOW);
     
-    int estado=0;
-    
     if (MCP3204_init(&fileDescriptor,"/dev/spidev1.2",&ad_MCP3204,mode_SPI_00,4.08,error))
     {
         printf("Cannot initialize the MCP3204 ADC.\n");
@@ -502,22 +554,27 @@ int_T main(int_T argc, const char *argv[])
         exit(1);
     }
     
-    
     /* Initialize model */
-    pv_csi_initialize();
+    cargaRLC_variable_initialize();
+    
+    /* Simulating the model step behavior (in non real-time) to
+     *  simulate model behavior at stop time.
+     */
+    
+    k=0;
+    i=0;
+    int estado=0;
     
     /* get current time */
     clock_gettime(0,&t);
     /* start after one second */
     t.tv_sec++;
     
-    
-    
     /* Simulating the model step behavior (in non real-time) to
      *  simulate model behavior at stop time.
      */
-    while ((rtmGetErrorStatus(pv_csi_M) == (NULL)) && !rtmGetStopRequested
-            (pv_csi_M)) {
+    while ((rtmGetErrorStatus(cargaRLC_variable_M) == (NULL)) &&
+            !rtmGetStopRequested(cargaRLC_variable_M)) {
         
         /* wait untill next shot */
         clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
@@ -529,16 +586,27 @@ int_T main(int_T argc, const char *argv[])
             estado=0;
         }
         digitalWrite (21, estado) ;
+        
         rt_OneStep();
+        
         t.tv_nsec+=interval;
         tsnorm(&t);
-        
+        /*
+         * delay(1);
+         * i++;
+         * if(i==39){
+         * i=0;
+         * }*/
+        //k++;
+        if(k==60001){
+            break;
+        }
     }
     
     /* Disable rt_OneStep() here */
     
     /* Terminate model */
-    pv_csi_terminate();
+    cargaRLC_variable_terminate();
     return 0;
 }
 
@@ -547,7 +615,3 @@ int_T main(int_T argc, const char *argv[])
  *
  * [EOF]
  */
-
-
-
-
