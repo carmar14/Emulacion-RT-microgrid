@@ -1,3 +1,4 @@
+//compile using "gcc ert_main.c cargaRLC_variable.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c -lm -lwiringPi -lrt -Wall"
 /*
  * File: ert_main.c
  *
