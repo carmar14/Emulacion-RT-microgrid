@@ -49,7 +49,7 @@
 const char *delimiter_characters = "\t";
 const char *filename = "perfiles_meteo_consum1/myData7_5min.txt";//"perfiles_meteo_consum/myData7_5min.txt";
 FILE *input_file; //= fopen(filename, "r");
-char buffer[BUFFER_SIZE];
+char buffert[BUFFER_SIZE];
 char *last_token;
 char *year;
 char *day;
@@ -349,9 +349,9 @@ void rt_OneStep(void)
     if (contador==15*60*1000/4 || contador2==0){
         
         contador2=1;
-        fgets(buffer, BUFFER_SIZE, input_file);	//Second line for the labels
+        fgets(buffert, BUFFER_SIZE, input_file);	//Second line for the labels
         
-        puts(buffer);
+        puts(buffert);
         //while(fgets(buffer, BUFFER_SIZE, input_file) != NULL){
         //fgets(buffer, BUFFER_SIZE, input_file);
         // Gets each token as a string and prints it
@@ -485,7 +485,16 @@ void rt_OneStep(void)
  */
 int_T main(int_T argc, const char *argv[])
 {
-    //Para RT
+
+    //Verificando txt de datos
+    //FILE *input_file = fopen(filename, "r");
+    input_file = fopen(filename, "r");
+    if (input_file == NULL){
+        fprintf(stderr, "Unable to open file %s\n",filename);
+    }
+    fgets(buffert, BUFFER_SIZE, input_file);	//First line for the labels
+
+//Para RT
     struct timespec t;
     struct sched_param param;
     /* default interval = 50000ns = 50us
