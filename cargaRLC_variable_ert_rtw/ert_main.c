@@ -355,7 +355,7 @@ void rt_OneStep(void)
         //while(fgets(buffer, BUFFER_SIZE, input_file) != NULL){
         //fgets(buffer, BUFFER_SIZE, input_file);
         // Gets each token as a string and prints it
-        year=strtok(buffer, delimiter_characters);
+        year=strtok(buffert, delimiter_characters);
         //printf("year: %s\n",year);
         day = strtok(NULL, delimiter_characters);
         //printf("day: %s\n",day);
@@ -374,7 +374,7 @@ void rt_OneStep(void)
         consumptp = strtok(NULL, delimiter_characters);
         printf("consumption: %s\n",consumptp);
         consumptq = strtok(NULL, delimiter_characters);
-        printf("consumption: %s\n",consumptq);
+        printf("consumptionq: %s\n",consumptq);
         /*while(last_token != NULL){
          * printf("%s\n",last_token);
          * last_token = strtok(NULL, delimiter_characters);
