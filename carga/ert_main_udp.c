@@ -32,7 +32,7 @@
 //-------------------Comunicacion UDP--------------------------------------
 //-----------------Direcciones IP-----
 
-#define SERVER "192.168.56.1"   //Direcion IP del Inversor
+#define SERVER "172.16.49.101"   //Direcion IP del Inversor
 #define PORTL 8887			//Puerto Local
 #define PORTR 8886			//Puerto Remoto
 
