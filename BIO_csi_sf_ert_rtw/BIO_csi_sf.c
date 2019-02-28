@@ -70,6 +70,9 @@ double get_MPC1(void){
 	
 }
 
+double get_duty(void) {
+    return BIO_csi_sf_B.Gain3; 
+}
 /* Forward declaration for local functions */
 static void BIO_csi_sf_mpcblock_refmd(const real_T ref[2], const real_T b_yoff[2],
   const real_T b_Rscale[2], real_T rseq[200], real_T vseq[101], real_T *v);

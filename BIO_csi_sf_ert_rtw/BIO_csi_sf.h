@@ -202,7 +202,7 @@ extern void set_Pref_bio(double);
 	
 extern double get_I_bio(void);
 extern double get_MPC1(void);
-	 
+extern double get_duty(void);	 
 
 /* Real-time Model object */
 extern RT_MODEL_BIO_csi_sf_T *const BIO_csi_sf_M;

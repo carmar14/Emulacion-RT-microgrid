@@ -73,6 +73,12 @@ double get_SOC(void){
 	 
 }
 
+
+double get_duty(void) {
+    return pv_csi_B.Gain1; 
+}
+
+
 /* Forward declaration for local functions */
 static void pv_csi_mpcblock_refmd(const real_T ref[2], const real_T b_yoff[2],
   const real_T b_RYscale[2], real_T rseq[200], real_T vseq[101], real_T *v);

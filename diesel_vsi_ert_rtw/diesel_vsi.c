@@ -62,6 +62,10 @@ double get_vdc(void){
 	return diesel_vsi_Y.vdc;
 }
 
+double get_duty(void) {
+    return diesel_vsi_Y.duty; 
+}  
+
 /*
  * Time delay interpolation routine
  *
@@ -426,6 +430,9 @@ void diesel_vsi_step(void)
      *  Gain: '<S1>/Gain2'
      */
     rtb_VSIlineZ1 = 0.002 * diesel_vsi_B.Sum11 + rtb_MotordeCombustin1;
+    
+    duty=rtb_VSIlineZ1;
+    diesel_vsi_Y.duty=rtb_VSIlineZ1;
 
     /* TransferFcn: '<Root>/Transfer Fcn5' */
     rtb_MotordeCombustin1 = 0.0;

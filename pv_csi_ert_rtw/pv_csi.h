@@ -233,6 +233,7 @@ extern void set_Qref(double);
 //-----Funciones para obtener valores de las salidas-------
 extern double get_I_pv(void);
 extern double get_SOC(void);
+extern double get_duty(void);
 
 /* Real-time Model object */
 extern RT_MODEL_pv_csi_T *const pv_csi_M;

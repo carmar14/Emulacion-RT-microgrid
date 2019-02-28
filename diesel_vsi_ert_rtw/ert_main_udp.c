@@ -1,4 +1,4 @@
-// compile with: "gcc ert_main.c diesel_vsi.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall"
+// compile with: "gcc ert_main_udp.c diesel_vsi.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall"
 /*
  * File: ert_main.c
  *
@@ -29,6 +29,40 @@
 //#include <ncurses.h>
 #include "libmcp3204.h"
 
+//-------------------Comunicacion UDP--------------------------------------
+//-----------------Direcciones IP-----
+
+#define SERVER "192.168.56.1"   //Direcion IP del Inversor
+#define PORTL 8887			//Puerto Local
+#define PORTR1 8886			//Puerto Remoto I3
+#define PORTR2 8885			//Puerto Remoto DVsi
+#define PORTR3 8884			//Puerto Remoto DieselE
+
+
+
+//===============================================================
+#include <string.h> //memset
+#include <stdlib.h> //exit(0);
+#include <arpa/inet.h>
+#include <sys/socket.h>
+//===============================================================
+
+//===============================================================
+void die(char *);
+void setUDP(void);
+double receive (void);
+void sendm1(double);
+void sendm2(double);
+void sendm3(double);
+//===============================================================
+
+//===============================================================
+struct sockaddr_in si_me, si_other, si_other2, si_other3; //
+int BUFLEN=512;
+int s, slen = sizeof(si_other) , recv_len;
+char buf[512];
+double duty_cycle=0.0;
+//===============================================================
 
 /*
  * Associating rt_OneStep with a real-time clock or interrupt service routine
@@ -126,6 +160,148 @@ static inline void tsnorm(struct timespec *ts)
     }
 }
 //------------------------------------------------------------------
+
+//====================Para UDP-TCP==========================
+void die(char *s)
+{
+    perror(s);
+    exit(1);
+}
+
+void setUDP(void)
+{
+    
+    //create a UDP socket
+    if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
+    {
+        die("socket");
+    }
+    
+    //Setting timeout for socket for 1ms
+    struct timeval tv;
+    tv.tv_sec = 0;
+    tv.tv_usec = 1000;
+    if (setsockopt(s, SOL_SOCKET, SO_RCVTIMEO,&tv,sizeof(tv)) < 0) {
+        perror("Error");
+    }
+    
+    // zero out the structure
+    memset((char *) &si_other, 0, sizeof(si_other));
+    
+    si_other.sin_family = AF_INET;
+    si_other.sin_port = htons(PORTR1);
+    if (inet_aton(SERVER , &si_other.sin_addr) == 0)
+    {
+        fprintf(stderr, "inet_aton() failed\n");
+        exit(1);
+    }
+    
+    memset((char *) &si_other2, 0, sizeof(si_other2));
+    
+    si_other2.sin_family = AF_INET;
+    si_other2.sin_port = htons(PORTR2);
+    if (inet_aton(SERVER , &si_other2.sin_addr) == 0)
+    {
+        fprintf(stderr, "inet_aton() failed\n");
+        exit(1);
+    }
+    
+    memset((char *) &si_other3, 0, sizeof(si_other3));
+    
+    si_other3.sin_family = AF_INET;
+    si_other3.sin_port = htons(PORTR3);
+    if (inet_aton(SERVER , &si_other3.sin_addr) == 0)
+    {
+        fprintf(stderr, "inet_aton() failed\n");
+        exit(1);
+    }
+    
+    si_me.sin_family = AF_INET;
+    si_me.sin_port = htons(PORTL);
+    si_me.sin_addr.s_addr = htonl(INADDR_ANY);
+    
+    //bind socket to port
+    //Crea socket para MPC
+    if( bind(s , (struct sockaddr*)&si_me, sizeof(si_me) ) == -1)
+    {
+        die("bind s1");
+    }
+}
+
+double receive (void)
+{
+    double x = 1.0;
+    printf("Waiting for data...");
+    memset(buf,'\0', BUFLEN);
+    
+    //try to receive some data, this is a blocking call
+    if ((recv_len = recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &si_other, (socklen_t*)&slen)) < 0)
+    {
+        printf("Timeout o fallo de recepción\n");
+        x=-1.0;
+        return x;
+        //die("recvfrom()");
+    }
+    
+    //Para llegar aca tuvo que haber recepción exitosa desde inversor
+    sendm(vdcmdiesel);
+    /*memset(buf,'\0', BUFLEN);
+     * sprintf(buf, "%5.2f", vdcmdiesel);
+     * printf("Dato a enviar: %s\n",buf);
+     *
+     * if (sendto(s, buf, BUFLEN, 0, (struct sockaddr*) &si_other, slen) == -1)
+     * {
+     * die("sendto()");
+     * }
+     */
+    
+    return x;
+}
+
+void sendm1(double mensaje)
+{
+    memset(buf,'\0', BUFLEN);
+    sprintf(buf, "%5.2f", mensaje);
+    printf("Dato a enviar: %s\n",buf);
+    
+    //print details of the client/peer and the data received
+    //printf("Received packet from %s:%d\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
+    //printf("Data: %s\n" , buf);
+    //printf("Numeric Data %3.2f\n",x);
+    //now reply the client with the same data
+    if (sendto(s, buf, BUFLEN, 0, (struct sockaddr*) &si_other, slen) == -1)
+    {
+        die("sendto()");
+    }
+    
+}
+
+void sendm2(double mensaje)
+{
+    memset(buf,'\0', BUFLEN);
+    sprintf(buf, "%5.2f", mensaje);
+    printf("Dato a enviar: %s\n",buf);
+
+    if (sendto(s, buf, BUFLEN, 0, (struct sockaddr*) &si_other2, slen) == -1)
+    {
+        die("sendto()");
+    }
+    
+}
+void sendm3(double mensaje)
+{
+    memset(buf,'\0', BUFLEN);
+    sprintf(buf, "%5.2f", mensaje);
+    printf("Dato a enviar: %s\n",buf);
+    
+    if (sendto(s, buf, BUFLEN, 0, (struct sockaddr*) &si_other3, slen) == -1)
+    {
+        die("sendto()");
+    }
+    
+}
+
+//===============================================================
 
 void rt_OneStep(void)
 {
@@ -265,8 +441,9 @@ void rt_OneStep(void)
     printf("Valor maximo: %3.2f \n", max);
     
     //-------------UDP-envio----------------------
-    //sendm(Idie);
-    //sendm(duty_cycle);
+    sendm1(Idie);
+    sendm2(duty_cycle);
+    sendm3(vdc);
     
     //----------Serial----------------------
     //-----------Escritura-envio---------------------
@@ -375,7 +552,7 @@ int_T main(int_T argc, const char *argv[])
     sleep(1);
     
     //Inicializar comunicacion UDP---------------------------------------------------------
-    //setUDP();
+    setUDP();
     
     //------------GPIO---------------------
     wiringPiSetup();

@@ -153,6 +153,7 @@ typedef struct {
   real_T flujo;                        /* '<Root>/flujo' */
   real_T i2;                           /* '<Root>/i2' */
   real_T vdc;                          /* '<Root>/vdc' */
+  real_T duty;
 } ExtY_diesel_vsi_T;
 
 /* Real-time Model Data Structure */
@@ -228,6 +229,7 @@ extern void set_flujo(double);
 extern double get_I_die(void);
 extern double get_flujo(void);
 extern double get_vdc(void);
+extern double get_duty(void);
 
 /* Real-time Model object */
 extern RT_MODEL_diesel_vsi_T *const diesel_vsi_M;
