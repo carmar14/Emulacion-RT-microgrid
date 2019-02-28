@@ -34,9 +34,9 @@
 
 #define SERVER "172.16.49.101"   //Direcion IP del Inversor
 #define PORTL 8887			//Puerto Local
-#define PORTR1 8886			//Puerto Remoto I3
-#define PORTR2 8885			//Puerto Remoto DVsi
-#define PORTR3 8884			//Puerto Remoto DieselE
+#define PORTR1 8890			//Puerto Remoto I3
+#define PORTR2 8893			//Puerto Remoto DVsi
+#define PORTR3 8897			//Puerto Remoto DieselE
 
 
 
