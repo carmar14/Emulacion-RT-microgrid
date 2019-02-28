@@ -229,7 +229,7 @@ double receive (void)
     }
     
     //Para llegar aca tuvo que haber recepción exitosa desde inversor
-    sendm(vdcmdiesel);
+    //sendm(vdcmdiesel);
     /*memset(buf,'\0', BUFLEN);
      * sprintf(buf, "%5.2f", vdcmdiesel);
      * printf("Dato a enviar: %s\n",buf);
