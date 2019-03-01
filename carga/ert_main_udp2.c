@@ -614,8 +614,11 @@ int_T main(int_T argc, const char *argv[])
         exit(1);
     }
     
+    //Inicializar comunicacion UDP---------------------------------------------------------
+    setUDP();
+    
     /* Initialize model */
-    carga_sf_initialize();
+    carga_sf_initialize(); 
     
     /* Simulating the model step behavior (in non real-time) to
      *  simulate model behavior at stop time.
