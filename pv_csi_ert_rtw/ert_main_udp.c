@@ -190,7 +190,7 @@ void setUDP(void)
     memset((char *) &si_other, 0, sizeof(si_other));
     
     si_other.sin_family = AF_INET;
-    si_other.sin_port = htons(PORTR1); 
+    si_other.sin_port = htons(PORTR1);
     if (inet_aton(SERVER , &si_other.sin_addr) == 0)
     {
         fprintf(stderr, "inet_aton() failed\n");
@@ -546,6 +546,7 @@ void rt_OneStep(void)
     
     //delay(1000);
     
+//------------------------Serial-------------------------------------
     i3a=i3*10;
     
     memset(buffer3,0,sizeof(buffer3));

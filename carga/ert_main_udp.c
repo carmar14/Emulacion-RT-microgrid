@@ -53,7 +53,7 @@ void sendm(double);
 //===============================================================
 
 //===============================================================
-struct sockaddr_in si_me, si_other, si_other2; //
+const struct sockaddr_in si_me, si_other, si_other2; //
 int BUFLEN=512;
 int s, slen = sizeof(si_other) , recv_len;
 char buf[512];
@@ -495,40 +495,40 @@ void rt_OneStep(void)
     inet_ntop(AF_INET, &(si_other.sin_addr), almac, 20);
     printf("Other address:%s\n",almac);
     
-//     //----------Serial----------------------
-//     //-----------Escritura-envio---------------------
-//     //Pma=Pm*10;
-//     //Qma=Qm*10;
-//     Vloada=Vload*10;
-//     Pma=Pm*10;
-//     Qma=Qm*10;
-//     //Vloada=-456;
-//     //if(Vloada>2300){
-//     //Vloada=2300;
-//     //}else if(Vloada<-2300){
-//     //Vloada=-2300;
-//     //}
-//     
-//     
-//     memset(buffer,0,sizeof(buffer));
-//     //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
-//     //sprintf(buffer,"v%07d\n",Vloada);
-//     sprintf(buffer,"v%07d%07d%07de\n",Vloada,Pma,Qma);
-//     //while(pinr==0){
-//     serialPuts(fd,buffer);
-//     serialPuts(fd2,buffer);
-//     //serialFlush(fd);
-//     //pinr=digitalRead(2);
-//     //printf("so\n");
-//     //printf("El dato es: %s \n",buffer);
-//     //}
-//     serialFlush(fd);
-//     tcflush(fd, TCIOFLUSH);
-//     serialFlush(fd2);
-//     tcflush(fd2, TCIOFLUSH);
-//     pinr=0;
-//     digitalWrite(1,LOW);
-//     var=0;
+    //----------Serial----------------------
+    //-----------Escritura-envio---------------------
+    //Pma=Pm*10;
+    //Qma=Qm*10;
+    Vloada=Vload*10;
+    Pma=Pm*10;
+    Qma=Qm*10;
+    //Vloada=-456;
+    //if(Vloada>2300){
+    //Vloada=2300;
+    //}else if(Vloada<-2300){
+    //Vloada=-2300;
+    //}
+    
+    
+    memset(buffer,0,sizeof(buffer));
+    //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
+    //sprintf(buffer,"v%07d\n",Vloada);
+    sprintf(buffer,"v%07d%07d%07de\n",Vloada,Pma,Qma);
+    //while(pinr==0){
+    serialPuts(fd,buffer);
+    serialPuts(fd2,buffer);
+    //serialFlush(fd);
+    //pinr=digitalRead(2);
+    //printf("so\n");
+    //printf("El dato es: %s \n",buffer);
+    //}
+    serialFlush(fd);
+    tcflush(fd, TCIOFLUSH);
+    serialFlush(fd2);
+    tcflush(fd2, TCIOFLUSH);
+    pinr=0;
+    digitalWrite(1,LOW);
+    var=0;
     
     
     
