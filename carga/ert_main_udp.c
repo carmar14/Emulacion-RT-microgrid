@@ -53,7 +53,7 @@ void sendm(double);
 //===============================================================
 
 //===============================================================
-const struct sockaddr_in si_me, si_other, si_other2; //
+static struct sockaddr_in si_me, si_other, si_other2; //
 int BUFLEN=512;
 int s, slen = sizeof(si_other) , recv_len;
 char buf[512];
@@ -208,9 +208,9 @@ void setUDP(void)
     // zero out the structure
     memset((char *) &si_other, 0, sizeof(si_other));
     
-    (char *) &si_other.sin_family = AF_INET;
-    (char *) &si_other.sin_port = htons(PORTR);
-    if (inet_aton(SERVER , (char *) &si_other.sin_addr) == 0)
+    si_other.sin_family = AF_INET;
+    si_other.sin_port = htons(PORTR);
+    if (inet_aton(SERVER , &si_other.sin_addr) == 0)
     {
         fprintf(stderr, "inet_aton() failed\n");
         exit(1);
