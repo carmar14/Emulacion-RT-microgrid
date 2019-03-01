@@ -59,6 +59,13 @@ int BUFLEN=512;
 int s, slen = sizeof(si_other) , recv_len;
 char buf[512];
 double duty_cycle=0.0;
+
+
+//para depurar address
+int longitud=20;
+char almac[20];
+
+
 //===============================================================
 
 /*
@@ -266,7 +273,10 @@ void sendm2(double mensaje)
     memset(buf,'\0', BUFLEN);
     sprintf(buf, "%5.2f", mensaje);
     printf("Dato a enviar: %s\n",buf);
-
+    
+    inet_ntop(AF_INET, &(si_other.sin_addr), almac, 20);
+    printf("Other address:%s\n",almac);
+    
     if (sendto(s, buf, BUFLEN, 0, (struct sockaddr*) &si_other2, slen) == -1)
     {
         die("sendto()");
