@@ -490,10 +490,10 @@ void rt_OneStep(void)
     if (max<Vload) max=Vload;
     
     //-------------UDP-envio----------------------
+    
+    sendm(Vload);
     inet_ntop(AF_INET, &(si_other.sin_addr), almac, 20);
     printf("Other address:%s\n",almac);
-    sendm(Vload);
-    
     
     //----------Serial----------------------
     //-----------Escritura-envio---------------------
