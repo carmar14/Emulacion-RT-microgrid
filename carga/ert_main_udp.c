@@ -61,7 +61,7 @@ double duty_cycle=0.0;
 
 //para depurar address
 int longitud=20;
-char almac[longitud];
+char almac[20];
 
 //===============================================================
 
@@ -270,9 +270,9 @@ void sendm(double mensaje)
     //printf("Numeric Data %3.2f\n",x);
     //now reply the client with the same data
     
-    inet_ntop(AF_INET, &(si_other.sin_addr), almac, longitud);
+    inet_ntop(AF_INET, &(si_other.sin_addr), almac, 20);
     printf("Other address:%s\n",almac);
-    inet_ntop(AF_INET, &(si_me.sin_addr), almac, longitud);
+    inet_ntop(AF_INET, &(si_me.sin_addr), almac, 20);
     printf("Me address:%s\n",almac);
     
     if (sendto(s, buf, BUFLEN, 0, (struct sockaddr*) &si_other, slen) == -1)
