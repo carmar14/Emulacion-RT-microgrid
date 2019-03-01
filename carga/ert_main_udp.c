@@ -269,9 +269,6 @@ void sendm(double mensaje)
     //printf("Data: %s\n" , buf);
     //printf("Numeric Data %3.2f\n",x);
     //now reply the client with the same data
-    
-    inet_ntop(AF_INET, &(si_other.sin_addr), almac, 20);
-    printf("Other address:%s\n",almac);
 //     inet_ntop(AF_INET, &(si_me.sin_addr), almac, 20);
 //     printf("Me address:%s\n",almac);
     
@@ -493,6 +490,8 @@ void rt_OneStep(void)
     if (max<Vload) max=Vload;
     
     //-------------UDP-envio----------------------
+    inet_ntop(AF_INET, &(si_other.sin_addr), almac, 20);
+    printf("Other address:%s\n",almac);
     sendm(Vload);
     
     
