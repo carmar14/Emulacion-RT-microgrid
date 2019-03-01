@@ -272,8 +272,8 @@ void sendm(double mensaje)
     
     inet_ntop(AF_INET, &(si_other.sin_addr), almac, 20);
     printf("Other address:%s\n",almac);
-    inet_ntop(AF_INET, &(si_me.sin_addr), almac, 20);
-    printf("Me address:%s\n",almac);
+//     inet_ntop(AF_INET, &(si_me.sin_addr), almac, 20);
+//     printf("Me address:%s\n",almac);
     
     if (sendto(s, buf, BUFLEN, 0, (struct sockaddr*) &si_other, slen) == -1)
     {
