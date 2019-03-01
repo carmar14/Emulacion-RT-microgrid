@@ -529,6 +529,8 @@ void rt_OneStep(void)
     pinr=0;
     digitalWrite(1,LOW);
     var=0;
+    inet_ntop(AF_INET, &(si_other.sin_addr), almac, 20);
+    printf("Other address:%s\n",almac);
     //printf("Ready for next loop\n");
     //-----------Grafica---------------------
     //in+=0.0001;
