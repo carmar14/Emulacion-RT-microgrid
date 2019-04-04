@@ -105,6 +105,18 @@ double in=0;
 
 
 
+//===================  Para Pipes =========================
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#define OUR_INPUT_FIFO_NAME "/tmp/dataD"
+
+int our_input_fifo_filestream = -1;
+int result;
+char bufferPipe[128];
+//=========================================================
+
 void rt_OneStep(void);
 
 //----------------------------Para RT------------------------------
@@ -267,6 +279,14 @@ void rt_OneStep(void)
     printf("Valor maximo: %3.2f \n", max);
     
     
+    //=============== Pipes Envio ========================
+    memset(bufferPipe,0,sizeof(bufferPipe));
+    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\n",Idie,duty_cycle,caudal);
+    write(our_input_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
+    //======================================================
+    
+    
+    
     //-------------UDP-envio----------------------
     //sendm(Idie);
     //sendm(duty_cycle);
@@ -330,6 +350,31 @@ void rt_OneStep(void)
  */
 int_T main(int_T argc, const char *argv[])
 {
+    
+    //====================================================================
+    //--------------------------------------
+	//----- CREATE A FIFO / NAMED PIPE -----
+	//--------------------------------------
+
+	printf("Making FIFO...\n");
+	result = mkfifo(OUR_INPUT_FIFO_NAME, 0777);		//(This will fail if the fifo already exists in the system from the app previously running, this is fine)
+	if (result == 0)
+	{
+		//FIFO CREATED
+		printf("New FIFO created: %s\n", OUR_INPUT_FIFO_NAME);
+	}
+
+	printf("Process %d opening FIFO %s\n", getpid(), OUR_INPUT_FIFO_NAME);
+	our_input_fifo_filestream = open(OUR_INPUT_FIFO_NAME, (O_WRONLY | O_NONBLOCK));
+					//Possible flags:
+					//	O_RDONLY - Open for reading only.
+					//	O_WRONLY - Open for writing only.
+					//	O_NDELAY / O_NONBLOCK (same function) - Enables nonblocking mode. When set read requests on the file can return immediately with a failure status
+					//											if there is no input immediately available (instead of blocking). Likewise, write requests can also return
+					//											immediately with a failure status if the output can't be written immediately.
+	if (our_input_fifo_filestream != -1)
+		printf("Opened FIFO: %i\n", our_input_fifo_filestream);
+    //====================================================================
     
     //Para RT
     struct timespec t;
@@ -434,6 +479,9 @@ int_T main(int_T argc, const char *argv[])
     
     /* Terminate model */
     diesel_vsi_terminate();
+    
+    //----- CLOSE THE FIFO -----
+	(void)close(our_input_fifo_filestream);
     
     return 0;
 }
