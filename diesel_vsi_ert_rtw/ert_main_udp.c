@@ -32,7 +32,7 @@
 //-------------------Comunicacion UDP--------------------------------------
 //-----------------Direcciones IP-----
 
-#define SERVER "172.16.49.101"   //Direcion IP del Inversor
+#define SERVER "172.16.49.71"//"172.16.49.101"   //Direcion IP del Inversor
 #define PORTL 8887			//Puerto Local
 #define PORTR1 8890			//Puerto Remoto I3
 #define PORTR2 8893			//Puerto Remoto DVsi
@@ -424,7 +424,7 @@ void rt_OneStep(void)
     
     /* Get model outputs here */
     //-----salidas-------
-    Idie=get_I_die();
+    Idie=get_I_die();//10;
     caudal=get_flujo();
     vdc=get_vdc();
     duty_cycle=get_duty();
@@ -433,6 +433,7 @@ void rt_OneStep(void)
     printf("La tension de la carga es : %3.2f \n",Vload);
     printf("El flujo es : %3.2f \n",caudal);
     printf("El nivel del bus dc es: %3.2f \n",vdc);
+    printf("El duty cycle: %3.2f \n",duty_cycle);
     
     if (min>Idie) min=Idie;
     if (max<Idie) max=Idie;

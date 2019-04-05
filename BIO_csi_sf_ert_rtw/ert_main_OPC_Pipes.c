@@ -1,4 +1,4 @@
-/* compile using  "gcc ert_main.c BIO_csi_sf.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c -lm -lwiringPi -lrt -Wall"  */
+/* compile using  "gcc ert_main_OPC_Pipes.c BIO_csi_sf.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c -lm -lwiringPi -lrt -Wall"  */
 //
 /*
  * File: ert_main.c
@@ -98,6 +98,23 @@
 
 //--------------------------------------
  
+
+//===================  Para Pipes =========================
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#define OUR_INPUT_FIFO_NAME "/tmp/dataInBIO"
+#define OUR_OUTPUT_FIFO_NAME "/tmp/dataOutBIO"
+
+int our_output_fifo_filestream = -1;
+int result, result2;
+char bufferPipe[128];
+FILE *fp;
+char * pch;
+int counter = 0;
+//=========================================================
+
  
 void rt_OneStep(void);
 
@@ -182,25 +199,25 @@ void rt_OneStep(void)
 	
 	var1=MCP3204_getValue(ad_MCP3204);
 	
-	if (MCP3204_convert(fileDescriptor,singleEnded,CH1,&ad_MCP3204,error))
-	{
-		printf("Error during conversion1.\n");
-		printf("%s\n",error);
-		exit(1);
-	}
+	//if (MCP3204_convert(fileDescriptor,singleEnded,CH1,&ad_MCP3204,error))
+	//{
+		//printf("Error during conversion1.\n");
+		//printf("%s\n",error);
+		//exit(1);
+	//}
 	
 	
-	var2=MCP3204_getValue(ad_MCP3204);
+	//var2=MCP3204_getValue(ad_MCP3204);
 	
-	if (MCP3204_convert(fileDescriptor,singleEnded,CH2,&ad_MCP3204,error))
-	{
-		printf("Error during conversion1.\n");
-		printf("%s\n",error);
-		exit(1);
-	}
+	//if (MCP3204_convert(fileDescriptor,singleEnded,CH2,&ad_MCP3204,error))
+	//{
+		//printf("Error during conversion1.\n");
+		//printf("%s\n",error);
+		//exit(1);
+	//}
 	
 	
-	var3=MCP3204_getValue(ad_MCP3204);
+	//var3=MCP3204_getValue(ad_MCP3204);
 	
 	//printf("Digital value of the sensor reading: %d\n",var1);
   
@@ -229,10 +246,10 @@ void rt_OneStep(void)
   //double vx=-2300;
   double k=(2*170)/2248.0;
   double vx=-170-(502*2*170)/2248.0;
-  double k2=0.5;
-  double vx2=-0.5*500;
-  double k3=2.0;
-  double vx3=-2*500.0;
+  //double k2=0.5;
+  //double vx2=-0.5*500;
+  //double k3=2.0;
+  //double vx3=-2*500.0;
   
   vdc=500;   //Proveniente de la fuente de generación
   //vload=171*sin(2*3.14*120*tiempo);//var1*k+vx; //Proveniente de la carga
@@ -244,10 +261,32 @@ void rt_OneStep(void)
   //pref=100.0;//var2*k2+vx2;//500.0;  //Proveniente del control terciario
   //qref=1000.0;//var3*k3+vx3;//3500.0; //Proveniente del control terciario
   
-  pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
-  qref=var3*k3+vx3;
-  pref=500;
-  qref=3500;
+  //pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
+  //qref=var3*k3+vx3;
+  //pref=500;
+  //qref=3500;
+  
+  
+  //=============== Pipes Lectura ========================
+  memset(bufferPipe,0,sizeof(bufferPipe));
+  printf("CB counter %d\n",counter);
+  if(fgets(bufferPipe,sizeof(bufferPipe),fp) != NULL)
+      {
+	  pref = strtof(bufferPipe,&pch);
+	  qref = strtof(pch,&pch);
+	  //printf("algo en buffer para Pref y Qref\n");
+	  counter++;
+      }
+      //else{printf("File empty");}
+  //======================================================
+  if (pref==0 && qref== 0)
+  {
+     pref=501;
+     qref=3500; 
+     printf("Pref y Qref en 0\n");
+  }
+  
+  printf("Pref %5.2f\tQref %5.2f\n",pref,qref);
   
   set_Vdc_bio(vdc);
   set_Vload(vload);
@@ -268,6 +307,12 @@ void rt_OneStep(void)
   printf("La corriente del inversor 1 es: %3.2f \n",i1);
   printf("La accion de control 1 del mpc  es: %3.2f \n", mpc1);
   
+  
+  //=============== Pipes Envio ========================
+  memset(bufferPipe,0,sizeof(bufferPipe));
+  sprintf(bufferPipe,"%3.2f\n",i1);
+  write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
+  //======================================================
   
   
   //----------Serial----------------------
@@ -320,6 +365,55 @@ void rt_OneStep(void)
  */
 int_T main(int_T argc, const char *argv[])
 {
+  
+  //====================================================================
+  //--------------------------------------
+  //----- CREATE A FIFO / NAMED PIPE -----
+  //--------------------------------------
+
+  printf("Making FIFO 1...\n");
+  result = mkfifo(OUR_OUTPUT_FIFO_NAME, 0777);		//(This will fail if the fifo already exists in the system from the app previously running, this is fine)
+  if (result == 0)
+  {
+	  //FIFO CREATED
+	  printf("New FIFO 1 created: %s\n", OUR_OUTPUT_FIFO_NAME);
+  }
+
+  printf("Process %d opening FIFO 1 %s\n", getpid(), OUR_OUTPUT_FIFO_NAME);
+  our_output_fifo_filestream = open(OUR_OUTPUT_FIFO_NAME, (O_WRONLY | O_NONBLOCK));
+				  //Possible flags:
+				  //	O_RDONLY - Open for reading only.
+				  //	O_WRONLY - Open for writing only.
+				  //	O_NDELAY / O_NONBLOCK (same function) - Enables nonblocking mode. When set read requests on the file can return immediately with a failure status
+				  //											if there is no input immediately available (instead of blocking). Likewise, write requests can also return
+				  //											immediately with a failure status if the output can't be written immediately.
+  if (our_output_fifo_filestream != -1)
+    printf("Opened FIFO 1: %i\n", our_output_fifo_filestream);
+      
+  
+  printf("Making FIFO 2...\n");
+  result = mkfifo(OUR_INPUT_FIFO_NAME, 0777);		//(This will fail if the fifo already exists in the system from the app previously running, this is fine)
+  if (result == 0)
+  {
+	  //FIFO CREATED
+	  printf("New FIFO 2 created: %s\n", OUR_INPUT_FIFO_NAME);
+  }
+
+  printf("Process %d opening FIFO %s\n", getpid(), OUR_INPUT_FIFO_NAME);
+      
+  if((fp = fopen(OUR_INPUT_FIFO_NAME, "r+")) == NULL){
+    printf("Something went wrong ");
+    return EXIT_FAILURE;
+  }
+  int fd = fileno(fp);  
+  int flags = fcntl(fd, F_GETFL, 0); 
+  flags |= O_NONBLOCK; 
+  fcntl(fd, F_SETFL, flags); 
+  printf("FIFO 2 opened...");
+  
+  //====================================================================
+  
+  
 	//Para RT
   struct timespec t;
   struct sched_param param;
@@ -390,7 +484,7 @@ int_T main(int_T argc, const char *argv[])
   /* Initialize model */
   
   BIO_csi_sf_initialize();
-  int k=0;
+  //int k=0;
   int estado=0;
   /* Simulating the model step behavior (in non real-time) to
    *  simulate model behavior at stop time.
@@ -430,6 +524,11 @@ int_T main(int_T argc, const char *argv[])
 
   /* Terminate model */
   BIO_csi_sf_terminate();
+  
+  //----- CLOSE THE FIFO -----
+  fclose(fp); //input fifo 
+  (void)close(our_output_fifo_filestream);
+  
   return 0;
 }
 
