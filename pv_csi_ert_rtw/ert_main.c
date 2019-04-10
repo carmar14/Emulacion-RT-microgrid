@@ -15,6 +15,7 @@
  * Validation result: Not run
  */
 
+#include <stdint.h>
 #include <stddef.h>
 #include <stdio.h>                     /* This ert_main.c example uses printf/fflush */
 #include "pv_csi.h"                    /* Model's header file */
@@ -26,7 +27,7 @@
 #include <unistd.h>
 #include <termios.h>
 #include <wiringPi.h>
-#include <ncurses.h>
+//#include <ncurses.h>
 #include "libmcp3204.h"
 
 
@@ -359,8 +360,8 @@ void rt_OneStep(void)
     //vload=vload/10.0;
     Prefd=var1*k1+vx1;
     Qrefd=var2*k2+vx2;
-    //Prefd=500;
-    //Qrefd=3500;
+    Prefd=500;
+    Qrefd=3500;
     
     set_Idc_PV(ipv);
     set_Vload(vload3);

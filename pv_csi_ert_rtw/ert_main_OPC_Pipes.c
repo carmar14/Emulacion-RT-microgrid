@@ -391,12 +391,12 @@ void rt_OneStep(void)
         }
         //else{printf("File empty");}
     //======================================================
-    if (Prefd==0 && Qrefd == 0)
-    {
-       Prefd=500;
-       Qrefd=3500; 
-       printf("Pref y Qref en 0\n");
-    }
+    //if (Prefd==0 && Qrefd == 0)
+    //{
+       //Prefd=500;
+       //Qrefd=3500; 
+       //printf("Pref y Qref en 0\n");
+    //}
     
     printf("Pref %5.2f\tQref %5.2f\n",Prefd,Qrefd);
     
