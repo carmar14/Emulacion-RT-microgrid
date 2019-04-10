@@ -279,12 +279,12 @@ void rt_OneStep(void)
       }
       //else{printf("File empty");}
   //======================================================
-  if (pref==0 && qref== 0)
-  {
-     pref=501;
-     qref=3500; 
-     printf("Pref y Qref en 0\n");
-  }
+  //if (pref==0 && qref== 0)
+  //{
+     //pref=500;
+     //qref=3500; 
+     //printf("Pref y Qref en 0\n");
+  //}
   
   printf("Pref %5.2f\tQref %5.2f\n",pref,qref);
   
@@ -405,10 +405,10 @@ int_T main(int_T argc, const char *argv[])
     printf("Something went wrong ");
     return EXIT_FAILURE;
   }
-  int fd = fileno(fp);  
-  int flags = fcntl(fd, F_GETFL, 0); 
+  int fdF = fileno(fp);  
+  int flags = fcntl(fdF, F_GETFL, 0); 
   flags |= O_NONBLOCK; 
-  fcntl(fd, F_SETFL, flags); 
+  fcntl(fdF, F_SETFL, flags); 
   printf("FIFO 2 opened...");
   
   //====================================================================
