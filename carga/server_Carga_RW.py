@@ -57,7 +57,7 @@ try:
     fcntl.fcntl(fd, fcntl.F_SETFL, flag | os.O_NONBLOCK)
     flag = fcntl.fcntl(fd, fcntl.F_GETFL)
     while True:
-        #time.sleep(1)    
+        #time.sleep(0.004)    
         try:
             #PipeString = os.read(PipeIn, bufferSize)
             #PipeString = PipeIn.readline()[:-1]

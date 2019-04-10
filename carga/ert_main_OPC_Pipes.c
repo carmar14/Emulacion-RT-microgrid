@@ -298,8 +298,8 @@ static inline void tsnorm(struct timespec *ts)
       
 	  double k1=(2*50)/2207.0;
 	  double vx1=-50-(556*2*50)/2207.0;
-	  double k2=(2*50)/2203.0;
-	  double vx2=-50-(543*2*50)/2203.0;
+	  double k2=(2*150)/2203.0;//(2*50)/2203.0;
+	  double vx2=-150-(543*2*150)/2203.0;//-50-(543*2*50)/2203.0;
 	  double k3=(2*90)/2207.0;
 	  double vx3=-90-(556*2*90)/2207.0;
 	  
@@ -509,7 +509,7 @@ static inline void tsnorm(struct timespec *ts)
 	  
 	  
 	  
-	  
+	 
 	  //------------GPIO---------------------
 	  wiringPiSetup();
 	  pinMode(0, OUTPUT);
@@ -533,7 +533,7 @@ static inline void tsnorm(struct timespec *ts)
 	  /* Simulating the model step behavior (in non real-time) to
 	   *  simulate model behavior at stop time.
 	   */
-	
+	  
 	  k=0;
 	  i=0;
 	  int estado=0;
