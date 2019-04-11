@@ -243,7 +243,7 @@ void rt_OneStep(void)
     
     //-----------Grafica---------------------
     //in+=0.0001;
-    fprintf(temp, "%3.2f %3.2f %3.2f \n", mpc1,vload,i1);
+    fprintf(temp, "%3.2f %3.2f \n",vload,i1);
     //}
     
     /* Indicate task complete */
