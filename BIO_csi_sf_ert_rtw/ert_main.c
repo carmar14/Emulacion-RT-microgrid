@@ -101,7 +101,7 @@
  
 void rt_OneStep(void);
 
-//----------------------------Para RT------------------------------
+----------------------------Para RT------------------------------
 /* using clock_nanosleep of librt */
 extern int clock_nanosleep(clockid_t __clock_id, int __flags,
       __const struct timespec *__req,
@@ -121,7 +121,7 @@ static inline void tsnorm(struct timespec *ts)
       ts->tv_sec++;
    }
 }
-//------------------------------------------------------------------
+------------------------------------------------------------------
 
 void rt_OneStep(void)
 {
