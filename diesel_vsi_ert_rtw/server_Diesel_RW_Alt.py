@@ -93,6 +93,7 @@ try:
         try:
             #PipeString = os.read(PipeIn, bufferSize)
             #PipeString = PipeIn.readline()[:-1]
+            PipeString = ""
             PipeString = PipeIn.readline().split()
             if not PipeString:
                 #print ("Empty String!")
