@@ -1,4 +1,4 @@
-// compile with "gcc ert_main.c pv_csi_smpc.c pv_csi_smpc_data.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall -lpthread
+// compile with "gcc ert_main_OPC_Pipes.c pv_csi_smpc.c pv_csi_smpc_data.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall -lpthread
 
 /*
  * File: ert_main.c
@@ -14,11 +14,12 @@
  * Code generation objectives: Unspecified
  * Validation result: Not run
  */
-#include <stdint.h>
+
 #include <stddef.h>
 #include <stdio.h>                     /* This ert_main.c example uses printf/fflush */
 #include "pv_csi_smpc.h"               /* Model's header file */
 #include "rtwtypes.h"
+#include <stdint.h>
 #include <wiringSerial.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -124,6 +125,23 @@ double in=0;
 //--------------------------------------
 
 
+//===================  Para Pipes =========================
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#define OUR_INPUT_FIFO_NAME "/tmp/dataInPV"
+#define OUR_OUTPUT_FIFO_NAME "/tmp/dataOutPV"
+
+int our_output_fifo_filestream = -1;
+int result, result2;
+char bufferPipe[128];
+FILE *fp;
+char * pch;
+int counter = 0;
+//=========================================================
+
+
 void rt_OneStep(void);
 
 //----------------------------Para RT------------------------------
@@ -148,7 +166,7 @@ static inline void tsnorm(struct timespec *ts)
 }
 //------------------------------------------------------------------
 
-
+void rt_OneStep(void);
 void rt_OneStep(void)
 {
     static boolean_T OverrunFlag = false;
@@ -158,19 +176,14 @@ void rt_OneStep(void)
     /* Check for overrun */
     if (OverrunFlag) {
         rtmSetErrorStatus(pv_csi_smpc_M, "Overrun");
-        
-    
         return;
     }
-    
     
     OverrunFlag = true;
     
     /* Save FPU context here (if necessary) */
     /* Re-enable timer or interrupt here */
     /* Set model inputs here */
-    
-    printf("Aqui estoy antes\n");
     
     if (MCP3204_convert(fileDescriptor,singleEnded,CH0,&ad_MCP3204,error))
     {
@@ -209,9 +222,6 @@ void rt_OneStep(void)
     }
     
     var4=MCP3204_getValue(ad_MCP3204); //Variable de corriente entregada por el panel
-    
-    
-    var=1;
     
     double k=(2*170)/2248.0;
     double vx=-170-(502*2*170)/2248.0;
@@ -276,8 +286,6 @@ void rt_OneStep(void)
     
     
     if(ferror(input_file)){
-        
-    
         perror("The following error ocurred");
     }
     
@@ -309,6 +317,19 @@ void rt_OneStep(void)
     Prefd=500;
     Qrefd=3500;
     
+    //=============== Pipes Lectura ========================
+    memset(bufferPipe,0,sizeof(bufferPipe));
+    //printf("CB counter %d\n",counter);
+    if(fgets(bufferPipe,sizeof(bufferPipe),fp) != NULL)
+        {
+            Prefd = strtof(bufferPipe,&pch);
+            Qrefd = strtof(pch,&pch);
+            //printf("algo en buffer para Pref y Qref\n");
+            counter++;
+        }
+        //else{printf("File empty");}
+    //======================================================
+    
     set_Idc_PV(ipv);
     set_Vload(vload3);
     set_Pref(Prefd);
@@ -327,16 +348,18 @@ void rt_OneStep(void)
             
     printf("La irradianza es: %3.2f \n",Suns);
     printf("La temperatura es: %3.2f \n",TaC);
-    printf("LA potencia P es:  %3.2f \n",Pm2);
-    printf("LA potencia Q es:  %3.2f \n",Qm2);
-    printf("El duty cycle es:  %3.2f \n",duty_cyle);
+    printf("La dato es: %d \n",var3);
     printf("La corriente de panel solar es: %3.2f \n",ipv);
     printf("La corriente del inversor 3 es: %3.2f \n",i3);
     printf("El estado de la bateria es: %3.2f \n",soc);
     printf ("La tensión en la carga es :%3.2f \n",vload3);
     
     
-    
+    //=============== Pipes Envio ========================
+    memset(bufferPipe,0,sizeof(bufferPipe));
+    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\n",i3,soc,Pm2,Qm2);
+    write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
+    //======================================================
     //delay(1000);
     
     i3a=i3*10;
@@ -361,11 +384,8 @@ void rt_OneStep(void)
     //fprintf(temp, "%3.2f %3.2f %3.2f %3.2f %3.2f %3.2f \n",i1,i2,i3,Vload,Pm,Qm);
     fprintf(temp, "%3.2f %3.2f %3.2f %3.2f \n",i3,vload3,Prefd,Qrefd);
     
-   
-    
     /* Indicate task complete */
     OverrunFlag = false;
-    printf("Aqui estoy adentro\n");
     
     /* Disable interrupts here */
     /* Restore FPU context here (if necessary) */
@@ -380,6 +400,55 @@ void rt_OneStep(void)
  */
 int_T main(int_T argc, const char *argv[])
 {
+    
+    
+    //====================================================================
+    //--------------------------------------
+	//----- CREATE A FIFO / NAMED PIPE -----
+	//--------------------------------------
+
+	printf("Making FIFO 1...\n");
+	result = mkfifo(OUR_OUTPUT_FIFO_NAME, 0777);		//(This will fail if the fifo already exists in the system from the app previously running, this is fine)
+	if (result == 0)
+	{
+		//FIFO CREATED
+		printf("New FIFO 1 created: %s\n", OUR_OUTPUT_FIFO_NAME);
+	}
+
+	printf("Process %d opening FIFO 1 %s\n", getpid(), OUR_OUTPUT_FIFO_NAME);
+	our_output_fifo_filestream = open(OUR_OUTPUT_FIFO_NAME, (O_WRONLY | O_NONBLOCK));
+					//Possible flags:
+					//	O_RDONLY - Open for reading only.
+					//	O_WRONLY - Open for writing only.
+					//	O_NDELAY / O_NONBLOCK (same function) - Enables nonblocking mode. When set read requests on the file can return immediately with a failure status
+					//											if there is no input immediately available (instead of blocking). Likewise, write requests can also return
+					//											immediately with a failure status if the output can't be written immediately.
+	if (our_output_fifo_filestream != -1)
+		printf("Opened FIFO 1: %i\n", our_output_fifo_filestream);
+        
+    
+    printf("Making FIFO 2...\n");
+	result = mkfifo(OUR_INPUT_FIFO_NAME, 0777);		//(This will fail if the fifo already exists in the system from the app previously running, this is fine)
+	if (result == 0)
+	{
+		//FIFO CREATED
+		printf("New FIFO 2 created: %s\n", OUR_INPUT_FIFO_NAME);
+	}
+
+	printf("Process %d opening FIFO %s\n", getpid(), OUR_INPUT_FIFO_NAME);
+	
+	if((fp = fopen(OUR_INPUT_FIFO_NAME, "r+")) == NULL){
+        printf("Something went wrong ");
+        return EXIT_FAILURE;
+    }
+    int fd = fileno(fp);  
+    int flags = fcntl(fd, F_GETFL, 0); 
+    flags |= O_NONBLOCK; 
+    fcntl(fd, F_SETFL, flags); 
+    printf("FIFO 2 opened...");
+    
+    //====================================================================
+    
     
     //Para emulacion de arreglo de paneles
     Va=0;
@@ -411,15 +480,12 @@ int_T main(int_T argc, const char *argv[])
     
     //Para RT
     struct timespec t;
-    struct sched_param param;
+    
     /* default interval = 50000ns = 50us
      * cycle duration = 100us
      */
     int interval=4*1000000;		//en ns   ->  20000=20us
     
-    /* Unused arguments */
-    (void)(argc);
-    (void)(argv);
     
     //Grafica
     
@@ -457,7 +523,9 @@ int_T main(int_T argc, const char *argv[])
         exit(1);
     }
     
-    
+    /* Unused arguments */
+    (void)(argc);
+    (void)(argv);
     
     /* Initialize model */
     pv_csi_smpc_initialize();
@@ -472,7 +540,6 @@ int_T main(int_T argc, const char *argv[])
      */
     while ((rtmGetErrorStatus(pv_csi_smpc_M) == (NULL)) && !rtmGetStopRequested
             (pv_csi_smpc_M)) {
-    //while(!rtmGetStopRequested(pv_csi_smpc_M))        {
         /* wait untill next shot */
         clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
         /* do the stuff */
@@ -486,15 +553,16 @@ int_T main(int_T argc, const char *argv[])
         rt_OneStep();
         t.tv_nsec+=interval;
         tsnorm(&t);
-        
-        
     }
-    
     
     /* Disable rt_OneStep() here */
     
     /* Terminate model */
     pv_csi_smpc_terminate();
+    
+    //----- CLOSE THE FIFO -----
+	fclose(fp); //input fifo 
+    (void)close(our_output_fifo_filestream);
     
     return 0;
 }
