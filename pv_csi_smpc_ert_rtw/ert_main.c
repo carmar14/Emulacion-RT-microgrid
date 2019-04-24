@@ -14,12 +14,11 @@
  * Code generation objectives: Unspecified
  * Validation result: Not run
  */
-
+#include <stdint.h>
 #include <stddef.h>
 #include <stdio.h>                     /* This ert_main.c example uses printf/fflush */
 #include "pv_csi_smpc.h"               /* Model's header file */
 #include "rtwtypes.h"
-#include <stdint.h>
 #include <wiringSerial.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -149,7 +148,7 @@ static inline void tsnorm(struct timespec *ts)
 }
 //------------------------------------------------------------------
 
-void rt_OneStep(void);
+
 void rt_OneStep(void)
 {
     static boolean_T OverrunFlag = false;
@@ -159,14 +158,19 @@ void rt_OneStep(void)
     /* Check for overrun */
     if (OverrunFlag) {
         rtmSetErrorStatus(pv_csi_smpc_M, "Overrun");
+        
+    
         return;
     }
+    
     
     OverrunFlag = true;
     
     /* Save FPU context here (if necessary) */
     /* Re-enable timer or interrupt here */
     /* Set model inputs here */
+    
+    printf("Aqui estoy antes\n");
     
     if (MCP3204_convert(fileDescriptor,singleEnded,CH0,&ad_MCP3204,error))
     {
@@ -205,6 +209,9 @@ void rt_OneStep(void)
     }
     
     var4=MCP3204_getValue(ad_MCP3204); //Variable de corriente entregada por el panel
+    
+    
+    var=1;
     
     double k=(2*170)/2248.0;
     double vx=-170-(502*2*170)/2248.0;
@@ -269,6 +276,8 @@ void rt_OneStep(void)
     
     
     if(ferror(input_file)){
+        
+    
         perror("The following error ocurred");
     }
     
@@ -318,11 +327,15 @@ void rt_OneStep(void)
             
     printf("La irradianza es: %3.2f \n",Suns);
     printf("La temperatura es: %3.2f \n",TaC);
-    printf("La dato es: %d \n",var3);
+    printf("LA potencia P es:  %3.2f \n",Pm2);
+    printf("LA potencia Q es:  %3.2f \n",Qm2);
+    printf("El duty cycle es:  %3.2f \n",duty_cyle);
     printf("La corriente de panel solar es: %3.2f \n",ipv);
     printf("La corriente del inversor 3 es: %3.2f \n",i3);
     printf("El estado de la bateria es: %3.2f \n",soc);
     printf ("La tensión en la carga es :%3.2f \n",vload3);
+    
+    
     
     //delay(1000);
     
@@ -348,8 +361,11 @@ void rt_OneStep(void)
     //fprintf(temp, "%3.2f %3.2f %3.2f %3.2f %3.2f %3.2f \n",i1,i2,i3,Vload,Pm,Qm);
     fprintf(temp, "%3.2f %3.2f %3.2f %3.2f \n",i3,vload3,Prefd,Qrefd);
     
+   
+    
     /* Indicate task complete */
     OverrunFlag = false;
+    printf("Aqui estoy adentro\n");
     
     /* Disable interrupts here */
     /* Restore FPU context here (if necessary) */
@@ -401,6 +417,9 @@ int_T main(int_T argc, const char *argv[])
      */
     int interval=4*1000000;		//en ns   ->  20000=20us
     
+    /* Unused arguments */
+    (void)(argc);
+    (void)(argv);
     
     //Grafica
     
@@ -438,9 +457,7 @@ int_T main(int_T argc, const char *argv[])
         exit(1);
     }
     
-    /* Unused arguments */
-    (void)(argc);
-    (void)(argv);
+    
     
     /* Initialize model */
     pv_csi_smpc_initialize();
@@ -455,6 +472,7 @@ int_T main(int_T argc, const char *argv[])
      */
     while ((rtmGetErrorStatus(pv_csi_smpc_M) == (NULL)) && !rtmGetStopRequested
             (pv_csi_smpc_M)) {
+    //while(!rtmGetStopRequested(pv_csi_smpc_M))        {
         /* wait untill next shot */
         clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
         /* do the stuff */
@@ -468,12 +486,16 @@ int_T main(int_T argc, const char *argv[])
         rt_OneStep();
         t.tv_nsec+=interval;
         tsnorm(&t);
+        
+        
     }
+    
     
     /* Disable rt_OneStep() here */
     
     /* Terminate model */
     pv_csi_smpc_terminate();
+    
     return 0;
 }
 

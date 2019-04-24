@@ -31,6 +31,10 @@ ExtU_pv_csi_smpc_T pv_csi_smpc_U;
 /* External outputs (root outports fed by signals with default storage) */
 ExtY_pv_csi_smpc_T pv_csi_smpc_Y;
 
+/* Real-time model */
+RT_MODEL_pv_csi_smpc_T pv_csi_smpc_M_;
+RT_MODEL_pv_csi_smpc_T *const pv_csi_smpc_M = &pv_csi_smpc_M_;
+
 //Funciones creadas por el programador set y get
 //-------Funciones para asignar entradas-------------
 void set_Idc_PV(double ipv){
@@ -79,9 +83,7 @@ double get_Qm(void){
 	 
 }
 
-/* Real-time model */
-RT_MODEL_pv_csi_smpc_T pv_csi_smpc_M_;
-RT_MODEL_pv_csi_smpc_T *const pv_csi_smpc_M = &pv_csi_smpc_M_;
+
 real_T look1_binlxpw(real_T u0, const real_T bp0[], const real_T table[],
                      uint32_T maxIndex)
 {
