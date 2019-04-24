@@ -105,8 +105,8 @@ double in=0;
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define OUR_INPUT_FIFO_NAME "/tmp/dataInPV"
-#define OUR_OUTPUT_FIFO_NAME "/tmp/dataOutPV"
+#define OUR_INPUT_FIFO_NAME "/tmp/dataInBIO"
+#define OUR_OUTPUT_FIFO_NAME "/tmp/dataOutBIO"
 
 int our_output_fifo_filestream = -1;
 int result, result2;
@@ -207,10 +207,10 @@ void rt_OneStep(void)
     tiempo=tiempo+0.0001;
     if (tiempo>=0.0083) tiempo=0;
     
-    pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
-    qref=var3*k3+vx3;
-    pref=500;
-    qref=3500;
+    //pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
+    //qref=var3*k3+vx3;
+    //pref=500;
+    //qref=3500;
     
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
@@ -336,10 +336,10 @@ int_T main(int_T argc, const char *argv[])
         printf("Something went wrong ");
         return EXIT_FAILURE;
     }
-    int fd = fileno(fp);  
-    int flags = fcntl(fd, F_GETFL, 0); 
+    int fdO = fileno(fp);  
+    int flags = fcntl(fdO, F_GETFL, 0); 
     flags |= O_NONBLOCK; 
-    fcntl(fd, F_SETFL, flags); 
+    fcntl(fdO, F_SETFL, flags); 
     printf("FIFO 2 opened...");
     
     //====================================================================
@@ -417,7 +417,7 @@ int_T main(int_T argc, const char *argv[])
     /* Simulating the model step behavior (in non real-time) to
      *  simulate model behavior at stop time.
      */
-    
+    sleep(5);
     /* get current time */
     clock_gettime(0,&t);
     /* start after one second */

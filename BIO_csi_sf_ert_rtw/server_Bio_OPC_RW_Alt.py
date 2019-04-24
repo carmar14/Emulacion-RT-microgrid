@@ -67,7 +67,6 @@ print("Server started at ()".format(url))
 
 try:
     #PipeIn = os.open(pipe_name, os.O_RDONLY | os.O_NONBLOCK)
-    print("Esperando abrir")
     PipeIn = open(pipe_name, 'r')
     print("Pipe 1 running...")
     fd = PipeIn.fileno()
@@ -104,10 +103,10 @@ try:
                 #soc = float(PipeString[1])
                 #data4 = PipeString[3]
                 #print('Received: "{0}\"'.format(PipeString))
-                #print('Received: IBio:{}\tpm:{}\tqm:{}'.format(iBio,pm,qm))
+                #print('Received: Ipv:{}\tsoc:{}'.format(ipv,soc))
                 IBIO.set_value(iBio)
                 PM.set_value(pm)
-                QM.set_value(qm)
+                QM..set_value(qm)
                 #SOC.set_value(soc)
         except OSError as err:
             if err.errno == 11:
@@ -119,8 +118,6 @@ except OSError as err:
     raise err;
     print("Error! Closing Pipe")
     ##os.close(pipe_name)
-
-
 
 
 
