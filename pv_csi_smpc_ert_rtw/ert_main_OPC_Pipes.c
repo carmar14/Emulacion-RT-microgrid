@@ -312,10 +312,10 @@ void rt_OneStep(void)
     
     vload3=var3*k+vx; //Proveniente de la carga
     //vload=vload/10.0;
-    Prefd=var1*k1+vx1;
-    Qrefd=var2*k2+vx2;
-    Prefd=500;
-    Qrefd=3500;
+    //Prefd=var1*k1+vx1;
+    //Qrefd=var2*k2+vx2;
+    //Prefd=500;
+    //Qrefd=3500;
     
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
@@ -538,8 +538,9 @@ int_T main(int_T argc, const char *argv[])
     /* Simulating the model step behavior (in non real-time) to
      *  simulate model behavior at stop time.
      */
-    while ((rtmGetErrorStatus(pv_csi_smpc_M) == (NULL)) && !rtmGetStopRequested
-            (pv_csi_smpc_M)) {
+    //while ((rtmGetErrorStatus(pv_csi_smpc_M) == (NULL)) && !rtmGetStopRequested
+      //      (pv_csi_smpc_M)) {
+     while(1) {  
         /* wait untill next shot */
         clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
         /* do the stuff */
