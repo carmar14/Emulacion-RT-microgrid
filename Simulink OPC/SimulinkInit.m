@@ -169,3 +169,12 @@ cvsi=200/sqrt(2);
 carga=cvsi*20;
 q=0:0.001:carga*1.2;
 soc=100-100*q/carga;
+
+% se cargan las matrices dinamicas del MPC DMC.
+load('DMC_matrices2');
+
+% se carga la libreria de true time.
+%run('truetime-2.0\init_truetime');
+
+load('modeloElectrico');
+load('modeloDiesel_dotros')
