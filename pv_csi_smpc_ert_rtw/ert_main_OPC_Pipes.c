@@ -349,6 +349,9 @@ void rt_OneStep(void)
     printf("La irradianza es: %3.2f \n",Suns);
     printf("La temperatura es: %3.2f \n",TaC);
     printf("La dato es: %d \n",var3);
+    printf("LA potencia P medida es:  %3.2f \n",Pm2);
+    printf("LA potencia Q medida es:  %3.2f \n",Qm2);
+    printf("El duty cycle es:  %3.2f \n",duty_cyle);
     printf("La corriente de panel solar es: %3.2f \n",ipv);
     printf("La corriente del inversor 3 es: %3.2f \n",i3);
     printf("El estado de la bateria es: %3.2f \n",soc);
