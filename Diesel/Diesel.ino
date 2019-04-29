@@ -133,7 +133,7 @@ void loop() {
   //sendToRasp(); 
   receiveRaspData();
   vl2=map(vl, -500, 500, 0, 4095);
-  vl2=map(vl, -20000, 20000, 0, 4095);
+  vl2=map(vl, -22000, 22000, 0, 4095);
   analogWrite(DAC1,vl2);
   //digitalWrite(27, LOW);
   
