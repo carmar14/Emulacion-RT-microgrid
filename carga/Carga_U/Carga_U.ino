@@ -145,6 +145,7 @@ void loop() {
   receiveRaspData();
   
   vl2=map(vl, -1800, 1800, 0, 4095);
+  vl2=map(vl, -1900, 1900, 0, 4095);
   //vl2=map(vl, -3500, 3500, 0, 4095);
   //vl=map(vl, -500, 700, 0, 4095);
   
