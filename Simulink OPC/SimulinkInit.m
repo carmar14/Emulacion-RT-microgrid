@@ -11,7 +11,7 @@ load('DMC_matrices');
 load('FitData')
 
 % se carga la libreria de true time.
-%run('truetime-2.0\init_truetime');
+run('truetime-2.0\init_truetime');
 
 
 %  Parámetros Motor Diesel
@@ -55,7 +55,7 @@ H_E_d = c2d(H_E,0.01,'tustin')
 % 
 % Db = zeros(2,3);
 
-load('FitData.mat');
+% load('FitData.mat');
 load('AyC.mat');
 %tf1.Denominator{2, 1}(2)
 % A=[0 1 zeros(1,10)
