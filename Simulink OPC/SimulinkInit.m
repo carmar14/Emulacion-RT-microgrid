@@ -180,12 +180,12 @@ load('modeloElectrico');
 load('modeloDiesel_dotros')
 
 sys=ss(ssAl,ssBl,ssCl,[]);
-sysd=c2d(sys,0.1);
+sysd=c2d(sys,1e-4);
 Ad=sysd.A;
 Bd=sysd.B;
 Cd=sysd.C;
 po=[-1.92*10 -1.92*10.1 -1.92*10.3 -1.92*10.2 -1.92*10.4];
-pod=exp(po*0.1);
+pod=exp(po*1e-4);
 Ld=place(Ad',Cd',pod);
 
 % step(sys)
