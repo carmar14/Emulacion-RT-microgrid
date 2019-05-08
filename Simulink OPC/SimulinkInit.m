@@ -178,3 +178,16 @@ load('DMC_matrices2');
 
 load('modeloElectrico');
 load('modeloDiesel_dotros')
+
+sys=ss(ssAl,ssBl,ssCl,[]);
+sysd=c2d(sys,0.1);
+Ad=sysd.A;
+Bd=sysd.B;
+Cd=sysd.C;
+po=[-1.92*10 -1.92*10.1 -1.92*10.3 -1.92*10.2 -1.92*10.4];
+pod=exp(po*0.1);
+Ld=place(Ad',Cd',pod);
+
+% step(sys)
+% hold on
+% step(sysd)
