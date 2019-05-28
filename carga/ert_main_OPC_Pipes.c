@@ -412,7 +412,8 @@ static inline void tsnorm(struct timespec *ts)
 	   //in+=0.0001;
 	   
 	   //fprintf(temp, "%d %d \n",var1,var2);
-	   fprintf(temp, "%3.2f %3.2f %3.2f %3.2f %3.2f %3.2f \n",i1,i2,i3,Vload,Pm,Qm);
+	   
+	   //fprintf(temp, "%3.2f %3.2f %3.2f %3.2f %3.2f %3.2f \n",i1,i2,i3,Vload,Pm,Qm);
 	  
 	  
 	  //}
@@ -464,7 +465,7 @@ static inline void tsnorm(struct timespec *ts)
 		/* default interval = 50000ns = 50us
 		* cycle duration = 100us
 		*/
-		int interval=4*1000000;		//en ns   ->  20000=20us
+		int interval=100*1000000;		//en ns   ->  20000=20us  20
 		
 		if(argc>=2 && atoi(argv[1])>0)
 		{
