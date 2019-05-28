@@ -139,7 +139,7 @@ void loop() {
   //vl2=map(vl, -600, 600, 0, 4095);
   vl2=map(vl, -2000, 2000, 0, 4095);
   analogWrite(DAC0,vl2);
-  //analogWrite(DAC0,1000);
+  analogWrite(DAC1,vl2);
   //digitalWrite(27, LOW);
   
   //digitalWrite(27, LOW);
