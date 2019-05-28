@@ -360,7 +360,7 @@ void rt_OneStep(void)
     
     //=============== Pipes Envio ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
-    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\n",i3,soc,Pm2,Qm2);
+    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",i3,soc,Pm2,Qm2,duty_cyle);
     write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================
     //delay(1000);
@@ -487,7 +487,7 @@ int_T main(int_T argc, const char *argv[])
     /* default interval = 50000ns = 50us
      * cycle duration = 100us
      */
-    int interval=4*1000000;		//en ns   ->  20000=20us
+    int interval=100*1000000;		//en ns   ->  20000=20us
     
     
     //Grafica

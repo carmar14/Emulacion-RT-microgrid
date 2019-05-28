@@ -11,7 +11,7 @@ load('DMC_matrices');
 load('FitData')
 
 % se carga la libreria de true time.
-%run('truetime-2.0\init_truetime');
+run('truetime-2.0\init_truetime');
 
 
 %  Parámetros Motor Diesel
@@ -55,7 +55,7 @@ H_E_d = c2d(H_E,0.01,'tustin')
 % 
 % Db = zeros(2,3);
 
-load('FitData.mat');
+% load('FitData.mat');
 load('AyC.mat');
 %tf1.Denominator{2, 1}(2)
 % A=[0 1 zeros(1,10)
@@ -169,3 +169,26 @@ cvsi=200/sqrt(2);
 carga=cvsi*20;
 q=0:0.001:carga*1.2;
 soc=100-100*q/carga;
+
+% se cargan las matrices dinamicas del MPC DMC.
+load('DMC_matrices2');
+
+% se carga la libreria de true time.
+%run('truetime-2.0\init_truetime');
+
+load('modeloElectrico');
+load('modeloDiesel_dotros')
+tm=0.1;
+% tm=1e-4; %en ocasiones se obtiene buena 
+sys=ss(ssAl,ssBl,ssCl,[]);
+sysd=c2d(sys,tm); %1e-4
+Ad=sysd.A;
+Bd=sysd.B;
+Cd=sysd.C;
+po=[-1.92*10 -1.92*10.1 -1.92*10.3 -1.92*10.2 -1.92*10.4];
+pod=exp(po*tm);
+Ld=place(Ad',Cd',pod);
+
+% step(sys)
+% hold on
+% step(sysd)

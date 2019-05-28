@@ -52,6 +52,7 @@ QREF = Param.add_variable(addspace, "Qref",0)
 
 PM = Param.add_variable(addspace, "Pm",0) 
 QM = Param.add_variable(addspace, "Qm",0)
+DC = Param.add_variable(addspace, "DuC",0)
 
 
 IPV.set_writable()
@@ -60,6 +61,7 @@ PREF.set_writable()
 QREF.set_writable()
 PM.set_writable()
 QM.set_writable()
+DC.set_writable()
 
 server.start()
 print("Server started at ()".format(url))
@@ -102,6 +104,7 @@ try:
                 soc = float(PipeString[1])
                 pm = float(PipeString[2])
                 qm = float(PipeString[3])
+                dc = float(PipeString[4])
                 #data4 = PipeString[3]
                 #print('Received: "{0}\"'.format(PipeString))
                 #print('Received: Ipv:{}\tsoc:{}'.format(ipv,soc))
@@ -109,6 +112,7 @@ try:
                 SOC.set_value(soc)
                 PM.set_value(pm)
                 QM.set_value(qm)
+                DC.set_value(dc)
         except OSError as err:
             if err.errno == 11:
                 print("Nothing there")
