@@ -159,7 +159,7 @@ void rt_OneStep(void)
     /* Re-enable timer or interrupt here */
     /* Set model inputs here */
     //-------entradas-------------
-    digitalWrite(0,LOW);
+    //digitalWrite(0,LOW);
     /*tcflush(fd, TCIOFLUSH);
      * var=0;
      * //(read_buffer,0,sizeof(read_buffer));
@@ -271,6 +271,7 @@ void rt_OneStep(void)
     printf("La tension de la carga es : %3.2f \n",Vload);
     printf("El flujo es : %3.2f \n",caudal);
     printf("El nivel del bus dc es: %3.2f \n",vdc);
+    printf("El dutyc es: %3.2f \n",duty_cycle);
     
     if (min>Idie) min=Idie;
     if (max<Idie) max=Idie;
@@ -281,7 +282,7 @@ void rt_OneStep(void)
     
     //=============== Pipes Envio ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
-    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\n",Idie,duty_cycle,caudal);
+    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\n",Idie,duty_cycle,caudal,vdc);
     write(our_input_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================
     
@@ -331,7 +332,10 @@ void rt_OneStep(void)
     //-----------Grafica---------------------
     //in+=0.0001;
     //fprintf(temp, "%3.2f %3.2f %3.2f %3.2f %3.2f %3.2f \n",i1,i2,i3,Vload,Pm,Qm);
-    fprintf(temp, "%3.2f %3.2f \n",Idie,Vload);
+    
+    //fprintf(temp, "%3.2f %3.2f \n",Idie,Vload);
+    
+    
     //}
     
     /* Indicate task complete */
@@ -382,7 +386,7 @@ int_T main(int_T argc, const char *argv[])
     /* default interval = 50000ns = 50us
      * cycle duration = 100us
      */
-    int interval=4*1000000;		//en ns   ->  20000=20us
+    int interval=100*1000000;		//en ns   ->  20000=20us     *4
     
     if(argc>=2 && atoi(argv[1])>0)
     {
@@ -469,7 +473,7 @@ int_T main(int_T argc, const char *argv[])
         }else{
             estado=0;
         }
-        digitalWrite (21, estado) ;
+        digitalWrite (0, estado) ;
         rt_OneStep();
         t.tv_nsec+=interval;
         tsnorm(&t);
