@@ -43,8 +43,11 @@
  */
 
 //Variables creadas por el programador
+#define BUFFER_SIZE 1024
 
 //------Entradas-------
+
+
 double vdc=0.0;
 double vload=0.0;
 double pref=0.0;
@@ -54,6 +57,12 @@ int fileDescriptor;
 char error[55];
 double vcarga=0.0;
 double tiempo=0.0;
+
+//Ataques
+const char *DoS = "ataqueDoS";
+FILE *input_DoS;
+char buffera[BUFFER_SIZE];
+char *rDoS;
 
 //------Salidas--------
 double i1=0.0;
@@ -209,8 +218,8 @@ void rt_OneStep(void)
     
     //pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
     //qref=var3*k3+vx3;
-    //pref=500;
-    //qref=3500;
+    pref=500;
+    qref=3500;
     
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
@@ -250,6 +259,18 @@ void rt_OneStep(void)
     printf("La corriente del inversor 1 es: %3.2f \n",i1);
     printf("El duty de bio es: %3.2f \n",duty_cycle);
     
+    
+    //-----------Ataque----------------
+    fgets(buffera, BUFFER_SIZE, input_DoS);	
+    //printf("El valor del ataque String es: %s\n",buffera);
+    
+    int ai=atoi(buffera);
+    if (ai ==1) {
+        i1=0.0;
+        //printf("El valor del ataque es: %d\n",ai);
+    }
+    printf("La corriente del inversor modificada es: %3.2f \n",i1);
+    
     //=============== Pipes Envio ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
     sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\n",i1,duty_cycle,Pm1,Qm1);
@@ -277,7 +298,9 @@ void rt_OneStep(void)
     
     //-----------Grafica---------------------
     //in+=0.0001;
-    fprintf(temp, "%3.2f %3.2f \n",vload,i1);
+    
+    //fprintf(temp, "%3.2f %3.2f \n",vload,i1);
+    
     //}
     
     /* Indicate task complete */
@@ -342,6 +365,14 @@ int_T main(int_T argc, const char *argv[])
     fcntl(fdO, F_SETFL, flags); 
     printf("FIFO 2 opened...");
     
+    
+    input_DoS= fopen(DoS, "r");
+    if (input_DoS == NULL){
+        fprintf(stderr, "Unable to open file %s\n",DoS);
+    }
+    
+    
+    
     //====================================================================
     
     //Para RT
@@ -353,7 +384,7 @@ int_T main(int_T argc, const char *argv[])
     
     printf("Iniciando \n");
     
-    int interval=4*1000000;		//en ns   ->  20000=20us
+    int interval=100*1000000;		// 4 en ns   ->  20000=20us   100
     
     if(argc>=2 && atoi(argv[1])>0)
     {
@@ -369,6 +400,8 @@ int_T main(int_T argc, const char *argv[])
         interval=atoi(argv[2]);
         printf("using realtime, priority: %d\n",interval);
     }
+    
+    
     
     
     //Grafica

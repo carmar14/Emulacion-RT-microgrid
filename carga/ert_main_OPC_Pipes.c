@@ -45,6 +45,13 @@
 	
 	#define MSGISIZE 26
 	
+	//Ataques
+	#define BUFFER_SIZE 1024
+	const char *DoS = "ataqueDoS";
+	FILE *input_DoS;
+	char buffera[BUFFER_SIZE];
+	char *rDoS;
+	
 	 //------Entradas-------
 	 double i1=0.0;
 	 double i2=0.0;
@@ -364,6 +371,17 @@ static inline void tsnorm(struct timespec *ts)
 	  printf("La potencia Q medida es: %3.2f \n",Qm);
 	  printf("Voltaje : %3.2f \n",Vload);
 	  
+	  //-----------Ataque----------------
+    fgets(buffera, BUFFER_SIZE, input_DoS);	
+    //printf("El valor del ataque String es: %s\n",buffera);
+    
+    int ai=atoi(buffera);
+    if (ai ==1) {
+        Vload=0.0;
+        printf("El valor del ataque es: %d\n",ai);
+    }
+    printf("La valor de tensión modificada es: %3.2f \n",Vload);
+	  
 	  if (min>Vload) min=Vload;
 	  if (max<Vload) max=Vload;
 	  
@@ -458,6 +476,12 @@ static inline void tsnorm(struct timespec *ts)
 		if (our_input_fifo_filestream != -1)
 			printf("Opened FIFO: %i\n", our_input_fifo_filestream);
 		//====================================================================
+		
+		
+		input_DoS= fopen(DoS, "r");
+    if (input_DoS == NULL){
+        fprintf(stderr, "Unable to open file %s\n",DoS);
+    }
 		
 		//Para RT
 		struct timespec t;
