@@ -45,6 +45,13 @@
 #define MSGISIZE 26
 #define BUFFER_SIZE 1024
 
+//Ataques
+#define BUFFER_SIZE 1024
+const char *DoS = "ataqueDoS";
+FILE *input_DoS;
+char buffera[BUFFER_SIZE];
+char *rDoS;
+
 //Datos del txt
 const char *delimiter_characters = "\t";
 const char *filename = "perfiles_meteo_consum1/myData7_5min.txt";//"perfiles_meteo_consum/myData7_5min.txt";
@@ -141,6 +148,18 @@ int senw[] = {2048,	2377,	2697,	3000,	3278,
 #define NSEC_PER_SEC    1000000000
 
 //--------------------------------------
+
+//===================  Para Pipes =========================
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#define OUR_INPUT_FIFO_NAME "/tmp/dataC"
+
+int our_input_fifo_filestream = -1;
+int result;
+char bufferPipe[128];
+//=========================================================
 
 void rt_OneStep(void);
 
@@ -425,6 +444,26 @@ void rt_OneStep(void)
     if (min>Vload) min=Vload;
     if (max<Vload) max=Vload;
     
+    //-----------Ataque----------------
+    fgets(buffera, BUFFER_SIZE, input_DoS);
+    //printf("El valor del ataque String es: %s\n",buffera);
+    
+    int ai=atoi(buffera);
+    if (ai ==1) {
+        Vload=0.0;
+        printf("El valor del ataque es: %d\n",ai);
+    }
+    printf("La valor de tensión modificada es: %3.2f \n",Vload);
+    
+    if (min>Vload) min=Vload;
+    if (max<Vload) max=Vload;
+    
+    //=============== Pipes Envio ========================
+    memset(bufferPipe,0,sizeof(bufferPipe));
+    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\n",Pm,Qm,Vload);
+    write(our_input_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
+    //======================================================
+    
     //----------Serial----------------------
     //-----------Escritura-envio---------------------
     //Pma=Pm*10;
@@ -485,15 +524,48 @@ void rt_OneStep(void)
  */
 int_T main(int_T argc, const char *argv[])
 {
-
+    
+    //====================================================================
+    //--------------------------------------
+    //----- CREATE A FIFO / NAMED PIPE -----
+    //--------------------------------------
+    
+    printf("Making FIFO...\n");
+    result = mkfifo(OUR_INPUT_FIFO_NAME, 0777);		//(This will fail if the fifo already exists in the system from the app previously running, this is fine)
+    if (result == 0)
+    {
+        //FIFO CREATED
+        printf("New FIFO created: %s\n", OUR_INPUT_FIFO_NAME);
+    }
+    
+    printf("Process %d opening FIFO %s\n", getpid(), OUR_INPUT_FIFO_NAME);
+    our_input_fifo_filestream = open(OUR_INPUT_FIFO_NAME, (O_WRONLY | O_NONBLOCK));
+    //Possible flags:
+    //	O_RDONLY - Open for reading only.
+    //	O_WRONLY - Open for writing only.
+    //	O_NDELAY / O_NONBLOCK (same function) - Enables nonblocking mode. When set read requests on the file can return immediately with a failure status
+    //											if there is no input immediately available (instead of blocking). Likewise, write requests can also return
+    //											immediately with a failure status if the output can't be written immediately.
+    if (our_input_fifo_filestream != -1)
+        printf("Opened FIFO: %i\n", our_input_fifo_filestream);
+    //====================================================================
+    
+    
     //Verificando txt de datos
+    
+    input_DoS= fopen(DoS, "r");
+    if (input_DoS == NULL){
+        fprintf(stderr, "Unable to open file %s\n",DoS);
+    }
+    
+    
     //FILE *input_file = fopen(filename, "r");
     input_file = fopen(filename, "r");
     if (input_file == NULL){
         fprintf(stderr, "Unable to open file %s\n",filename);
     }
     fgets(buffert, BUFFER_SIZE, input_file);	//First line for the labels
-
+    
 //Para RT
     struct timespec t;
     struct sched_param param;
