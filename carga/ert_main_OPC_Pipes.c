@@ -489,7 +489,7 @@ static inline void tsnorm(struct timespec *ts)
 		/* default interval = 50000ns = 50us
 		* cycle duration = 100us
 		*/
-		int interval=100*1000000;		//en ns   ->  20000=20us  20
+		int interval=4*1000000;		//en ns   ->  20000=20us  20  100
 		
 		if(argc>=2 && atoi(argv[1])>0)
 		{
