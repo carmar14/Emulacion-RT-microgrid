@@ -365,6 +365,9 @@ int_T main(int_T argc, const char *argv[])
     fcntl(fdO, F_SETFL, flags); 
     printf("FIFO 2 opened...");
     
+    //====================================================================
+    
+    
     
     input_DoS= fopen(DoS, "r");
     if (input_DoS == NULL){
@@ -372,8 +375,6 @@ int_T main(int_T argc, const char *argv[])
     }
     
     
-    
-    //====================================================================
     
     //Para RT
     struct timespec t;
@@ -384,7 +385,7 @@ int_T main(int_T argc, const char *argv[])
     
     printf("Iniciando \n");
     
-    int interval=100*1000000;		// 4 en ns   ->  20000=20us   100
+    int interval=4*1000000;		// 4 en ns   ->  20000=20us   100
     
     if(argc>=2 && atoi(argv[1])>0)
     {
