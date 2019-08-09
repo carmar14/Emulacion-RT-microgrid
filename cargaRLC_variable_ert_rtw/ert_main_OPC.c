@@ -69,7 +69,7 @@ char *tempout;
 char *consumptp;
 char *consumptq;
 float Lref;
-float Lref2;
+float Lref2=5000.0;
 int contador;
 int contador2=0;
 
@@ -438,9 +438,11 @@ void rt_OneStep(void)
         perror("The following error ocurred");
     }
     
-    P=atof(consumptp);
-    Q=atof(consumptq);
-    
+   
+    P=1000;//atof(consumptp);
+    //P=1728;
+    Q=-sqrt(Lref2*Lref2-P*P);//atof(consumptq);
+    //Q=-11210;
     set_i1(i1);
     set_i2(i2);
     set_i3(i3);
@@ -453,6 +455,7 @@ void rt_OneStep(void)
     
     printf ("i1: %f i2: %f i3: %f p: %f q: %f\n",i1,i2,i3,P,Q);
     printf("El contador es: %i\n",contador);
+    printf("El dato de potencia es: %3.2f\n",Lref2);
     
     /* Step the model for base rate */
     cargaRLC_variable_step();
@@ -488,6 +491,7 @@ void rt_OneStep(void)
     //=============== Pipes Envio ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
     sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\n",Pm,Qm,Vload);
+    //sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\n",P,Q,Vload);
     write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================
     
@@ -534,7 +538,7 @@ void rt_OneStep(void)
     
     //fprintf(temp, "%d %d \n",var1,var2);
     fprintf(temp, "%3.2f %3.2f %3.2f %3.2f %3.2f %3.2f \n",i1,i2,i3,Vload,Pm,Qm);
-    sleep(1);
+    //sleep(1);
     //}
     
     
