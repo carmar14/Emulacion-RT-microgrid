@@ -68,7 +68,8 @@ char *solarrad;
 char *tempout;
 char *consumptp;
 char *consumptq;
-const double Lref;
+float Lref;
+float Lref2;
 int contador;
 int contador2=0;
 
@@ -163,7 +164,7 @@ int result, result2;
 char bufferPipe[128];
 FILE *fp;
 char * pch;
-int counter = 0;
+
 //=========================================================
 
 void rt_OneStep(void);
@@ -410,17 +411,16 @@ void rt_OneStep(void)
     
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
-    //printf("CB counter %d\n",counter);
+    
     if(fgets(bufferPipe,sizeof(bufferPipe),fp) != NULL)
     {
-		printf("bufferPipe: %s\n",bufferPipe);
-		int *ptrLref = &Lref;
-		*ptrLref = strtof(bufferPipe,&pch);
-		printf("Load_Ref fresh: %f\n",Lref);
-		sleep(1);
+		//printf("bufferPipe: %s\n",bufferPipe);
+		Lref = strtof(bufferPipe,NULL);
+		//Lref = strtof(bufferPipe,&pch);
+		//printf("Load_Ref fresh: %f\n",Lref);
 		//qref = strtof(pch,&pch);
 		//printf("algo en buffer para Pref y Qref\n");
-		counter++;
+		Lref2 = Lref;
     }
     //else{printf("File empty");}
     //======================================================
@@ -429,9 +429,9 @@ void rt_OneStep(void)
     contador=0;
     }
     */
-    printf("Load_Ref: %f\n",Lref);
     
     contador=contador+1;
+    //sleep(1);
     
     
     if(ferror(input_file)){
@@ -505,14 +505,16 @@ void rt_OneStep(void)
     //Vloada=-2300;
     //}
     
-    
     memset(buffer,0,sizeof(buffer));
+
     //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
     //sprintf(buffer,"v%07d\n",Vloada);
     sprintf(buffer,"v%07d%07d%07de\n",Vloada,Pma,Qma);
+    
     //while(pinr==0){
     serialPuts(fd,buffer);
     serialPuts(fd2,buffer);
+
     //serialFlush(fd);
     //pinr=digitalRead(2);
     //printf("so\n");
@@ -525,15 +527,16 @@ void rt_OneStep(void)
     pinr=0;
     digitalWrite(1,LOW);
     var=0;
+    
     //printf("Ready for next loop\n");
     //-----------Grafica---------------------
     //in+=0.0001;
     
     //fprintf(temp, "%d %d \n",var1,var2);
     fprintf(temp, "%3.2f %3.2f %3.2f %3.2f %3.2f %3.2f \n",i1,i2,i3,Vload,Pm,Qm);
-    
-    
+    sleep(1);
     //}
+    
     
     /* Indicate task complete */
     OverrunFlag = false;
@@ -599,6 +602,7 @@ int_T main(int_T argc, const char *argv[])
     //sleep(1000);
     //====================================================================
     
+    Lref = 0.0;
     
     //Verificando txt de datos
     
@@ -704,6 +708,7 @@ int_T main(int_T argc, const char *argv[])
     /* Simulating the model step behavior (in non real-time) to
      *  simulate model behavior at stop time.
      */
+     
     while ((rtmGetErrorStatus(cargaRLC_variable_M) == (NULL)) &&
             !rtmGetStopRequested(cargaRLC_variable_M)) {
         
