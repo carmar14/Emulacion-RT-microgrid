@@ -218,8 +218,8 @@ void rt_OneStep(void)
     
     //pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
     //qref=var3*k3+vx3;
-    pref=500;
-    qref=3500;
+    //pref=500;
+    //qref=3500;
     
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
@@ -252,8 +252,8 @@ void rt_OneStep(void)
     Qm1=get_Qm();
     
     printf("El vload es : %3.2f \n",vload);
-    printf("La potencia P es: %3.2f \n",pref);
-    printf("La potencia Q es: %3.2f \n", qref);
+    printf("La potencia Pref es: %3.2f \n",pref);
+    printf("La potencia Qref es: %3.2f \n", qref);
     printf("La potencia P medida es: %3.2f \n",Pm1);
     printf("La potencia Q medida es: %3.2f \n", Qm1);
     printf("La corriente del inversor 1 es: %3.2f \n",i1);
