@@ -320,8 +320,8 @@ void rt_OneStep(void)
     //vload=vload/10.0;
     //Prefd=var1*k1+vx1;
     //Qrefd=var2*k2+vx2;
-    Prefd=500;
-    Qrefd=3500;
+    //Prefd=500;
+    //Qrefd=3500;
     
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
@@ -354,6 +354,8 @@ void rt_OneStep(void)
             
     printf("La irradianza es: %3.2f \n",Suns);
     printf("La temperatura es: %3.2f \n",TaC);
+    printf("La potencia activa referencia es: %3.2f \n",Prefd);
+    printf("La potencia reactiva referencia es: %3.2f \n",Qrefd);
     printf("La dato es: %d \n",var3);
     printf("LA potencia P medida es:  %3.2f \n",Pm2);
     printf("LA potencia Q medida es:  %3.2f \n",Qm2);
@@ -514,7 +516,7 @@ int_T main(int_T argc, const char *argv[])
     /* default interval = 50000ns = 50us
      * cycle duration = 100us
      */
-    int interval=100*1000000;		//en ns   ->  20000=20us
+    int interval=4*1000000;		//en ns   ->  20000=20us 100
     
     
     //Grafica
