@@ -51,6 +51,7 @@ PREF = Param.add_variable(addspace, "Pref",0)
 QREF = Param.add_variable(addspace, "Qref",0)
 PM = Param.add_variable(addspace, "Pm",0) 
 QM = Param.add_variable(addspace, "Qm",0)
+DC = Param.add_variable(addspace, "DuC",0)
 
 
 IBIO.set_writable()
@@ -59,6 +60,7 @@ PREF.set_writable()
 QREF.set_writable()
 PM.set_writable()
 QM.set_writable()
+DC.set_writable()
 
 server.start()
 print("Server started at ()".format(url))
@@ -101,6 +103,7 @@ try:
                 iBio = float(PipeString[0])
                 pm = float(PipeString[2])
                 qm = float(PipeString[3])
+                dc = float(PipeString[1])
                 #soc = float(PipeString[1])
                 #data4 = PipeString[3]
                 #print('Received: "{0}\"'.format(PipeString))
@@ -108,7 +111,7 @@ try:
                 IBIO.set_value(iBio)
                 PM.set_value(pm)
                 QM.set_value(qm)
-                #SOC.set_value(soc)
+                DC.set_value(dc)
         except OSError as err:
             if err.errno == 11:
                 print("Nothing there")

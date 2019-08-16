@@ -67,6 +67,12 @@ char *consumptq;
 int contador;
 int contador2=0;
 
+//Ataques
+const char *DoS = "ataqueDoS";
+FILE *input_DoS;
+char buffera[BUFFER_SIZE];
+char *rDoS;
+
 //------Entradas-------
 double ipv=0.0;
 double vload3=0.0;
@@ -289,9 +295,9 @@ void rt_OneStep(void)
         perror("The following error ocurred");
     }
     
-    TaC= atof(tempout) ; //Lectura desde el txt
+    TaC= atof(tempout); //Lectura desde el txt
     Va=0.5;
-    Suns=atof(solarrad)/1000.0 ; //Lectura desde el txt
+    Suns=atof(solarrad)/1000.0; //Lectura desde el txt
     TaK = 273 + TaC;
     IL_T1 = Isc_T1 * Suns;
     IL = IL_T1 + K0*(TaK - T1);
@@ -348,6 +354,8 @@ void rt_OneStep(void)
             
     printf("La irradianza es: %3.2f \n",Suns);
     printf("La temperatura es: %3.2f \n",TaC);
+    printf("La potencia activa referencia es: %3.2f \n",Prefd);
+    printf("La potencia reactiva referencia es: %3.2f \n",Qrefd);
     printf("La dato es: %d \n",var3);
     printf("LA potencia P medida es:  %3.2f \n",Pm2);
     printf("LA potencia Q medida es:  %3.2f \n",Qm2);
@@ -356,6 +364,20 @@ void rt_OneStep(void)
     printf("La corriente del inversor 3 es: %3.2f \n",i3);
     printf("El estado de la bateria es: %3.2f \n",soc);
     printf ("La tensión en la carga es :%3.2f \n",vload3);
+    
+    //-----------Ataque----------------
+    fgets(buffera, BUFFER_SIZE, input_DoS);	
+    //printf("El valor del ataque String es: %s\n",buffera);
+    
+    int ai=atoi(buffera);
+    if (ai ==1) {
+        i3=0.0;
+        printf("El valor del ataque es: %d\n",ai);
+    }
+    printf("La corriente del inversor modificada es: %3.2f \n",i3);
+    
+    //memset(buffera,"",sizeof(buffera));
+    
     
     
     //=============== Pipes Envio ========================
@@ -385,7 +407,8 @@ void rt_OneStep(void)
     //-----------Grafica---------------------
     //in+=0.0001;
     //fprintf(temp, "%3.2f %3.2f %3.2f %3.2f %3.2f %3.2f \n",i1,i2,i3,Vload,Pm,Qm);
-    fprintf(temp, "%3.2f %3.2f %3.2f %3.2f \n",i3,vload3,Prefd,Qrefd);
+    
+    //fprintf(temp, "%3.2f %3.2f %3.2f %3.2f \n",i3,vload3,Prefd,Qrefd);
     
     /* Indicate task complete */
     OverrunFlag = false;
@@ -481,13 +504,19 @@ int_T main(int_T argc, const char *argv[])
     }
     fgets(buffer, BUFFER_SIZE, input_file);	//First line for the labels
     
+    
+    input_DoS= fopen(DoS, "r");
+    if (input_DoS == NULL){
+        fprintf(stderr, "Unable to open file %s\n",DoS);
+    }
+    
     //Para RT
     struct timespec t;
     
     /* default interval = 50000ns = 50us
      * cycle duration = 100us
      */
-    int interval=100*1000000;		//en ns   ->  20000=20us
+    int interval=4*1000000;		//en ns   ->  20000=20us 100
     
     
     //Grafica

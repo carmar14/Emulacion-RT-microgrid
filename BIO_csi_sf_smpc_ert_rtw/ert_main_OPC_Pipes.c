@@ -43,8 +43,11 @@
  */
 
 //Variables creadas por el programador
+#define BUFFER_SIZE 1024
 
 //------Entradas-------
+
+
 double vdc=0.0;
 double vload=0.0;
 double pref=0.0;
@@ -54,6 +57,12 @@ int fileDescriptor;
 char error[55];
 double vcarga=0.0;
 double tiempo=0.0;
+
+//Ataques
+const char *DoS = "ataqueDoS";
+FILE *input_DoS;
+char buffera[BUFFER_SIZE];
+char *rDoS;
 
 //------Salidas--------
 double i1=0.0;
@@ -243,12 +252,24 @@ void rt_OneStep(void)
     Qm1=get_Qm();
     
     printf("El vload es : %3.2f \n",vload);
-    printf("La potencia P es: %3.2f \n",pref);
-    printf("La potencia Q es: %3.2f \n", qref);
+    printf("La potencia Pref es: %3.2f \n",pref);
+    printf("La potencia Qref es: %3.2f \n", qref);
     printf("La potencia P medida es: %3.2f \n",Pm1);
     printf("La potencia Q medida es: %3.2f \n", Qm1);
     printf("La corriente del inversor 1 es: %3.2f \n",i1);
     printf("El duty de bio es: %3.2f \n",duty_cycle);
+    
+    
+    //-----------Ataque----------------
+    fgets(buffera, BUFFER_SIZE, input_DoS);	
+    //printf("El valor del ataque String es: %s\n",buffera);
+    
+    int ai=atoi(buffera);
+    if (ai ==1) {
+        i1=0.0;
+        //printf("El valor del ataque es: %d\n",ai);
+    }
+    printf("La corriente del inversor modificada es: %3.2f \n",i1);
     
     //=============== Pipes Envio ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
@@ -277,7 +298,9 @@ void rt_OneStep(void)
     
     //-----------Grafica---------------------
     //in+=0.0001;
-    fprintf(temp, "%3.2f %3.2f \n",vload,i1);
+    
+    //fprintf(temp, "%3.2f %3.2f \n",vload,i1);
+    
     //}
     
     /* Indicate task complete */
@@ -344,6 +367,15 @@ int_T main(int_T argc, const char *argv[])
     
     //====================================================================
     
+    
+    
+    input_DoS= fopen(DoS, "r");
+    if (input_DoS == NULL){
+        fprintf(stderr, "Unable to open file %s\n",DoS);
+    }
+    
+    
+    
     //Para RT
     struct timespec t;
     struct sched_param param;
@@ -353,7 +385,7 @@ int_T main(int_T argc, const char *argv[])
     
     printf("Iniciando \n");
     
-    int interval=4*1000000;		//en ns   ->  20000=20us
+    int interval=4*1000000;		// 4 en ns   ->  20000=20us   100
     
     if(argc>=2 && atoi(argv[1])>0)
     {
@@ -369,6 +401,8 @@ int_T main(int_T argc, const char *argv[])
         interval=atoi(argv[2]);
         printf("using realtime, priority: %d\n",interval);
     }
+    
+    
     
     
     //Grafica
