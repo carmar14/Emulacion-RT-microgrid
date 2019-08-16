@@ -54,6 +54,10 @@ PM = Param.add_variable(addspace, "Pm",0)
 QM = Param.add_variable(addspace, "Qm",0)
 DC = Param.add_variable(addspace, "DuC",0)
 
+KB = Param.add_variable(addspace, "Kb",0)
+IRR = Param.add_variable(addspace, "Irr",0) 
+TEMP= Param.add_variable(addspace, "Temp",0)
+
 
 IPV.set_writable()
 SOC.set_writable()
@@ -62,6 +66,9 @@ QREF.set_writable()
 PM.set_writable()
 QM.set_writable()
 DC.set_writable()
+KB.set_writable()
+IRR.set_writable()
+TEMP.set_writable()
 
 server.start()
 print("Server started at ()".format(url))
@@ -81,6 +88,8 @@ try:
     print("Program running...")
     pref = 500
     qref = 3500
+    irr=0
+    temp=0
     while True:
         time.sleep(0.05)    
         try:
@@ -90,11 +99,16 @@ try:
 
             pref1 = pref
             qref1 = qref
+            irr1=irr
+            temp1=temp
             pref = PREF.get_value()
             qref = QREF.get_value()
-            if((pref1 != pref) or (qref1 != qref) ):
-                print("Pref {}  Qref {}".format(pref,qref))
-                string = str(pref)+'\t'+str(qref)+'\n'
+            irr = IRR.get_value()
+            temp = TEMP.get_value()
+            kb= KB.get_value()
+            if((pref1 != pref) or (qref1 != qref) or (temp1 != temp) or (irr1 !=irr)):
+                print("Pref {}  Qref {} Irr {} Temp {}".format(pref,qref,irr,temp))
+                string = str(pref)+'\t'+str(qref)+'\t'+str(irr)+'\t'+str(temp)+'\n'
                 os.write(PipeIn2, str.encode(string))
             if not PipeString:
                 #print ("Empty String!")
