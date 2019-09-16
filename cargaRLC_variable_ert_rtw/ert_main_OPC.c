@@ -1,4 +1,4 @@
-//compile using "gcc ert_main.c cargaRLC_variable.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c -lm -lwiringPi -lrt -Wall"
+//compile using "gcc ert_main_OPC.c cargaRLC_variable.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c -lm -lwiringPi -lrt -Wall"
 /*
  * File: ert_main.c
  *
@@ -68,6 +68,8 @@ char *solarrad;
 char *tempout;
 char *consumptp;
 char *consumptq;
+float Lref;
+float Lref2=5000.0;
 int contador;
 int contador2=0;
 
@@ -154,11 +156,15 @@ int senw[] = {2048,	2377,	2697,	3000,	3278,
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define OUR_INPUT_FIFO_NAME "/tmp/dataC"
+#define OUR_INPUT_FIFO_NAME "/tmp/dataC_In"
+#define OUR_OUTPUT_FIFO_NAME "/tmp/dataC"
 
-int our_input_fifo_filestream = -1;
-int result;
+int our_output_fifo_filestream = -1;
+int result, result2;
 char bufferPipe[128];
+FILE *fp;
+char * pch;
+
 //=========================================================
 
 void rt_OneStep(void);
@@ -365,9 +371,10 @@ void rt_OneStep(void)
     printf("Valor minimo: %3.2f \n", min);
     printf("Valor maximo: %3.2f \n", max);
     
-    if (contador==15*60*1000/4 || contador2==0){
+    if (contador==15*60*1000/4 | contador2==0){   //15*60*1000/4 
         
         contador2=1;
+        contador=0;
         fgets(buffert, BUFFER_SIZE, input_file);	//Second line for the labels
         
         puts(buffert);
@@ -401,21 +408,60 @@ void rt_OneStep(void)
         //}
         
     }
-    else{
-        contador=0;
+    
+    //=============== Pipes Lectura ========================
+    memset(bufferPipe,0,sizeof(bufferPipe));
+    
+    if(fgets(bufferPipe,sizeof(bufferPipe),fp) != NULL)
+    {
+		//printf("bufferPipe: %s\n",bufferPipe);
+		Lref = strtof(bufferPipe,NULL);
+		//Lref = strtof(bufferPipe,&pch);
+		//printf("Load_Ref fresh: %f\n",Lref);
+		//qref = strtof(pch,&pch);
+		//printf("algo en buffer para Pref y Qref\n");
+		Lref2 = Lref;
     }
+    //else{printf("File empty");}
+    //======================================================
+    /*
+    else{
+    contador=0;
+    }
+    */
     
     contador=contador+1;
+    //sleep(1);
     
     
     if(ferror(input_file)){
         perror("The following error ocurred");
     }
     
-    P=atof(consumptp);
-    Q=atof(consumptq);
+   //Calculo de P y Q dependiendo de la referencia que se envía para suplir la demanda
+	/*
+	double a=2;
+	double b=-20000;
+	double c=10000*10000-Lref2;
+	
+	printf("El dato de la raiz es:  %3.2f\n", b*b-4*a*c);
+    double P1=(-b+sqrt(b*b-4*a*c))/(2*a);//atof(consumptp);
+    double P2=(-b-sqrt(b*b-4*a*c))/(2*a);
     
-    set_i1(i1);
+    if (P1>0){
+		P=P1;
+	}
+	
+	if (P2>0){
+		P=P2;
+	}
+	*/
+	
+	//Lref2=10527;//12604;
+    P=0.35*Lref2;
+    Q=-sqrt(Lref2*Lref2-P*P);//atof(consumptq); P-10000;
+    //Q=-11210;
+    set_i1(i1); 
     set_i2(i2);
     set_i3(i3);
     set_P(P);
@@ -426,6 +472,8 @@ void rt_OneStep(void)
     //set_i3((senw[i]-2048)*0.0391);
     
     printf ("i1: %f i2: %f i3: %f p: %f q: %f\n",i1,i2,i3,P,Q);
+    printf("El contador es: %i\n",contador);
+    printf("El dato de potencia es: %3.2f\n",Lref2);
     
     /* Step the model for base rate */
     cargaRLC_variable_step();
@@ -461,7 +509,8 @@ void rt_OneStep(void)
     //=============== Pipes Envio ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
     sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\n",Pm,Qm,Vload);
-    write(our_input_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
+    //sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\n",P,Q,Vload);
+    write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================
     
     //----------Serial----------------------
@@ -478,14 +527,16 @@ void rt_OneStep(void)
     //Vloada=-2300;
     //}
     
-    
     memset(buffer,0,sizeof(buffer));
+
     //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
     //sprintf(buffer,"v%07d\n",Vloada);
     sprintf(buffer,"v%07d%07d%07de\n",Vloada,Pma,Qma);
+    
     //while(pinr==0){
     serialPuts(fd,buffer);
     serialPuts(fd2,buffer);
+
     //serialFlush(fd);
     //pinr=digitalRead(2);
     //printf("so\n");
@@ -498,15 +549,16 @@ void rt_OneStep(void)
     pinr=0;
     digitalWrite(1,LOW);
     var=0;
+    
     //printf("Ready for next loop\n");
     //-----------Grafica---------------------
     //in+=0.0001;
     
     //fprintf(temp, "%d %d \n",var1,var2);
     fprintf(temp, "%3.2f %3.2f %3.2f %3.2f %3.2f %3.2f \n",i1,i2,i3,Vload,Pm,Qm);
-    
-    
+    //sleep(1);
     //}
+    
     
     /* Indicate task complete */
     OverrunFlag = false;
@@ -531,25 +583,48 @@ int_T main(int_T argc, const char *argv[])
     //--------------------------------------
     
     printf("Making FIFO...\n");
-    result = mkfifo(OUR_INPUT_FIFO_NAME, 0777);		//(This will fail if the fifo already exists in the system from the app previously running, this is fine)
+    result = mkfifo(OUR_OUTPUT_FIFO_NAME, 0777);		//(This will fail if the fifo already exists in the system from the app previously running, this is fine)
     if (result == 0)
     {
         //FIFO CREATED
-        printf("New FIFO created: %s\n", OUR_INPUT_FIFO_NAME);
+        printf("New FIFO created: %s\n", OUR_OUTPUT_FIFO_NAME);
     }
     
-    printf("Process %d opening FIFO %s\n", getpid(), OUR_INPUT_FIFO_NAME);
-    our_input_fifo_filestream = open(OUR_INPUT_FIFO_NAME, (O_WRONLY | O_NONBLOCK));
+    printf("Process %d opening FIFO %s\n", getpid(), OUR_OUTPUT_FIFO_NAME);
+    our_output_fifo_filestream = open(OUR_OUTPUT_FIFO_NAME, (O_WRONLY | O_NONBLOCK));
     //Possible flags:
     //	O_RDONLY - Open for reading only.
     //	O_WRONLY - Open for writing only.
     //	O_NDELAY / O_NONBLOCK (same function) - Enables nonblocking mode. When set read requests on the file can return immediately with a failure status
     //											if there is no input immediately available (instead of blocking). Likewise, write requests can also return
     //											immediately with a failure status if the output can't be written immediately.
-    if (our_input_fifo_filestream != -1)
-        printf("Opened FIFO: %i\n", our_input_fifo_filestream);
+    if (our_output_fifo_filestream != -1)
+        printf("Opened FIFO 1: %i\n", our_output_fifo_filestream);
+        
+    printf("Making FIFO 2...\n");
+	result2 = mkfifo(OUR_INPUT_FIFO_NAME, 0777);		//(This will fail if the fifo already exists in the system from the app previously running, this is fine)
+	if (result2 == 0)
+	{
+		//FIFO CREATED
+		printf("New FIFO 2 created: %s\n", OUR_INPUT_FIFO_NAME);
+	}
+
+	printf("Process %d opening FIFO 2 %s\n", getpid(), OUR_INPUT_FIFO_NAME);
+	
+	if((fp = fopen(OUR_INPUT_FIFO_NAME, "r+")) == NULL){
+        printf("Something went wrong ");
+        return EXIT_FAILURE;
+    }
+    int fdO = fileno(fp);  
+    int flags = fcntl(fdO, F_GETFL, 0); 
+    flags |= O_NONBLOCK; 
+    fcntl(fdO, F_SETFL, flags); 
+    printf("FIFO 2 opened...\n");
+    
+    //sleep(1000);
     //====================================================================
     
+    Lref = 0.0;
     
     //Verificando txt de datos
     
@@ -655,6 +730,7 @@ int_T main(int_T argc, const char *argv[])
     /* Simulating the model step behavior (in non real-time) to
      *  simulate model behavior at stop time.
      */
+     
     while ((rtmGetErrorStatus(cargaRLC_variable_M) == (NULL)) &&
             !rtmGetStopRequested(cargaRLC_variable_M)) {
         

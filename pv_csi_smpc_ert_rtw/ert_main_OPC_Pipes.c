@@ -60,8 +60,8 @@ char *times;
 char *outhum;
 char *windspd;
 char *rain;
-char *solarrad;
-char *tempout;
+char *solarrad2;
+char *tempout2;
 char *consumptp;
 char *consumptq;
 int contador;
@@ -78,6 +78,8 @@ double ipv=0.0;
 double vload3=0.0;
 double Prefd=0.0;
 double Qrefd=0.0;
+double solarrad;
+double tempout;
 MCP3204 ad_MCP3204;
 int fileDescriptor;
 char error[55];
@@ -248,7 +250,7 @@ void rt_OneStep(void)
     //Paneles solares
     //Read each line into the buffer
     
-    if (contador==15*60*1000/4 || contador2==0){
+    if ((contador==15*60*1000/4 || contador2==0 )&& 0){
         
         contador2=1;
         fgets(buffer, BUFFER_SIZE, input_file);	//Second line for the labels
@@ -269,10 +271,10 @@ void rt_OneStep(void)
         //printf("windspd: %s\n",windspd);
         rain = strtok(NULL, delimiter_characters);
         //printf("rain: %s\n",rain);
-        solarrad = strtok(NULL, delimiter_characters);
-        printf("solarrad: %s\n",solarrad);
-        tempout = strtok(NULL, delimiter_characters);
-        printf("tempout: %s\n",tempout);
+        solarrad2 = strtok(NULL, delimiter_characters);
+        printf("solarrad: %s\n",solarrad2);
+        tempout2 = strtok(NULL, delimiter_characters);
+        printf("tempout: %s\n",tempout2);
         consumptp = strtok(NULL, delimiter_characters);
         printf("consumption: %s\n",consumptp);
         consumptq = strtok(NULL, delimiter_characters);
@@ -295,9 +297,33 @@ void rt_OneStep(void)
         perror("The following error ocurred");
     }
     
-    TaC= atof(tempout); //Lectura desde el txt
+       
+    vload3=var3*k+vx; //Proveniente de la carga
+    //vload=vload/10.0;
+    //Prefd=var1*k1+vx1;
+    //Qrefd=var2*k2+vx2;
+    //Prefd=500;
+    //Qrefd=2430;//3403;
+    
+    //=============== Pipes Lectura ========================
+    memset(bufferPipe,0,sizeof(bufferPipe));
+    //printf("CB counter %d\n",counter);
+    if(fgets(bufferPipe,sizeof(bufferPipe),fp) != NULL)
+        {
+            Prefd = strtof(bufferPipe,&pch);
+            Qrefd = strtof(pch,&pch);
+            solarrad = strtof(pch,&pch);
+            tempout = strtof(pch,&pch);
+            
+            //printf("algo en buffer para Pref y Qref\n");
+            counter++;
+        }
+        //else{printf("File empty");}
+    //======================================================
+    
+    TaC= tempout;//atof(tempout); //Lectura desde el txt
     Va=0.5;
-    Suns=atof(solarrad)/1000.0; //Lectura desde el txt
+    Suns=solarrad/1000.0; //atof(solarrad)/1000.0; //Lectura desde el txt
     TaK = 273 + TaC;
     IL_T1 = Isc_T1 * Suns;
     IL = IL_T1 + K0*(TaK - T1);
@@ -314,27 +340,6 @@ void rt_OneStep(void)
     
     ipv=1.5;//500;   //Proveniente de la fuente de generación PV
     ipv=Ia;
-    
-    
-    vload3=var3*k+vx; //Proveniente de la carga
-    //vload=vload/10.0;
-    //Prefd=var1*k1+vx1;
-    //Qrefd=var2*k2+vx2;
-    Prefd=500;
-    Qrefd=3500;
-    
-    //=============== Pipes Lectura ========================
-    memset(bufferPipe,0,sizeof(bufferPipe));
-    //printf("CB counter %d\n",counter);
-    if(fgets(bufferPipe,sizeof(bufferPipe),fp) != NULL)
-        {
-            Prefd = strtof(bufferPipe,&pch);
-            Qrefd = strtof(pch,&pch);
-            //printf("algo en buffer para Pref y Qref\n");
-            counter++;
-        }
-        //else{printf("File empty");}
-    //======================================================
     
     set_Idc_PV(ipv);
     set_Vload(vload3);
@@ -354,6 +359,8 @@ void rt_OneStep(void)
             
     printf("La irradianza es: %3.2f \n",Suns);
     printf("La temperatura es: %3.2f \n",TaC);
+    printf("La potencia activa referencia es: %3.2f \n",Prefd);
+    printf("La potencia reactiva referencia es: %3.2f \n",Qrefd);
     printf("La dato es: %d \n",var3);
     printf("LA potencia P medida es:  %3.2f \n",Pm2);
     printf("LA potencia Q medida es:  %3.2f \n",Qm2);
@@ -514,7 +521,7 @@ int_T main(int_T argc, const char *argv[])
     /* default interval = 50000ns = 50us
      * cycle duration = 100us
      */
-    int interval=100*1000000;		//en ns   ->  20000=20us
+    int interval=4*1000000;		//en ns   ->  20000=20us 100
     
     
     //Grafica
