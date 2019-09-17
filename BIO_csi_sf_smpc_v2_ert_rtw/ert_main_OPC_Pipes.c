@@ -1,4 +1,4 @@
-/* compile using  "gcc ert_main_OPC_Pipes.c BIO_csi_sf_smpc_v2.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c -lm -lwiringPi -lrt -Wall"  */
+/* compile using  "gcc ert_main_OPC_Pipes.c BIO_csi_sf_smpc_v2_data.c BIO_csi_sf_smpc_v2.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c -lm -lwiringPi -lrt -Wall"  */
 
 
 
