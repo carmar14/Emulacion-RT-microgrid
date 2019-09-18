@@ -438,12 +438,30 @@ void rt_OneStep(void)
         perror("The following error ocurred");
     }
     
-   
-    P=1000;//atof(consumptp);
-    //P=1728;
-    Q=-sqrt(Lref2*Lref2-P*P);//atof(consumptq);
+   //Calculo de P y Q dependiendo de la referencia que se envía para suplir la demanda
+	/*
+	double a=2;
+	double b=-20000;
+	double c=10000*10000-Lref2;
+	
+	printf("El dato de la raiz es:  %3.2f\n", b*b-4*a*c);
+    double P1=(-b+sqrt(b*b-4*a*c))/(2*a);//atof(consumptp);
+    double P2=(-b-sqrt(b*b-4*a*c))/(2*a);
+    
+    if (P1>0){
+		P=P1;
+	}
+	
+	if (P2>0){
+		P=P2;
+	}
+	*/
+	
+	//Lref2=10527;//12604;
+    P=0.35*Lref2;
+    Q=-sqrt(Lref2*Lref2-P*P);//atof(consumptq); P-10000;
     //Q=-11210;
-    set_i1(i1);
+    set_i1(i1); 
     set_i2(i2);
     set_i3(i3);
     set_P(P);
