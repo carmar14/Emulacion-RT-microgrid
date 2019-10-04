@@ -559,7 +559,9 @@ void rt_OneStep(void)
     //printf("El dato pin es: %d \n",pinr);
     //}
     serialFlush(fd3);
-    tcflush(fd3, TCIOFLUSH);
+    
+    
+    
     pinr=0;
     
     var=0;
