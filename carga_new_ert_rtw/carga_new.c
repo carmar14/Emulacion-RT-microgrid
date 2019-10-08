@@ -33,54 +33,46 @@ ExtY_carga_new_T carga_new_Y;
 
 //Funciones creadas por el programador set y get
 //-------Funciones para asignar entradas-------------
-void set_Idc_PV(double ipv){
+void set_i1(double i1){
 	//printf("La accion 1 es: %3.2f \n",V_bio);
-	renovables_U.Ipv=ipv;
+	carga_new_U.i1=i1;
 	//printf("El voltaje es: %3.2f \n",BIO_csi_U.V_bio);
-	}
-	
-void set_Vload(double Vload){
-	renovables_U.Vload=Vload;
 }
 
-void set_Pref(double pr){
+void set_i2(double i2){
 	//printf("La accion 1 es: %3.2f \n",V_bio);
-	renovables_U.Piren=pr;
+	carga_new_U.i2=i2;
 	//printf("El voltaje es: %3.2f \n",BIO_csi_U.V_bio);
-	}
-	
-void set_Qref(double qr){
-	renovables_U.Qiren=qr;
 }
+
+void set_i3(double i3){
+	//printf("La accion 1 es: %3.2f \n",V_bio);
+	carga_new_U.i3=i3;
+	//printf("El voltaje es: %3.2f \n",BIO_csi_U.V_bio);
+}	
+
 
 //-----Funciones para obtener valores de las salidas-------
 	
-double get_I_pv(void){
-	return renovables_Y.i2;
-	 
-}
-
-double get_SOC(void){
-	return renovables_Y.soc;
-	 
-}
-
-double get_duty_cycle(void) {
-    return renovables_Y.duty_cycle; 
-}
-
 double get_Pm(void){
-	return renovables_Y.Poren;
+	return carga_new_Y.Po;
 	 
 }
 
 double get_Qm(void){
-	return renovables_Y.Qoren;
+	return carga_new_Y.Qo;
 	 
 }
 
+double get_Vload(void){
+	return carga_new_Y.Vload;
+	 
+}
+
+
+
 double get_Potencia(void){
-	return renovables_Y.Potencia_ren;
+	return carga_new_Y.potencia;
 	 
 }
 
