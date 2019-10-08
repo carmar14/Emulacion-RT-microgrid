@@ -317,6 +317,15 @@ extern void diesel_initialize(void);
 extern void diesel_step(void);
 extern void diesel_terminate(void);
 
+//-------Funciones para asignar entradas-------------
+extern void set_Vload(double);
+extern void set_flujo(double);
+
+//-----Funciones para obtener valores de las salidas-------
+extern double get_I_die(void);
+extern double get_Potencia(void);
+extern double get_duty(void);
+
 /* Real-time Model object */
 extern RT_MODEL_diesel_T *const diesel_M;
 

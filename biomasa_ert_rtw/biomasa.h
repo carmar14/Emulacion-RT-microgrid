@@ -396,6 +396,20 @@ extern void biomasa_initialize(void);
 extern void biomasa_step(void);
 extern void biomasa_terminate(void);
 
+//-------Funciones para asignar entradas-------------
+//extern void set_Vdc_bio(double);
+extern void set_Vload(double);
+extern void set_Qref_bio(double);
+extern void set_Pref_bio(double);
+//-----Funciones para obtener valores de las salidas-------
+	
+extern double get_I_bio(void);
+extern double get_Pm(void);
+extern double get_Qm(void);
+extern double get_duty_cycle(void);	
+extern double get_Potencia(void);	
+
+
 /* Real-time Model object */
 extern RT_MODEL_biomasa_T *const biomasa_M;
 

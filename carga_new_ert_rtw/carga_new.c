@@ -31,6 +31,59 @@ ExtU_carga_new_T carga_new_U;
 /* External outputs (root outports fed by signals with default storage) */
 ExtY_carga_new_T carga_new_Y;
 
+//Funciones creadas por el programador set y get
+//-------Funciones para asignar entradas-------------
+void set_Idc_PV(double ipv){
+	//printf("La accion 1 es: %3.2f \n",V_bio);
+	renovables_U.Ipv=ipv;
+	//printf("El voltaje es: %3.2f \n",BIO_csi_U.V_bio);
+	}
+	
+void set_Vload(double Vload){
+	renovables_U.Vload=Vload;
+}
+
+void set_Pref(double pr){
+	//printf("La accion 1 es: %3.2f \n",V_bio);
+	renovables_U.Piren=pr;
+	//printf("El voltaje es: %3.2f \n",BIO_csi_U.V_bio);
+	}
+	
+void set_Qref(double qr){
+	renovables_U.Qiren=qr;
+}
+
+//-----Funciones para obtener valores de las salidas-------
+	
+double get_I_pv(void){
+	return renovables_Y.i2;
+	 
+}
+
+double get_SOC(void){
+	return renovables_Y.soc;
+	 
+}
+
+double get_duty_cycle(void) {
+    return renovables_Y.duty_cycle; 
+}
+
+double get_Pm(void){
+	return renovables_Y.Poren;
+	 
+}
+
+double get_Qm(void){
+	return renovables_Y.Qoren;
+	 
+}
+
+double get_Potencia(void){
+	return renovables_Y.Potencia_ren;
+	 
+}
+
 /* Real-time model */
 RT_MODEL_carga_new_T carga_new_M_;
 RT_MODEL_carga_new_T *const carga_new_M = &carga_new_M_;

@@ -1,5 +1,3 @@
-// compile with: "gcc ert_main.c diesel.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall"
-
 /*
  * File: ert_main.c
  *
@@ -257,7 +255,7 @@ void rt_OneStep(void)
     
     //=============== Pipes Envio ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
-    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\n",Idie,duty_cycle,potencia);
+    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\n",Idie,duty_cycle,caudal,vdc);
     write(our_input_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================
     
@@ -325,142 +323,25 @@ void rt_OneStep(void)
  */
 int_T main(int_T argc, const char *argv[])
 {
-  
-    //====================================================================
-    //--------------------------------------
-	//----- CREATE A FIFO / NAMED PIPE -----
-	//--------------------------------------
-
-	printf("Making FIFO...\n");
-	result = mkfifo(OUR_INPUT_FIFO_NAME, 0777);		//(This will fail if the fifo already exists in the system from the app previously running, this is fine)
-	if (result == 0)
-	{
-		//FIFO CREATED
-		printf("New FIFO created: %s\n", OUR_INPUT_FIFO_NAME);
-	}
-
-	printf("Process %d opening FIFO %s\n", getpid(), OUR_INPUT_FIFO_NAME);
-	our_input_fifo_filestream = open(OUR_INPUT_FIFO_NAME, (O_WRONLY | O_NONBLOCK));
-					//Possible flags:
-					//	O_RDONLY - Open for reading only.
-					//	O_WRONLY - Open for writing only.
-					//	O_NDELAY / O_NONBLOCK (same function) - Enables nonblocking mode. When set read requests on the file can return immediately with a failure status
-					//											if there is no input immediately available (instead of blocking). Likewise, write requests can also return
-					//											immediately with a failure status if the output can't be written immediately.
-	if (our_input_fifo_filestream != -1)
-		printf("Opened FIFO: %i\n", our_input_fifo_filestream);
-    //====================================================================
-    
-    //Para RT
-    struct timespec t;
-    struct sched_param param;
-    /* default interval = 50000ns = 50us
-     * cycle duration = 100us
-     */
-    int interval=4*1000000;		//en ns   ->  20000=20us     *4  100
-    
-    if(argc>=2 && atoi(argv[1])>0)
-    {
-        printf("using realtime, priority: %d\n",atoi(argv[1]));
-        param.sched_priority = atoi(argv[1]);
-        /* enable realtime fifo scheduling */
-        if(sched_setscheduler(0, SCHED_FIFO, &param)==-1){
-            perror("sched_setscheduler failed");
-            exit(-1);
-        }
-    }
-    if(argc>=3){
-        interval=atoi(argv[2]);
-        printf("using realtime, priority: %d\n",interval);
-    }
-    
-    /* Unused arguments */
+  /* Unused arguments */
   (void)(argc);
   (void)(argv);
-  
-  //Grafica
-    
-    
-    temp = fopen("data.temp", "w");
-    
-    gnuplotPipe = popen ("gnuplot -persistent", "w");
-    
-    fprintf(gnuplotPipe,"set grid \n");
-    
-    //Serial
-    
-    fd=serialOpen ("/dev/ttyACM0", 115200);  //0 Para la corriente del generador diesel
-    serialClose(fd);
-    fd=serialOpen ("/dev/ttyACM0", 115200);
-    
-    //fd2=serialOpen ("/dev/ttyACM1", 9600);
-    //serialClose(fd2);
-    //fd2=serialOpen ("/dev/ttyACM1", 9600);
-    
-    sleep(1);
-    
-    //Inicializar comunicacion UDP---------------------------------------------------------
-    //setUDP();
-    
-    //------------GPIO---------------------
-    wiringPiSetup();
-    pinMode(0, OUTPUT);
-    pinMode(1, OUTPUT);
-    pinMode(3, OUTPUT);
-    //wiringPiISR(2, INT_EDGE_RISING, &lectura);
-    pinMode(2, INPUT);
-    digitalWrite(3,HIGH);
-    digitalWrite(1,LOW);
-    
-    if (MCP3204_init(&fileDescriptor,"/dev/spidev1.2",&ad_MCP3204,mode_SPI_00,4.08,error))
-    {
-        printf("Cannot initialize the MCP3204 ADC.\n");
-        printf("%s\n",error);
-        exit(1);
-    }
-    
-    delay(1500);
 
   /* Initialize model */
   diesel_initialize();
-  
-   int estado=0;
-    
-    /* get current time */
-    clock_gettime(0,&t); 
-    /* start after one second */
-    t.tv_sec++;
-    
 
   /* Simulating the model step behavior (in non real-time) to
    *  simulate model behavior at stop time.
    */
   while ((rtmGetErrorStatus(diesel_M) == (NULL)) && !rtmGetStopRequested
          (diesel_M)) {
-     /* wait untill next shot */
-        clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
-        /* do the stuff */
-        if(estado==0){
-            estado=1;
-            
-        }else{
-            estado=0;
-        }
-        digitalWrite (0, estado) ;
-        rt_OneStep();
-        t.tv_nsec+=interval;
-        tsnorm(&t);
+    rt_OneStep();
   }
 
   /* Disable rt_OneStep() here */
 
   /* Terminate model */
   diesel_terminate();
-  
-  //----- CLOSE THE FIFO -----
-	(void)close(our_input_fifo_filestream);
-    
-    
   return 0;
 }
 

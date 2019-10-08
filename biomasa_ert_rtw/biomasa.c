@@ -35,6 +35,55 @@ ExtY_biomasa_T biomasa_Y;
 RT_MODEL_biomasa_T biomasa_M_;
 RT_MODEL_biomasa_T *const biomasa_M = &biomasa_M_;
 
+
+//Funciones creadas por el programador set y get
+//-------Funciones para asignar entradas-------------
+/*
+void set_Vdc_bio(double Vdc_bio){
+	//printf("La accion 1 es: %3.2f \n",V_bio);
+	BIO_csi_sf_smpc_U.Vdc=Vdc_bio;
+	//printf("El voltaje es: %3.2f \n",BIO_csi_U.V_bio);
+	}
+
+*/
+	
+void set_Vload(double Vload){
+	biomasa_U.Vload=Vload;
+}
+
+void set_Qref_bio(double Qref_bio){
+	biomasa_U.Qibio=Qref_bio;
+	}
+	
+void set_Pref_bio(double Pref_bio){
+	biomasa_U.Pibio=Pref_bio;
+	}
+	
+//-----Funciones para obtener valores de las salidas-------
+	
+double get_I_bio(void){
+	return biomasa_Y.i1;
+	 
+	}
+	
+double get_Pm(void){
+	return biomasa_Y.Pobio;
+	
+}
+
+double get_Qm(void){
+	return biomasa_Y.Qobio;
+	
+}
+
+double get_duty_cycle(void) {
+    return biomasa_Y.duty_cycle; 
+}
+
+double get_Potencia(void) {
+    return biomasa_Y.Potencia_bio; 
+}
+
 /*
  * Time delay interpolation routine
  *

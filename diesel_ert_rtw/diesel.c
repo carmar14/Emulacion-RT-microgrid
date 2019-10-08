@@ -35,6 +35,28 @@ ExtY_diesel_T diesel_Y;
 RT_MODEL_diesel_T diesel_M_;
 RT_MODEL_diesel_T *const diesel_M = &diesel_M_;
 
+//-------Funciones para asignar entradas-------------
+void set_Vload(double Vload){
+	diesel_U.Vload=Vload;
+}
+
+void set_flujo(double flujo){
+	diesel_U.ref=flujo;
+}
+
+//-----Funciones para obtener valores de las salidas-------
+double get_I_die(void){
+	return diesel_Y.i3;
+}
+
+double get_Potencia(void){
+	return diesel_Y.potencia;
+}
+
+double get_duty(void) {
+    return diesel_Y.duty_cycle; 
+}  
+
 /*
  * Time delay interpolation routine
  *
