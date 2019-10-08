@@ -139,6 +139,28 @@ int result;
 char bufferPipe[128];
 //=========================================================
 
+//----------------------------Para RT------------------------------
+/* using clock_nanosleep of librt */
+extern int clock_nanosleep(clockid_t __clock_id, int __flags,
+        __const struct timespec *__req,
+        struct timespec *__rem);
+
+/* the struct timespec consists of nanoseconds
+ * and seconds. if the nanoseconds are getting
+ * bigger than 1000000000 (= 1 second) the
+ * variable containing seconds has to be
+ * incremented and the nanoseconds decremented
+ * by 1000000000.
+ */
+static inline void tsnorm(struct timespec *ts)
+{
+    while (ts->tv_nsec >= NSEC_PER_SEC) {
+        ts->tv_nsec -= NSEC_PER_SEC;
+        ts->tv_sec++;
+    }
+}
+//------------------------------------------------------------------
+
 void rt_OneStep(void);
 void rt_OneStep(void)
 {
