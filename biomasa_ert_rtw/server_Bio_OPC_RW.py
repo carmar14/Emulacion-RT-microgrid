@@ -106,7 +106,7 @@ try:
                 pm = float(PipeString[2])
                 qm = float(PipeString[3])
                 dc = float(PipeString[1])
-                potencia=float(PipeString[4]
+                potencia=float(PipeString[4])
                 #soc = float(PipeString[1])
                 #data4 = PipeString[3]
                 #print('Received: "{0}\"'.format(PipeString))

@@ -202,8 +202,8 @@ void rt_OneStep(void)
     
     //pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
     //qref=var3*k3+vx3;
-    pref=500;
-    qref=3500;//2430;//3403;
+    pref=-400;//500;
+    qref=5000;//3500;//2430;//3403;
     
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
@@ -447,7 +447,7 @@ int_T main(int_T argc, const char *argv[])
             (biomasa_M)) {
         
         /* wait untill next shot */
-        clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
+        //clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
         /* do the stuff */
         if(estado==0){
             estado=1;
