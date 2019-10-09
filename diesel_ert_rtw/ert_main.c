@@ -257,7 +257,7 @@ void rt_OneStep(void)
     
     //=============== Pipes Envio ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
-    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\n",Idie,duty_cycle,potencia);
+    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\n",Idie,duty_cycle,potencia);
     write(our_input_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================
     
