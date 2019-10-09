@@ -2,6 +2,7 @@
 
 #Para OPC
 from opcua import Server
+from opcua import Client
 from random import randint
 import time
 
@@ -9,8 +10,8 @@ import time
 import os, sys
 import fcntl
 #pipe_name = '/tmp/my_fifo'
-pipe_name = '/tmp/dataOutBIO'
-pipe_name2 = '/tmp/dataInBIO'
+pipe_name = '/tmp/dataOutD'
+pipe_name2 = '/tmp/dataInD'
 
 #________Creacion Pipe__________
 if not os.path.exists(pipe_name):
@@ -31,6 +32,7 @@ else:
 #_______________________________
 
 
+
 #============= Para OPC ==========================
 server = Server()
 
@@ -44,34 +46,37 @@ node = server.get_objects_node()
 
 Param = node.add_object(addspace, "Parameters")
 
-IBIO = Param.add_variable(addspace, "iBio",0)
-#SOC = Param.add_variable(addspace, "SOC",0)
+IDIE = Param.add_variable(addspace, "iDies",0)
+DUTY = Param.add_variable(addspace, "DiesDuty",0)
+POTENCIA= Param.add_variable(addspace, "Potencia",0)
 
-PREF = Param.add_variable(addspace, "Pref",0) 
-QREF = Param.add_variable(addspace, "Qref",0)
-PM = Param.add_variable(addspace, "Pm",0) 
-QM = Param.add_variable(addspace, "Qm",0)
-DC = Param.add_variable(addspace, "DuC",0)
-POTENCIA = Param.add_variable(addspace, "Potencia",0)
-
-
-IBIO.set_writable()
-#SOC.set_writable()
-PREF.set_writable()
-QREF.set_writable()
-PM.set_writable()
-QM.set_writable()
-DC.set_writable()
+IDIE.set_writable()
+DUTY.set_writable()
 POTENCIA.set_writable()
 
 server.start()
 print("Server started at ()".format(url))
 
+#===================================================
+
+
+#============= OPC Client ==========================
+conex = False
+c_url = "opc.tcp://172.16.49.84:4840"   #IP and Port from server
+
+client = Client(c_url)
+while not conex:
+    try:
+        client.connect()
+        conex=True
+    except:
+        #print("No client conection")
+        continue
+print("Client Connected")
 #=================================================
 
 try:
     #PipeIn = os.open(pipe_name, os.O_RDONLY | os.O_NONBLOCK)
-    print("Esperando abrir")
     PipeIn = open(pipe_name, 'r')
     print("Pipe 1 running...")
     fd = PipeIn.fileno()
@@ -81,54 +86,42 @@ try:
     PipeIn2 = os.open(pipe_name2, os.O_WRONLY)
     print("Pipe 2 running...")
     print("Program running...")
-    pref = 500
-    qref = 3500
+    VLOAD = client.get_node("ns=2;i=4")
+    vload = 0
     while True:
-        time.sleep(0.05)    
+        #time.sleep(0.004)    
         try:
             #PipeString = os.read(PipeIn, bufferSize)
             #PipeString = PipeIn.readline()[:-1]
+            PipeString = ""
             PipeString = PipeIn.readline().split()
-
-            pref1 = pref
-            qref1 = qref
-            pref = PREF.get_value()
-            qref = QREF.get_value()
-            if((pref1 != pref) or (qref1 != qref) ):
-                print("Pref {}  Qref {}".format(pref,qref))
-                string = str(pref)+'\t'+str(qref)+'\n'
-                os.write(PipeIn2, str.encode(string))
             if not PipeString:
                 #print ("Empty String!")
                 continue;
             else:
-                iBio = float(PipeString[0])
-                pm = float(PipeString[2])
-                qm = float(PipeString[3])
-                dc = float(PipeString[1])
-                potencia=float(PipeString[4])
-                #soc = float(PipeString[1])
+                Idie = float(PipeString[0])
+                Duty_cycle = float(PipeString[1])
+                potencia = float(PipeString[2])
                 #data4 = PipeString[3]
                 #print('Received: "{0}\"'.format(PipeString))
-                #print('Received: IBio:{}\tpm:{}\tqm:{}'.format(iBio,pm,qm))
-                IBIO.set_value(iBio)
-                PM.set_value(pm)
-                QM.set_value(qm)
-                DC.set_value(dc)
+                #print('Received: Idie:{}\tDuty Cycle:{}\tCaudal:{}'.format(Idie,Duty_cycle,Caudal))
+                IDIE.set_value(Idie)
+                DUTY.set_value(Duty_cycle)
                 POTENCIA.set_value(potencia)
-                    
+                
+            vload = VLOAD.get_value()
+            string = str(vload)+'\n'
+            os.write(PipeIn2, str.encode(string))
+            
         except OSError as err:
             if err.errno == 11:
                 print("Nothing there")
                 continue;
             else:
                 raise err; 
-except OSError as err:
-    raise err;
-    print("Error! Closing Pipe")
+except: 
+    print("Error Closing Pipe")
     ##os.close(pipe_name)
-
-
 
 
 

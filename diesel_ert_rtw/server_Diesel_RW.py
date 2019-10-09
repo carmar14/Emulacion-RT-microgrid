@@ -9,7 +9,7 @@ import time
 import os, sys
 import fcntl
 #pipe_name = '/tmp/my_fifo'
-pipe_name = '/tmp/dataC'
+pipe_name = '/tmp/dataD'
 
 #________Creacion Pipe__________
 if not os.path.exists(pipe_name):
@@ -35,15 +35,15 @@ node = server.get_objects_node()
 
 Param = node.add_object(addspace, "Parameters")
 
-PM = Param.add_variable(addspace, "Pm",0)
-QM = Param.add_variable(addspace, "Qm",0)
-VLOAD = Param.add_variable(addspace, "Vload",0)
-POTENCIA = Param.add_variable(addspace, "Potencia",0)
+IDIE = Param.add_variable(addspace, "iDies",0)
+DUTY = Param.add_variable(addspace, "DiesDuty",0)
+CAUD = Param.add_variable(addspace, "DiesCaud",0)
+VDC = Param.add_variable(addspace, "Vdc",0)
 
-PM.set_writable()
-QM.set_writable()
-VLOAD.set_writable()
-POTENCIA.set_writable()
+IDIE.set_writable()
+DUTY.set_writable()
+CAUD.set_writable()
+VDC.set_writable()
 
 server.start()
 print("Server started at ()".format(url))
@@ -59,7 +59,7 @@ try:
     fcntl.fcntl(fd, fcntl.F_SETFL, flag | os.O_NONBLOCK)
     flag = fcntl.fcntl(fd, fcntl.F_GETFL)
     while True:
-        #time.sleep(0.004)    
+        #time.sleep(1)    
         try:
             #PipeString = os.read(PipeIn, bufferSize)
             #PipeString = PipeIn.readline()[:-1]
@@ -68,17 +68,17 @@ try:
                 #print ("Empty String!")
                 continue;
             else:
-                Pm = float(PipeString[0])
-                Qm = float(PipeString[1])
-                Vload = float(PipeString[2])
-                Potencia= float(PipeString[3])
+                Idie = float(PipeString[0])
+                Duty_cycle = float(PipeString[1])
+                Caudal = float(PipeString[2])
+                #Vdc = float(PipeString[3])
                 #data4 = PipeString[3]
                 #print('Received: "{0}\"'.format(PipeString))
                 #print('Received: Idie:{}\tDuty Cycle:{}\tCaudal:{}'.format(Idie,Duty_cycle,Caudal))
-                PM.set_value(Pm)
-                QM.set_value(Qm)
-                VLOAD.set_value(Vload)
-                POTENCIA.set_value(Potencia)
+                IDIE.set_value(Idie)
+                DUTY.set_value(Duty_cycle)
+                CAUD.set_value(Caudal)
+                #VDC.set_value(Vdc)
         except OSError as err:
             if err.errno == 11:
                 print("Nothing there")
