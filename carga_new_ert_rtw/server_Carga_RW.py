@@ -38,10 +38,12 @@ Param = node.add_object(addspace, "Parameters")
 PM = Param.add_variable(addspace, "Pm",0)
 QM = Param.add_variable(addspace, "Qm",0)
 VLOAD = Param.add_variable(addspace, "Vload",0)
+POTENCIA = Param.add_variable(addspace, "Potencia",0)
 
 PM.set_writable()
 QM.set_writable()
 VLOAD.set_writable()
+POTENCIA.set_writable()
 
 server.start()
 print("Server started at ()".format(url))
@@ -69,12 +71,14 @@ try:
                 Pm = float(PipeString[0])
                 Qm = float(PipeString[1])
                 Vload = float(PipeString[2])
+                Potencia= float(PipeString[3])
                 #data4 = PipeString[3]
                 #print('Received: "{0}\"'.format(PipeString))
                 #print('Received: Idie:{}\tDuty Cycle:{}\tCaudal:{}'.format(Idie,Duty_cycle,Caudal))
                 PM.set_value(Pm)
                 QM.set_value(Qm)
                 VLOAD.set_value(Vload)
+                POTENCIA.set_value(Potencia)
         except OSError as err:
             if err.errno == 11:
                 print("Nothing there")
