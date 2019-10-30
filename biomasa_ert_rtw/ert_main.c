@@ -31,6 +31,7 @@
 //#include <ncurses.h>
 #include "libmcp3204.h"
 
+
 /*
  * Associating rt_OneStep with a real-time clock or interrupt service routine
  * is what makes the generated code "real-time".  The function rt_OneStep is
@@ -46,7 +47,8 @@
 
 //Variables creadas por el programador
 #define BUFFER_SIZE 1024
-
+double valor_min=1000.0;
+double valor_max=0.0;
 //------Entradas-------
 
 
@@ -195,14 +197,14 @@ void rt_OneStep(void)
     
     
     //vdc=500;   //Proveniente de la fuente de generación
-    //vload=171*sin(2*3.14*120*tiempo);//var1*k+vx; //Proveniente de la carga
-    vload=var1*k+vx;
+    vload=170*sin(2*3.14*60*tiempo);//var1*k+vx; //Proveniente de la carga
+    //vload=var1*k+vx;
     tiempo=tiempo+0.0001;
-    if (tiempo>=0.0083) tiempo=0;
+    if (tiempo>0.0167) tiempo=0;
     
     //pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
     //qref=var3*k3+vx3;
-    pref=-400;//500;
+    pref=400;//500;   antes estaba en -400
     qref=5000;//3500;//2430;//3403;
     
     //=============== Pipes Lectura ========================
@@ -235,6 +237,14 @@ void rt_OneStep(void)
     Qm1=get_Qm();
     potencia=get_Potencia();
     
+    //Verificando valores maximos y minimos
+    if (i1 > valor_max){
+         valor_max=i1;
+    }
+    if (i1 < valor_min){
+        valor_min=i1;    
+    }
+    
     printf("El vload es : %3.2f \n",vload);
     printf("La potencia Pref es: %3.2f \n",pref);
     printf("La potencia Qref es: %3.2f \n", qref);
@@ -242,6 +252,8 @@ void rt_OneStep(void)
     printf("La potencia Q medida es: %3.2f \n", Qm1);
     printf("La corriente del inversor 1 es: %3.2f \n",i1);
     printf("El duty de bio es: %3.2f \n",duty_cycle);
+    printf("El valor minimo de corriente : %3.2f \n",valor_min);
+    printf("El valor maximo de corriente : %3.2f \n",valor_max);
     
     
     //-----------Ataque----------------
