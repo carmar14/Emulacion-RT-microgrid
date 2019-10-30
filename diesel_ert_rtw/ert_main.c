@@ -31,6 +31,7 @@
 #include "libmcp3204.h"
 
 
+
 /*
  * Associating rt_OneStep with a real-time clock or interrupt service routine
  * is what makes the generated code "real-time".  The function rt_OneStep is
@@ -78,7 +79,7 @@ char var1s[7];
 char var2s[7];
 char var3s[7];
 int fd;
-int fd2;
+
 int i2a=0;
 int caudala=0;
 char buffer[8];
@@ -160,7 +161,7 @@ void rt_OneStep(void)
   /* Set model inputs here */
   
   var=1;
-    
+    digitalWrite (0, 0) ;
     if (MCP3204_convert(fileDescriptor,singleEnded,CH0,&ad_MCP3204,error))
     {
         printf("Error during conversion1.\n");
@@ -168,28 +169,13 @@ void rt_OneStep(void)
         exit(1);
     }
     
+    delayMicroseconds(500);
     
     var1=MCP3204_getValue(ad_MCP3204);
     
-    if (MCP3204_convert(fileDescriptor,singleEnded,CH1,&ad_MCP3204,error))
-    {
-        printf("Error during conversion1.\n");
-        printf("%s\n",error);
-        exit(1);
-    }
+    delayMicroseconds(500);
     
-    
-    var2=MCP3204_getValue(ad_MCP3204);
-    
-    if (MCP3204_convert(fileDescriptor,singleEnded,CH2,&ad_MCP3204,error))
-    {
-        printf("Error during conversion1.\n");
-        printf("%s\n",error);
-        exit(1);
-    }
-    
-    
-    var3=MCP3204_getValue(ad_MCP3204);
+    digitalWrite (0, 1) ;
     
     //printf("Trama de arduino: %s\n",read_buffer);
     
@@ -235,6 +221,8 @@ void rt_OneStep(void)
     set_flujo(flujo);
 
   /* Step the model for base rate */
+  
+  
   diesel_step();
 
   /* Get model outputs here */
@@ -285,18 +273,7 @@ void rt_OneStep(void)
     serialFlush(fd);
     tcflush(fd, TCIOFLUSH);
     
-    //Datos del caudal Bayona
-    memset(buffer2,0,sizeof(buffer2));
-    //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
-    sprintf(buffer2,"v%07d\n",caudala);
-    //while(pinr==0){
-    serialPuts(fd2,buffer2);
-    serialFlush(fd2);
-    //pinr=digitalRead(2);
-    //printf("El dato pin es: %d \n",pinr);
-    //}
-    serialFlush(fd2);
-    tcflush(fd2, TCIOFLUSH);
+    
     
     
     pinr=0;
@@ -357,7 +334,7 @@ int_T main(int_T argc, const char *argv[])
     /* default interval = 50000ns = 50us
      * cycle duration = 100us
      */
-    int interval=4*1000000;		//en ns   ->  20000=20us     *4  100
+    int interval=10*1000000;		//en ns   ->  20000=20us     *4  100
     
     if(argc>=2 && atoi(argv[1])>0)
     {
@@ -393,9 +370,6 @@ int_T main(int_T argc, const char *argv[])
     serialClose(fd);
     fd=serialOpen ("/dev/ttyACM0", 115200);
     
-    //fd2=serialOpen ("/dev/ttyACM1", 9600);
-    //serialClose(fd2);
-    //fd2=serialOpen ("/dev/ttyACM1", 9600);
     
     sleep(1);
     
@@ -438,8 +412,9 @@ int_T main(int_T argc, const char *argv[])
   while ((rtmGetErrorStatus(diesel_M) == (NULL)) && !rtmGetStopRequested
          (diesel_M)) {
      /* wait untill next shot */
-        clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
+        //clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
         /* do the stuff */
+        /*
         if(estado==0){
             estado=1;
             
@@ -447,6 +422,7 @@ int_T main(int_T argc, const char *argv[])
             estado=0;
         }
         digitalWrite (0, estado) ;
+        */
         rt_OneStep();
         t.tv_nsec+=interval;
         tsnorm(&t);
