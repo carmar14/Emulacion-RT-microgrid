@@ -1,0 +1,44 @@
+=======================================================
+
+Python
+
+sudo apt-get install libxml2-dev libxmlsec1-dev libffi-dev
+sudo pip3 install cryptography
+sudo install freeopcua
+
+=======================================================
+
+Arduino
+
+https://www.arduino.cc/en/Main/Software
+Linux ARM 32 bits
+descomprimir
+ejecutar en un terminal 
+pi@raspberrypi:~/Downloads/arduino-1.8.10 $ sudo ./install.sh
+
+Instalar gestor de a tarjeta Due
+
+=======================================================
+
+Configuración para manejo de tarjeta MCP3204
+
+sudo su
+cd /boot/
+nano config.txt
+// comentar el dtoverlay que haya 
+//y adicionar dtoverlay=spi1-3cs
+
+=======================================================
+
+Descargar repositorio GitHub
+
+Preferiblemente en la carpeta de descargas
+Terminal:
+cd Downloads
+git clone https://github.com/carmar14/Emulacion-RT-microgrid.git
+
+
+Aplicar parche RT
+
+Ir a la carpeta con nombre como RT_Patch_Raspbian...
+y seguir instrucciones del archivo "descripción_ultimo_parche_RT.txt"
