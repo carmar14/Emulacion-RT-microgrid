@@ -4,7 +4,7 @@ Python
 
 sudo apt-get install libxml2-dev libxmlsec1-dev libffi-dev
 sudo pip3 install cryptography
-sudo install freeopcua
+sudo pip3 install freeopcua
 
 =======================================================
 
