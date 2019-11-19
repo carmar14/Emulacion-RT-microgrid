@@ -1,5 +1,5 @@
 //compile using "gcc ert_main.c carga_new.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c -lm -lwiringPi -lrt -Wall"
-/*
+/* 
  * File: ert_main.c
  *
  * Code generated for Simulink model 'carga_new'.
@@ -43,6 +43,9 @@
 //Variables creadas por el programador
 
 #define MSGISIZE 26
+
+double valor_max=0.0;
+double valor_min=2000;
 
 //Ataques
 #define BUFFER_SIZE 1024
@@ -330,6 +333,10 @@ void rt_OneStep(void)
     //i2=40*sin(2*3.14*60*tiempo);
     i3=var3*k3+vx3;//90*sin(2*3.14*60*tiempo);//(var3*k3)+vx3;  //renovables
     
+    //Simulacion de corrientes
+    //i1=60*sin(2*3.14*60*tiempo);
+    //i2=1200*sin(2*3.14*60*tiempo);
+    //i3=100*sin(2*3.14*60*tiempo);
     tiempo=tiempo+0.0001;
     if (tiempo==0.0168) tiempo=0.0;
     //i3=i3/10.0;
@@ -353,7 +360,7 @@ void rt_OneStep(void)
     
     
     
-    set_i1(i1);
+    set_i1(i1);  
     set_i2(i2);
     set_i3(i3);
     
@@ -374,9 +381,20 @@ void rt_OneStep(void)
     Vload=get_Vload();
     potencia=get_Potencia();
     
-    printf("La potencia P medida es: %3.2f \n",Pm);
-    printf("La potencia Q medida es: %3.2f \n",Qm);
+    if (Vload> valor_max){
+         valor_max=Vload;
+    } 
+    if (Vload< valor_min){
+        valor_min=Vload;    
+    }
+    
+    //printf("La potencia P medida es: %3.2f \n",Pm);
+    //printf("La potencia Q medida es: %3.2f \n",Qm);
     printf("Voltaje : %3.2f \n",Vload);
+    //printf("El valor minimo de corriente : %3.2f \n",valor_min);
+    //printf("El valor maximo de corriente : %3.2f \n",valor_max);
+    
+    
     
     //-----------Ataque----------------
     fgets(buffera, BUFFER_SIZE, input_DoS);
@@ -387,7 +405,7 @@ void rt_OneStep(void)
         Vload=0.0;
         printf("El valor del ataque es: %d\n",ai);
     }
-    printf("La valor de tensión modificada es: %3.2f \n",Vload);
+    //printf("La valor de tensión modificada es: %3.2f \n",Vload);
     
 //     if (min>Vload) min=Vload;
 //     if (max<Vload) max=Vload;
