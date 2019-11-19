@@ -253,8 +253,8 @@ void rt_OneStep(void)
     //vload=vload/10.0;
     //Prefd=var1*k1+vx1;
     //Qrefd=var2*k2+vx2;
-    Prefd=500;
-    Qrefd=3500;//2430;//3403;
+    Prefd=5000;//500;
+    Qrefd=8000;//3500;//2430;//3403;
     
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));

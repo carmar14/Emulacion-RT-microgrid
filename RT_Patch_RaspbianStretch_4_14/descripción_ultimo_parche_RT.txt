@@ -1,0 +1,16 @@
+
+~Desktop$ cp rt-kernel.tgz /tmp #ir a ubicacion del comprimido y copiar a directorio /tmp
+cd /tmp
+/tmp$ tar xzf rt-kernel.tgz
+/tmp$ cd boot
+/tmp/boot$ sudo cp -rd * /boot/
+/tmp/boot$ cd ../lib
+/tmp/lib$ sudo cp -dr * /lib/
+/tmp/lib$ cd ../overlays
+/tmp/overlays$ sudo cp -d * /boot/overlays
+/tmp/overlays$ cd ..
+/tmp$ sudo cp -d bcm* /boot/
+
+sudo nano /boot/config.txt
+# Add the following option:
+kernel=vmlinuz-4.14.81-rt47-v7+
