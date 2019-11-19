@@ -1,4 +1,4 @@
-/* compile using  "gcc ert_main.c biomasa_data.c biomasa.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c -lm -lwiringPi -lrt -Wall"  */
+/* compile using  "gcc ert_main_New_Serial.c biomasa_data.c biomasa.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c -lm -lwiringPi -lrt -Wall"  */
 
 
 /*
@@ -79,6 +79,8 @@ double potencia=0.0;
 #define MSGISIZE 9
 
 //Comunicacion
+#include <stdbool.h> 
+
 int  bytes_read = 0;
 int pinr=0;
 int var=0;
@@ -93,6 +95,15 @@ char var3s[7];
 int fd;
 int i1a=0;
 char buffer[8];
+
+bool stringComplete = false;  // whether the string is complete
+bool conti = true;
+char inputCharArray[125];
+char delim[] = ",";
+char *ptr;
+int j = 0;
+char inChar;
+char *vload_CA;
 
 //===============================================================
 //-------Variables para graficar
@@ -175,17 +186,17 @@ void rt_OneStep(void)
     
     /* Step the model for base rate */
     
-    var=1;
+    //var=1;
     
-    if (MCP3204_convert(fileDescriptor,singleEnded,CH0,&ad_MCP3204,error))
-    {
-        printf("Error during conversion1.\n");
-        printf("%s\n",error);
-        exit(1);
-    }
+    //if (MCP3204_convert(fileDescriptor,singleEnded,CH0,&ad_MCP3204,error))
+    //{
+        //printf("Error during conversion1.\n");
+        //printf("%s\n",error);
+        //exit(1);
+    //}
     
     
-    var1=MCP3204_getValue(ad_MCP3204);  //Vload
+    //var1=MCP3204_getValue(ad_MCP3204);  //Vload
     
     
     
@@ -198,7 +209,48 @@ void rt_OneStep(void)
     
     //vdc=500;   //Proveniente de la fuente de generación
     //vload=170*sin(2*3.14*60*tiempo);//var1*k+vx; //Proveniente de la carga
-    vload=var1*k+vx;
+    //vload=var1*k+vx;
+    
+    // ============================= recibe Serial===========================
+    
+    stringComplete = false;
+    conti = true;
+    serialFlush(fd);
+    
+    memset(inputCharArray, 0, sizeof(inputCharArray));
+    while (conti) {
+      inChar = serialGetchar(fd);
+      if (inChar == '\n') {
+        j = 0;
+        while (!stringComplete) {
+          while (serialDataAvail (fd) > 0  && conti) {
+            inChar = serialGetchar(fd);
+            if (inChar == '\n') {
+              stringComplete = true;
+              conti = false;
+            } else {
+              inputCharArray[j] = inChar;
+              j++;
+            }
+          }
+        }
+      }
+
+    }
+    //ptr = strtok(inputCharArray, delim);
+    //vload_CA = ptr;
+    //vload = atoi(vload_CA);
+    vload = atoi(inputCharArray);
+    //ptr = strtok(NULL, delim);
+    //eolRef_CA = ptr;
+    //eolRef = eolRef_CA.toFloat();
+    //ptr = strtok(NULL, delim);
+    //diesRef_CA = ptr;
+    //diesRef = diesRef_CA.toFloat();
+    
+    //=======================================================================
+    vload = vload / 10.0;
+    
     tiempo=tiempo+0.0001;
     if (tiempo>0.0167) tiempo=0;
     
@@ -281,7 +333,7 @@ void rt_OneStep(void)
     
     memset(buffer,0,sizeof(buffer));
     //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
-    sprintf(buffer,"v%07d\n",i1a);
+    sprintf(buffer,"%d\n",i1a);
     
     serialPuts(fd,buffer);
     serialFlush(fd);
