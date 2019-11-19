@@ -301,9 +301,14 @@ static inline void tsnorm(struct timespec *ts)
 	  //i1=i1/10.0;
 	  i2=(var2*k2)+vx2;
 	  //i2=i2/10.0;
-	  //i1=40*sin(2*3.14*60*tiempo);
-	  //i2=40*sin(2*3.14*60*tiempo);
+	  
 	  i3=var3*k3+vx3;//90*sin(2*3.14*60*tiempo);//(var3*k3)+vx3;
+	  
+	  /*
+	  i1=40*sin(2*3.14*60*tiempo);
+	  i2=40*sin(2*3.14*60*tiempo);
+	  i3=90*sin(2*3.14*60*tiempo);
+	  */
 	  
 	  tiempo=tiempo+0.0001;
 	  if (tiempo==0.0168) tiempo=0.0;
