@@ -195,12 +195,12 @@ void rt_OneStep(void)
     memset(inputCharArray, 0, sizeof(inputCharArray));
     while (conti) {
       inChar = serialGetchar(fd);
-      if (inChar == '\n') {
+      if (inChar == 's') {
         j = 0;
         while (!stringComplete) {
           while (serialDataAvail (fd) > 0  && conti) {
             inChar = serialGetchar(fd);
-            if (inChar == '\n') {
+            if (inChar == 'e') {
               stringComplete = true;
               conti = false;
             } else {
