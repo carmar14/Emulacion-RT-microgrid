@@ -15,10 +15,7 @@ void setup() {
   xTaskCreate(commOut_Rasp, NULL, configMINIMAL_STACK_SIZE , NULL, 1, NULL);
   xTaskCreate(commIN_Load, NULL, configMINIMAL_STACK_SIZE , NULL, 1, NULL);
   xTaskCreate(commOut_Load, NULL, configMINIMAL_STACK_SIZE , NULL, 1, NULL);
-<<<<<<< HEAD
 
-=======
->>>>>>> 80fc511ee0b7b2720f6918121bcaec253aa4030b
   vTaskStartScheduler();
 }
 
