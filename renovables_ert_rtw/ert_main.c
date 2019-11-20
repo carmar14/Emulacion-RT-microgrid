@@ -47,6 +47,9 @@
 #define BUFFER_SIZE 1024
 double Vg,Vc,n,Ns,T1,Voc_T1,Isc_T1,Isc_T2,T2,Voc_T2,Ics_T2,TaK,K0,IL_T1,IL,I0,I0_T1,Xv,dVdI_Voc,k,q,Rs,A,Vt_Ta,Ia;
 double Suns,TaC,Va,Temp,Volt,Irra;
+double tiempo=0.0;
+double valor_min=1000.0;
+double valor_max=0.0;
 
 //Datos del txt
 const char *delimiter_characters = "\t";
@@ -250,6 +253,9 @@ void rt_OneStep(void)
     double vx4=-90-(556*2*90)/2207.0;
     
     vload3=var3*k+vx; //Proveniente de la carga
+    //vload3=170*sin(2*3.14*60*tiempo);
+    tiempo=tiempo+0.0001;
+    if (tiempo>0.0167) tiempo=0;
     //vload=vload/10.0;
     //Prefd=var1*k1+vx1;
     //Qrefd=var2*k2+vx2;
@@ -307,6 +313,13 @@ void rt_OneStep(void)
     duty_cyle=get_duty_cycle();
     potencia=get_Potencia();
     
+    if (i3 > valor_max){
+         valor_max=i3;
+    }
+    if (i3 < valor_min){
+        valor_min=i3;    
+    }
+    
     printf("La irradianza es: %3.2f \n",Suns);
     printf("La temperatura es: %3.2f \n",TaC);
     printf("La potencia activa referencia es: %3.2f \n",Prefd);
@@ -319,6 +332,9 @@ void rt_OneStep(void)
     printf("La corriente del inversor 3 es: %3.2f \n",i3);
     printf("El estado de la bateria es: %3.2f \n",soc);
     printf ("La tensión en la carga es :%3.2f \n",vload3);
+    printf("El valor minimo de corriente : %3.2f \n",valor_min);
+    printf("El valor maximo de corriente : %3.2f \n",valor_max);
+    
     
     //-----------Ataque----------------
     fgets(buffera, BUFFER_SIZE, input_DoS);
