@@ -1,4 +1,4 @@
-// compile with "gcc ert_main.c renovables.c renovables_data.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall -lpthread
+// compile with "gcc ert_main_New_Serial.c renovables.c renovables_data.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall -lpthread
 
 /*
  * File: ert_main.c
@@ -272,16 +272,18 @@ void rt_OneStep(void)
     stringComplete = false;
     conti = true;
     serialFlush(fd3);
-    
+    printf("Pre Serial\n");
     memset(inputCharArray, 0, sizeof(inputCharArray));
     while (conti) {
       inChar = serialGetchar(fd3);
-      if (inChar == '\n') {
+      //printf("Buscando S:\n");
+      //printf("cahr: %c\n",inChar);
+      if (inChar == 's') {
         j = 0;
         while (!stringComplete) {
           while (serialDataAvail (fd3) > 0  && conti) {
             inChar = serialGetchar(fd3);
-            if (inChar == '\n') {
+            if (inChar == 'e') {
               stringComplete = true;
               conti = false;
             } else {
@@ -293,9 +295,10 @@ void rt_OneStep(void)
       }
 
     }
+    printf("Post serial\n");
     
     vload3 = atoi(inputCharArray);
-    vload3 = vload / 10.0;
+    vload3 = vload3 / 10.0;
     
     //=======================================================================
     
