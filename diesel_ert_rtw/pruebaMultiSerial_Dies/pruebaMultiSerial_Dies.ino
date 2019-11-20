@@ -2,17 +2,23 @@
 
 int loadVolt = 0;
 int Dies = 0;
+int DiesA=0;
 
 void setup() {
   // put your setup code here, to run once:
   SerialUSB.begin(115200);
   Serial.begin(115200);
   Serial2.begin(115200);
+  analogWriteResolution(12);
 
   xTaskCreate(commIN_Rasp, NULL, configMINIMAL_STACK_SIZE , NULL, 1, NULL);
   xTaskCreate(commOut_Rasp, NULL, configMINIMAL_STACK_SIZE , NULL, 1, NULL);
   xTaskCreate(commIN_Load, NULL, configMINIMAL_STACK_SIZE , NULL, 1, NULL);
   xTaskCreate(commOut_Load, NULL, configMINIMAL_STACK_SIZE , NULL, 1, NULL);
+<<<<<<< HEAD
+
+=======
+>>>>>>> 80fc511ee0b7b2720f6918121bcaec253aa4030b
   vTaskStartScheduler();
 }
 
@@ -22,9 +28,16 @@ static void commIN_Rasp(void* arg) {
   xLastWakeTime = xTaskGetTickCount();
 
   while (1) {
-    SerialUSB.flush();
-    Dies = SerialUSB.parseInt();
-    
+
+    if (SerialUSB.available()) {
+      Dies = SerialUSB.parseInt();
+      SerialUSB.flush();
+    }
+
+    DiesA=map(Dies,-40000,40000,0,4095);
+    analogWrite(DAC1,DiesA);
+        
+
     vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_PERIOD_MS));
   }
 
@@ -37,9 +50,9 @@ static void commOut_Rasp(void* arg) {
 
   while (1) {
 
-    //SerialUSB.print('s');
-    SerialUSB.println(loadVolt);
-    //SerialUSB.println('e');
+    SerialUSB.print('s');
+    SerialUSB.print(loadVolt);
+    SerialUSB.println('e');
     vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_PERIOD_MS));
   }
 }
@@ -49,8 +62,11 @@ static void commIN_Load(void* arg) {
   xLastWakeTime = xTaskGetTickCount();
 
   while (1) {
-    Serial.flush();
-    loadVolt = Serial.parseInt();
+    
+    if (Serial.available()) {
+      loadVolt = Serial.parseInt();
+      Serial.flush();
+    }
 
     vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_PERIOD_MS));
   }
@@ -64,5 +80,5 @@ static void commOut_Load(void* arg) {
     vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_PERIOD_MS));
   }
 }
- 
+
 void loop() {}
