@@ -334,7 +334,7 @@ void rt_OneStep(void)
     }
     
     ipv=1.5;//500;   //Proveniente de la fuente de generación PV
-    ipv=Ia;
+    //ipv=Ia;
     
     set_Idc_PV(ipv);
     set_Vload(vload3);
