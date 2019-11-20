@@ -13,7 +13,7 @@ void setup() {
   xTaskCreate(commOut_Rasp, NULL, configMINIMAL_STACK_SIZE , NULL, 1, NULL);
   xTaskCreate(commIN_Load, NULL, configMINIMAL_STACK_SIZE , NULL, 1, NULL);
   xTaskCreate(commOut_Load, NULL, configMINIMAL_STACK_SIZE , NULL, 1, NULL);
-  
+  vTaskStartScheduler();
 }
 
 static void commIN_Rasp(void* arg) {
