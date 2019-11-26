@@ -36,7 +36,7 @@ static void commIN_Rasp(void* arg) {
       SerialUSB.flush();
     }
 
-    loadVoltA=map(Dies,-4800,4800,0,4095);
+    loadVoltA=map(loadVolt,-4800,4800,0,4095);
     analogWrite(DAC0,loadVoltA);    
 
     vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_PERIOD_MS));
