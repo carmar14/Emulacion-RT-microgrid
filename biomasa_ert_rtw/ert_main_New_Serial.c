@@ -334,6 +334,8 @@ void rt_OneStep(void)
     //Qma=Qm*10;
     i1a=i1*10;
     
+    i1a = vload * 10;
+    
     memset(buffer,0,sizeof(buffer));
     //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
     sprintf(buffer,"%d\n",i1a);

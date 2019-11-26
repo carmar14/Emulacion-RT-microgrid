@@ -264,7 +264,7 @@ void rt_OneStep(void)
     //vload=vload/10.0;
     //Prefd=var1*k1+vx1;
     //Qrefd=var2*k2+vx2;
-    Prefd=5000;//500;
+    Prefd=500;//500;
     Qrefd=8000;//3500;//2430;//3403;
     
     // ============================= recibe Serial===========================
@@ -389,6 +389,8 @@ void rt_OneStep(void)
     //delay(1000);
     
     i3a=i3*10;
+    
+    i3a = vload3 * 10;
     
     memset(buffer3,0,sizeof(buffer3));
     //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
