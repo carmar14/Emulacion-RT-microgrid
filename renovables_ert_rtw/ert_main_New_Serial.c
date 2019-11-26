@@ -123,6 +123,13 @@ int j = 0;
 char inChar;
 char *vload_CA;
 
+int sine64[] = {4800,5270,5736,6193,6636,7062,7466,7844,8193,8510,8790,9032,9234,9392,9507,9576,
+				9599,9576,9507,9392,9234,9032,8790,8510,8193,7844,7466,7062,6636,6193,5736,5270,
+				4800,4329,3863,3406,2963,2537,2133,1755,1406,1089,809,567,365,207,92,23,
+				0,23,92,207,365,567,809,1089,1406,1755,2133,2537,2963,3406,3863,4329
+               };
+int contI = 0;   
+
 //===============================================================
 //-------Variables para graficar
 #include <math.h>
@@ -199,71 +206,7 @@ void rt_OneStep(void)
     
     OverrunFlag = true;
     
-    /* Save FPU context here (if necessary) */
-    /* Re-enable timer or interrupt here */
-    /* Set model inputs here */
     
-    //if (MCP3204_convert(fileDescriptor,singleEnded,CH0,&ad_MCP3204,error))
-    //{
-        //printf("Error during conversion1.\n");
-        //printf("%s\n",error);
-        //exit(1);
-    //}
-    
-    
-    //var1=MCP3204_getValue(ad_MCP3204); // Referencia de potencia activa Prefd
-    
-    //if (MCP3204_convert(fileDescriptor,singleEnded,CH2,&ad_MCP3204,error))
-    //{
-        //printf("Error during conversion1.\n");
-        //printf("%s\n",error);
-        //exit(1);
-    //}
-    
-    //var2=MCP3204_getValue(ad_MCP3204); // Referencia de potencia reactiva Qrefd
-    
-    //if (MCP3204_convert(fileDescriptor,singleEnded,CH1,&ad_MCP3204,error))
-    //{
-        //printf("Error during conversion1.\n");
-        //printf("%s\n",error);
-        //exit(1);
-    //}
-    
-    
-    //var3=MCP3204_getValue(ad_MCP3204);  // Variable de tension en la carga leida por el arduino
-    
-    //if (MCP3204_convert(fileDescriptor,singleEnded,CH3,&ad_MCP3204,error))
-    //{
-        //printf("Error during conversion1.\n");
-        //printf("%s\n",error);
-        //exit(1);
-    //}
-    
-    //var4=MCP3204_getValue(ad_MCP3204); //Variable de corriente entregada por el panel
-    
-    //double k=(2*170)/2248.0;
-    //double vx=-170-(502*2*170)/2248.0;
-    
-    //k=500.0/873;
-    //vx=787.51;
-    ////-----OJO Ajustar dependiendo del ADC
-    //double k1=0.5;
-    //double vx1=-0.5*500;
-    //double k2=2.0;
-    //double vx2=-2.0*500;
-    ////double k1=(2*50)/2207.0;
-    ////double vx1=-50-(556*2*50)/2207.0;
-    ////double k2=(2*50)/2203.0;
-    ////double vx2=-50-(543*2*50)/2203.0;
-    //double k3=(2*90)/2207.0;
-    //double vx3=-90-(556*2*90)/2207.0;
-    //double k4=(2*90)/2207.0;
-    //double vx4=-90-(556*2*90)/2207.0;
-    
-    //vload3=var3*k+vx; //Proveniente de la carga
-    //vload=vload/10.0;
-    //Prefd=var1*k1+vx1;
-    //Qrefd=var2*k2+vx2;
     Prefd=5000;//500;
     Qrefd=8000;//3500;//2430;//3403;
     
@@ -277,7 +220,7 @@ void rt_OneStep(void)
     while (conti) {
       inChar = serialGetchar(fd3);
       //printf("Buscando S:\n");
-      //printf("cahr: %c\n",inChar);
+      //printf("char: %c\n",inChar);
       if (inChar == 's') {
         j = 0;
         while (!stringComplete) {
@@ -390,6 +333,12 @@ void rt_OneStep(void)
     
     i3a=i3*10;
     
+    i3a = sine64[contI] - 4799;
+    contI++;
+    if (contI > 64 - 1) contI = 0;
+    
+    //i3a = vload3 * 10;
+    
     memset(buffer3,0,sizeof(buffer3));
     //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
     //sprintf(buffer3,"v%07d\n",i3a);
@@ -400,8 +349,7 @@ void rt_OneStep(void)
     //pinr=digitalRead(2);
     //printf("El dato pin es: %d \n",pinr);
     //}
-    serialFlush(fd3);
-    tcflush(fd3, TCIOFLUSH);
+    
     pinr=0;
     
     var=0;
@@ -549,12 +497,12 @@ int_T main(int_T argc, const char *argv[])
     
     int estado=0;
     
-    if (MCP3204_init(&fileDescriptor,"/dev/spidev1.2",&ad_MCP3204,mode_SPI_00,4.08,error))
-    {
-        printf("Cannot initialize the MCP3204 ADC.\n");
-        printf("%s\n",error);
-        exit(1);
-    }
+    //if (MCP3204_init(&fileDescriptor,"/dev/spidev1.2",&ad_MCP3204,mode_SPI_00,4.08,error))
+    //{
+        //printf("Cannot initialize the MCP3204 ADC.\n");
+        //printf("%s\n",error);
+        //exit(1);
+    //}
     
     /* Unused arguments */
     (void)(argc);

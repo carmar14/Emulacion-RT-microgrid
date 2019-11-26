@@ -259,7 +259,7 @@ void rt_OneStep(void)
     
     //pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
     //qref=var3*k3+vx3;
-    pref=400;//500;   antes estaba en -400
+    pref=-400;//500;   antes estaba en -400
     qref=5000;//3500;//2430;//3403;
     
     //=============== Pipes Lectura ========================
@@ -334,7 +334,7 @@ void rt_OneStep(void)
     //Qma=Qm*10;
     i1a=i1*10;
     
-    i1a = vload * 10;
+    //i1a = vload * 10;
     
     memset(buffer,0,sizeof(buffer));
     //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
