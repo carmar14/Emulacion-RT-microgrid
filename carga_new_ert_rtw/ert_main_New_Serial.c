@@ -389,7 +389,7 @@ void rt_OneStep(void)
     Pma=Pm*10;
     Qma=Qm*10;
 
-    
+    Vloada = EnAlt;
     
     memset(buffer,0,sizeof(buffer));
 

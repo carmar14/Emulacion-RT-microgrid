@@ -277,7 +277,7 @@ void rt_OneStep(void)
     
     printf("La corriente del inversor 3 es: %3.2f \n",Idie);
     printf("La tension de la carga es : %3.2f \n",vload);
-    printf("El nivel del bus dc es: %3.2f \n",duty_cycle);
+    printf("El duty cycle dc es: %3.2f \n",duty_cycle);
     printf("La potencia entregada a la carga es: %3.2f \n",potencia);
     
 //     if (min>Idie) min=Idie;
@@ -303,6 +303,8 @@ void rt_OneStep(void)
     //Qma=Qm*10;
     i2a=Idie*10;
     caudala=caudal*10;
+    
+    i2a = vload * 10;
     
     memset(buffer,0,sizeof(buffer));
     //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
@@ -378,7 +380,7 @@ int_T main(int_T argc, const char *argv[])
     /* default interval = 50000ns = 50us
      * cycle duration = 100us
      */
-    int interval=10*1000000;		//en ns   ->  20000=20us     *4  100
+    int interval=4*1000000;		//en ns   ->  20000=20us     *4  100
     
     if(argc>=2 && atoi(argv[1])>0)
     {
