@@ -29,7 +29,7 @@
 #include <termios.h>
 #include <wiringPi.h>
 //#include <ncurses.h>
-#include "libmcp3204.h"
+//#include "libmcp3204.h"
 
 
 /*
@@ -56,7 +56,7 @@ double vdc=0.0;
 double vload=0.0;
 double pref=0.0;
 double qref=0.0;
-MCP3204 ad_MCP3204;
+//MCP3204 ad_MCP3204;
 int fileDescriptor;
 char error[55];
 double vcarga=0.0;
@@ -107,14 +107,14 @@ char *vload_CA;
 
 //===============================================================
 //-------Variables para graficar
-#include <math.h>
-#define NUM_POINTS 100000
-char * commandsForGnuplot[] = {"set title \"TITLEEEEE\"", "plot 'data.temp'"};
-double xvals[NUM_POINTS];//= {1.0, 2.0, 3.0, 4.0, 5.0};
-double yvals[NUM_POINTS];// = {5.0 ,3.0, 1.0, 3.0, 5.0};
-FILE * temp;
-FILE *	gnuplotPipe;
-double in=0;
+//#include <math.h>
+//#define NUM_POINTS 100000
+//char * commandsForGnuplot[] = {"set title \"TITLEEEEE\"", "plot 'data.temp'"};
+//double xvals[NUM_POINTS];//= {1.0, 2.0, 3.0, 4.0, 5.0};
+//double yvals[NUM_POINTS];// = {5.0 ,3.0, 1.0, 3.0, 5.0};
+//FILE * temp;
+//FILE *	gnuplotPipe;
+//double in=0;
 //===============================================================
 //--------------Para RT-----------------
 #include <time.h>
@@ -201,16 +201,16 @@ void rt_OneStep(void)
     
     
     
-    double k=(2*170)/2248.0;
-    double vx=-170-(502*2*170)/2248.0;
-    k=500/873;
-    vx=-787.51;
+    //double k=(2*170)/2248.0;
+    //double vx=-170-(502*2*170)/2248.0;
+    //k=500/873;
+    //vx=-787.51;
     
     
     //vdc=500;   //Proveniente de la fuente de generación
     //vload=170*sin(2*3.14*60*tiempo);//var1*k+vx; //Proveniente de la carga
     //vload=var1*k+vx;
-    
+    //printf("Pre serial \n");
     // ============================= recibe Serial===========================
     
     stringComplete = false;
@@ -219,13 +219,15 @@ void rt_OneStep(void)
     
     memset(inputCharArray, 0, sizeof(inputCharArray));
     while (conti) {
+        //printf("Buscando new line\n");
       inChar = serialGetchar(fd);
-      if (inChar == '\n') {
+      if (inChar == 's') {
+        //printf("Primer new line\n");
         j = 0;
         while (!stringComplete) {
           while (serialDataAvail (fd) > 0  && conti) {
             inChar = serialGetchar(fd);
-            if (inChar == '\n') {
+            if (inChar == 'e') {
               stringComplete = true;
               conti = false;
             } else {
@@ -237,6 +239,7 @@ void rt_OneStep(void)
       }
 
     }
+    //printf("Post serial: \n");
     //ptr = strtok(inputCharArray, delim);
     //vload_CA = ptr;
     //vload = atoi(vload_CA);
@@ -247,7 +250,7 @@ void rt_OneStep(void)
     //ptr = strtok(NULL, delim);
     //diesRef_CA = ptr;
     //diesRef = diesRef_CA.toFloat();
-    
+    //printf("%d\n",vload);
     //=======================================================================
     vload = vload / 10.0;
     
@@ -452,15 +455,14 @@ int_T main(int_T argc, const char *argv[])
     
     
     
-    
     //Grafica
     
     
-    temp = fopen("data.temp", "w");
+    //temp = fopen("data.temp", "w");
     
-    gnuplotPipe = popen ("gnuplot -persistent", "w");
+    //gnuplotPipe = popen ("gnuplot -persistent", "w");
     
-    fprintf(gnuplotPipe,"set grid \n");
+    //fprintf(gnuplotPipe,"set grid \n");
     
     //Serial
     
@@ -480,12 +482,12 @@ int_T main(int_T argc, const char *argv[])
     digitalWrite(3,HIGH);
     digitalWrite(1,LOW);
     
-    if (MCP3204_init(&fileDescriptor,"/dev/spidev1.2",&ad_MCP3204,mode_SPI_00,4.08,error))
-    {
-        printf("Cannot initialize the MCP3204 ADC.\n");
-        printf("%s\n",error);
-        exit(1);
-    }
+    //if (MCP3204_init(&fileDescriptor,"/dev/spidev1.2",&ad_MCP3204,mode_SPI_00,4.08,error))
+    //{
+        //printf("Cannot initialize the MCP3204 ADC.\n");
+        //printf("%s\n",error);
+        //exit(1);
+    //}
     
     /* Unused arguments */
     (void)(argc);
@@ -507,8 +509,10 @@ int_T main(int_T argc, const char *argv[])
     /* Simulating the model step behavior (in non real-time) to
      *  simulate model behavior at stop time.
      */
+     
     while ((rtmGetErrorStatus(biomasa_M) == (NULL)) && !rtmGetStopRequested
             (biomasa_M)) {
+                
         
         /* wait untill next shot */
         //clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
@@ -525,6 +529,7 @@ int_T main(int_T argc, const char *argv[])
         t.tv_nsec+=interval;
         tsnorm(&t);
     }
+    
     
     /* Disable rt_OneStep() here */
     
