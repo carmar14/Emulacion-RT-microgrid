@@ -1,5 +1,7 @@
 #include <FreeRTOS_ARM.h>
 
+#define SERIAL_BUFFER_SIZE 10
+
 int loadVolt = 0;
 int Dies = 0;
 int DiesA=0;
@@ -31,7 +33,8 @@ static void commIN_Rasp(void* arg) {
       SerialUSB.flush();
     }
 
-    DiesA=map(Dies,-40000,40000,0,4095);
+    //DiesA=map(Dies,-40000,40000,0,4095);
+    DiesA=map(Dies,-15000,15000,0,4095);
     analogWrite(DAC1,DiesA);
         
 
