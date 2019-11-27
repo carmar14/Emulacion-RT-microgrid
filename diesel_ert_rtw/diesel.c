@@ -787,6 +787,8 @@ void diesel_step(void)
      *  Product: '<Root>/Product3'
      *  Sum: '<Root>/Sum9'
      */
+     
+   
     diesel_B.Gain10 = ((2.0 * diesel_Y.duty_cycle * diesel_B.OutputDCVoltage -
                         diesel_X.Integrator7_CSTATE) - 0.001 *
                        diesel_X.Integrator6_CSTATE) * 200.0;

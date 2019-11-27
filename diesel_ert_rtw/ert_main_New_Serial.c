@@ -304,7 +304,7 @@ void rt_OneStep(void)
     i2a=Idie*10;
     caudala=caudal*10;
     
-    i2a = vload * 10;
+    //i2a = vload * 10;
     
     memset(buffer,0,sizeof(buffer));
     //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
