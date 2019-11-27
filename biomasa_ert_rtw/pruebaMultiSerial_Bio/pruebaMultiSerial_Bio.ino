@@ -1,5 +1,7 @@
 #include <FreeRTOS_ARM.h>
 
+#define SERIAL_BUFFER_SIZE 10
+
 int loadVolt = 0;
 int Bio = 0;
 int BioA=0;

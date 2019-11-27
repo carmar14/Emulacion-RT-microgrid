@@ -1,5 +1,7 @@
 #include <FreeRTOS_ARM.h>
 
+#define SERIAL_BUFFER_SIZE 10
+
 int loadVolt = 0;
 int EnAlt = 0;
 int EnAltA = 0;
@@ -33,7 +35,7 @@ static void commIN_Rasp(void* arg) {
 
     }
     EnAltA = map(EnAlt, -6000, 6000, 0, 4095);
-    analogWrite(DAC0, EnAltA);
+    analogWrite(DAC1, EnAltA);
 
     vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_PERIOD_MS));
   }
