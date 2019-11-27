@@ -105,6 +105,13 @@ int j = 0;
 char inChar;
 char *vload_CA;
 
+int sine64[] = {4800,5270,5736,6193,6636,7062,7466,7844,8193,8510,8790,9032,9234,9392,9507,9576,
+				9599,9576,9507,9392,9234,9032,8790,8510,8193,7844,7466,7062,6636,6193,5736,5270,
+				4800,4329,3863,3406,2963,2537,2133,1755,1406,1089,809,567,365,207,92,23,
+				0,23,92,207,365,567,809,1089,1406,1755,2133,2537,2963,3406,3863,4329
+               };
+int contI = 0;   
+
 //===============================================================
 //-------Variables para graficar
 //#include <math.h>
@@ -186,31 +193,6 @@ void rt_OneStep(void)
     
     /* Step the model for base rate */
     
-    //var=1;
-    
-    //if (MCP3204_convert(fileDescriptor,singleEnded,CH0,&ad_MCP3204,error))
-    //{
-        //printf("Error during conversion1.\n");
-        //printf("%s\n",error);
-        //exit(1);
-    //}
-    
-    
-    //var1=MCP3204_getValue(ad_MCP3204);  //Vload
-    
-    
-    
-    
-    //double k=(2*170)/2248.0;
-    //double vx=-170-(502*2*170)/2248.0;
-    //k=500/873;
-    //vx=-787.51;
-    
-    
-    //vdc=500;   //Proveniente de la fuente de generación
-    //vload=170*sin(2*3.14*60*tiempo);//var1*k+vx; //Proveniente de la carga
-    //vload=var1*k+vx;
-    //printf("Pre serial \n");
     // ============================= recibe Serial===========================
     
     stringComplete = false;
@@ -335,6 +317,10 @@ void rt_OneStep(void)
     i1a=i1*10;
     
     //i1a = vload * 10;
+    
+    //i1a = sine64[contI] - 4799;
+    //contI++;
+    //if (contI > 64 - 1) contI = 0;
     
     memset(buffer,0,sizeof(buffer));
     //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
