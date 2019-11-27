@@ -333,9 +333,9 @@ void rt_OneStep(void)
     
     i3a=i3*10;
     
-    i3a = sine64[contI] - 4799;
-    contI++;
-    if (contI > 64 - 1) contI = 0;
+    //i3a = sine64[contI] - 4799;
+    //contI++; 
+    //if (contI > 64 - 1) contI = 0;
     
     //i3a = vload3 * 10;
     
