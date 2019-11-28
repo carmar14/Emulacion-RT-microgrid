@@ -1,11 +1,13 @@
+// compile with: "gcc ert_main.c diesel.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall"
+
 /*
  * File: ert_main.c
  *
  * Code generated for Simulink model 'diesel'.
  *
- * Model version                  : 1.15
+ * Model version                  : 1.25
  * Simulink Coder version         : 8.14 (R2018a) 06-Feb-2018
- * C/C++ source code generated on : Fri Oct  4 11:52:14 2019
+ * C/C++ source code generated on : Thu Nov 28 09:59:44 2019
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -27,7 +29,6 @@
 #include <stdint.h>
 //#include <ncurses.h>
 #include "libmcp3204.h"
-
 
 /*
  * Associating rt_OneStep with a real-time clock or interrupt service routine
@@ -76,7 +77,7 @@ char var1s[7];
 char var2s[7];
 char var3s[7];
 int fd;
-int fd2;
+
 int i2a=0;
 int caudala=0;
 char buffer[8];
@@ -138,6 +139,7 @@ static inline void tsnorm(struct timespec *ts)
 }
 //------------------------------------------------------------------
 
+
 void rt_OneStep(void);
 void rt_OneStep(void)
 {
@@ -156,156 +158,11 @@ void rt_OneStep(void)
   /* Save FPU context here (if necessary) */
   /* Re-enable timer or interrupt here */
   /* Set model inputs here */
-  
-  var=1;
-    
-    if (MCP3204_convert(fileDescriptor,singleEnded,CH0,&ad_MCP3204,error))
-    {
-        printf("Error during conversion1.\n");
-        printf("%s\n",error);
-        exit(1);
-    }
-    
-    
-    var1=MCP3204_getValue(ad_MCP3204);
-    
-    if (MCP3204_convert(fileDescriptor,singleEnded,CH1,&ad_MCP3204,error))
-    {
-        printf("Error during conversion1.\n");
-        printf("%s\n",error);
-        exit(1);
-    }
-    
-    
-    var2=MCP3204_getValue(ad_MCP3204);
-    
-    if (MCP3204_convert(fileDescriptor,singleEnded,CH2,&ad_MCP3204,error))
-    {
-        printf("Error during conversion1.\n");
-        printf("%s\n",error);
-        exit(1);
-    }
-    
-    
-    var3=MCP3204_getValue(ad_MCP3204);
-    
-    //printf("Trama de arduino: %s\n",read_buffer);
-    
-    /*if (var==1){
-     * int q=0;
-     * //Acomodar en arreglo de caracteres los datos recibidos
-     * for(q=0; q<7;q++){
-     * var1s[q]=read_buffer[q+1]; //Primer dato
-     * //var2s[q]=read_buffer[q+10]; //Segundo dato
-     * //var3s[q]=read_buffer[q+18]; //Tercer dato
-     * }
-     * var1=atoi(var1s);//Primer dato en numero
-     * //var2=atof(var2s)/10.0; //Segundo dato en numero
-     * //var3=atof(var3s)/10.0; //Segundo dato en numero
-     *
-     * //var3=atof(var3s)/10.0; //Segundo dato en numero
-     * //printf ("El numero1  es :%d \n",var1);
-     * //printf ("El numero2  es :%3.2f \n",var2);
-     * //printf ("El numero3  es :%3.2f \n",var3);
-     */
-    
-    double k=(2*170)/2248.0;
-    double vx=-170-(502*2*170)/2248.0;
-    k=500/873.0;
-    vx=787.51;
-    //double k=(2220+2150)/4095;
-    //double vx=-2150;
-    
-    Pref_d=500;
-    Qref_d=3500;
-    Vload=var1*k+vx;
-    //Vload=170*sin(2*3.14*60*tiempo);
-    tiempo=tiempo+0.0001;
-    if (tiempo>=0.017) tiempo =0;
-    //Vload=Vload/10.0;
-    par=0.1;//1.4;
-    flujo=1000;
-    
-    //set_Pref_d(Pref_d);
-    //set_Qref_d(Qref_d);
-    set_Vload(Vload);
-    //set_par(par);
-    set_flujo(flujo);
 
   /* Step the model for base rate */
   diesel_step();
 
   /* Get model outputs here */
-  
-  //-----salidas-------
-    Idie=get_I_die();
-    duty_cycle=get_duty();
-    potencia=get_Potencia();
-    
-    printf("La corriente del inversor 3 es: %3.2f \n",Idie);
-    printf("La tension de la carga es : %3.2f \n",Vload);
-    printf("El nivel del bus dc es: %3.2f \n",duty_cycle);
-    printf("La potencia entregada a la carga es: %3.2f \n",potencia);
-    
-//     if (min>Idie) min=Idie;
-//     if (max<Idie) max=Idie;
-//     
-//     printf("Valor minimo: %3.2f \n", min);
-//     printf("Valor maximo: %3.2f \n", max);
-    
-    //=============== Pipes Envio ========================
-    memset(bufferPipe,0,sizeof(bufferPipe));
-    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\n",Idie,duty_cycle,caudal,vdc);
-    write(our_input_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
-    //======================================================
-    
-    
-    //-------------UDP-envio----------------------
-    //sendm(Idie);
-    //sendm(duty_cycle);
-    
-    //----------Serial----------------------
-    //-----------Escritura-envio---------------------
-    //Pma=Pm*10;
-    //Qma=Qm*10;
-    i2a=Idie*10;
-    caudala=caudal*10;
-    
-    memset(buffer,0,sizeof(buffer));
-    //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
-    sprintf(buffer,"v%07d\n",i2a);
-    //while(pinr==0){
-    serialPuts(fd,buffer);
-    serialFlush(fd);
-    //pinr=digitalRead(2);
-    //printf("El dato pin es: %d \n",pinr);
-    //}
-    serialFlush(fd);
-    tcflush(fd, TCIOFLUSH);
-    
-    //Datos del caudal Bayona
-    memset(buffer2,0,sizeof(buffer2));
-    //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
-    sprintf(buffer2,"v%07d\n",caudala);
-    //while(pinr==0){
-    serialPuts(fd2,buffer2);
-    serialFlush(fd2);
-    //pinr=digitalRead(2);
-    //printf("El dato pin es: %d \n",pinr);
-    //}
-    serialFlush(fd2);
-    tcflush(fd2, TCIOFLUSH);
-    
-    
-    pinr=0;
-    
-    var=0;
-    
-    //-----------Grafica---------------------
-    //in+=0.0001;
-    //fprintf(temp, "%3.2f %3.2f %3.2f %3.2f %3.2f %3.2f \n",i1,i2,i3,Vload,Pm,Qm);
-    fprintf(temp, "%3.2f %3.2f \n",Idie,Vload);
-    //}
 
   /* Indicate task complete */
   OverrunFlag = false;
