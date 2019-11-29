@@ -221,18 +221,10 @@ void rt_OneStep(void)
       }
 
     }
-    //printf("Post serial: \n");
-    //ptr = strtok(inputCharArray, delim);
-    //vload_CA = ptr;
-    //vload = atoi(vload_CA);
+    //serialFlush(fd);
+    
     vload = atoi(inputCharArray);
-    //ptr = strtok(NULL, delim);
-    //eolRef_CA = ptr;
-    //eolRef = eolRef_CA.toFloat();
-    //ptr = strtok(NULL, delim);
-    //diesRef_CA = ptr;
-    //diesRef = diesRef_CA.toFloat();
-    //printf("%d\n",vload);
+    
     //=======================================================================
     vload = vload / 10.0;
     
@@ -241,7 +233,7 @@ void rt_OneStep(void)
     
     //pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
     //qref=var3*k3+vx3;
-    pref=-400;//500;   antes estaba en -400
+    pref=400;//500;   antes estaba en -400
     qref=5000;//3500;//2430;//3403;
     
     //=============== Pipes Lectura ========================
@@ -503,7 +495,7 @@ int_T main(int_T argc, const char *argv[])
                 
         
         /* wait untill next shot */
-        //clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
+        clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
         /* do the stuff */
         if(estado==0){
             estado=1;
