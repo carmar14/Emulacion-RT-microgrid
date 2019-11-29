@@ -208,35 +208,40 @@ void rt_OneStep(void)
     serialFlush(fd);
     
     memset(inputCharArray, 0, sizeof(inputCharArray));
-    while (conti) {
-      inChar = serialGetchar(fd);
-      if (inChar == 's') {
-        j = 0;
-        while (!stringComplete) {
-          while (serialDataAvail (fd) > 0  && conti) {
-            inChar = serialGetchar(fd);
-            if (inChar == 'e') {
-              stringComplete = true;
-              conti = false;
-            } else {
-              inputCharArray[j] = inChar;
-              j++;
-            }
-          }
-        }
-      }
-
-    }
-    ptr = strtok(inputCharArray, delim);
-    Bio_CA = ptr;
-    Bio = atoi(Bio_CA);
-    //vload = atoi(inputCharArray);
-    ptr = strtok(NULL, delim);
-    Dies_CA = ptr;
-    Dies = atoi(Dies_CA);
-    ptr = strtok(NULL, delim);
-    EnAlt_CA = ptr;
-    EnAlt = atoi(EnAlt_CA);
+    //if (serialDataAvail (fd))
+    //{
+		while (conti) {
+			inChar = serialGetchar(fd);
+			if (inChar == 's') {
+				j = 0;
+				while (!stringComplete) {
+					while (serialDataAvail (fd) > 0  && conti) {
+						inChar = serialGetchar(fd);
+						if (inChar == 'e') {
+							stringComplete = true;
+							conti = false;
+						} else {
+							inputCharArray[j] = inChar;
+							j++;
+						}
+					}
+				}
+			}
+		
+		}
+		serialFlush(fd);
+		ptr = strtok(inputCharArray, delim);
+		Bio_CA = ptr;
+		Bio = atoi(Bio_CA);
+		//vload = atoi(inputCharArray);
+		ptr = strtok(NULL, delim);
+		Dies_CA = ptr;
+		Dies = atoi(Dies_CA);
+		ptr = strtok(NULL, delim);
+		EnAlt_CA = ptr;
+		EnAlt = atoi(EnAlt_CA);
+	//}
+    
     
     //=======================================================================
     
@@ -265,7 +270,7 @@ void rt_OneStep(void)
 //     printf("Valor maximo: %3.2f \n", max);
     
     
-    
+    //1000*sin(2*3.14*60*tiempo)
     
     set_i1(i1);
     set_i2(i2);
@@ -437,6 +442,7 @@ int_T main(int_T argc, const char *argv[])
     pinMode(0, OUTPUT);
     pinMode(1, OUTPUT);
     pinMode(3, OUTPUT);
+    pinMode(21, OUTPUT);
     //wiringPiISR(2, INT_EDGE_RISING, &lectura);
     pinMode(2, INPUT);
     digitalWrite(3,HIGH);
@@ -477,7 +483,13 @@ int_T main(int_T argc, const char *argv[])
             estado=0;
         }
         digitalWrite (21, estado);
+        i=i+1;
+        if (i==35){
+			i=0;
+		}
+        //digitalWrite (21, HIGH);
         rt_OneStep();
+        //digitalWrite (21, LOW);
         t.tv_nsec+=interval;
         tsnorm(&t);
         
