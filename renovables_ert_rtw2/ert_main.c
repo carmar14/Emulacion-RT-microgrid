@@ -1,13 +1,13 @@
-// compile with "gcc ert_main_New_Serial.c renovables.c renovables_data.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall -lpthread
+// compile with "gcc ert_main.c renovables.c renovables_data.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall -lpthread
 
 /*
  * File: ert_main.c
  *
  * Code generated for Simulink model 'renovables'.
  *
- * Model version                  : 1.6
+ * Model version                  : 1.7
  * Simulink Coder version         : 8.14 (R2018a) 06-Feb-2018
- * C/C++ source code generated on : Fri Oct  4 11:39:43 2019
+ * C/C++ source code generated on : Fri Nov 29 12:13:17 2019
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -74,12 +74,14 @@ char buffera[BUFFER_SIZE];
 char *rDoS;
 
 //------Entradas-------
+double min=0.0;
+double max=100;
 double ipv=0.0;
 double vload3=0.0;
 double Prefd=0.0;
 double Qrefd=0.0;
-double solarrad=1000;
-double tempout=25;
+double solarrad;
+double tempout;
 double potencia=0.0;
 MCP3204 ad_MCP3204;
 int fileDescriptor;
@@ -190,25 +192,27 @@ static inline void tsnorm(struct timespec *ts)
 }
 //------------------------------------------------------------------
 
-
 void rt_OneStep(void);
 void rt_OneStep(void)
 {
-    static boolean_T OverrunFlag = false;
-    
-    /* Disable interrupts here */
-    
-    /* Check for overrun */
-    if (OverrunFlag) {
-        rtmSetErrorStatus(renovables_M, "Overrun");
-        return;
-    }
-    
-    OverrunFlag = true;
-    
-    
-    Prefd=500;//500;
-    Qrefd=300;//3500;//2430;//3403;
+  static boolean_T OverrunFlag = false;
+
+  /* Disable interrupts here */
+
+  /* Check for overrun */
+  if (OverrunFlag) {
+    rtmSetErrorStatus(renovables_M, "Overrun");
+    return;
+  }
+
+  OverrunFlag = true;
+
+  /* Save FPU context here (if necessary) */
+  /* Re-enable timer or interrupt here */
+  /* Set model inputs here */
+  
+   Prefd=500;//500;
+    Qrefd=3500;//3500;//2430;//3403;
     
     // ============================= recibe Serial===========================
     
@@ -241,8 +245,8 @@ void rt_OneStep(void)
     }
     printf("Post serial\n");
     //serialFlush(fd3);
-    int vload3i = atoi(inputCharArray);
-    vload3 = vload3i / 10.0;
+    vload3 = atoi(inputCharArray);
+    vload3 = vload3 / 10.0;
     
     //=======================================================================
     
@@ -284,29 +288,39 @@ void rt_OneStep(void)
     set_Vload(vload3);
     set_Pref(Prefd);
     set_Qref(Qrefd);
-    
-    /* Step the model for base rate */
-    renovables_step();
-    
-    /* Get model outputs here */
-    
-    i3=get_I_pv();
+
+  /* Step the model for base rate */
+  renovables_step();
+
+  /* Get model outputs here */
+  
+  i3=get_I_pv();
     soc=get_SOC();
     Pm2=get_Pm();
     Qm2=get_Qm();
     duty_cyle=get_duty_cycle();
     potencia=get_Potencia();
     
-    printf("La irradianza es: %3.2f \n",Suns);
-    printf("La temperatura es: %3.2f \n",TaC);
+    if (i3>max){
+        max=i3;
+    }
+        
+    if (i3<min){
+        min=i3;
+    }
+    
+    //printf("La irradianza es: %3.2f \n",Suns);
+    //printf("La temperatura es: %3.2f \n",TaC);
+    printf("La minima es: %3.2f \n",min);
+    printf("La maxima es: %3.2f \n",max);
     printf("La potencia activa referencia es: %3.2f \n",Prefd);
     printf("La potencia reactiva referencia es: %3.2f \n",Qrefd);
     printf("LA potencia P medida es:  %3.2f \n",Pm2);
     printf("LA potencia Q medida es:  %3.2f \n",Qm2);
-    printf("El duty cycle es:  %3.2f \n",duty_cyle);
-    printf("La corriente de panel solar es: %3.2f \n",ipv);
+    //printf("El duty cycle es:  %3.2f \n",duty_cyle);
+    //printf("La corriente de panel solar es: %3.2f \n",ipv);
     printf("La corriente del inversor 3 es: %3.2f \n",i3);
-    printf("El estado de la bateria es: %3.2f \n",soc);
+    //printf("El estado de la bateria es: %3.2f \n",soc);
     printf ("La tensión en la carga es :%3.2f \n",vload3);
     
     //-----------Ataque----------------
@@ -330,7 +344,7 @@ void rt_OneStep(void)
     write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================
     //delay(1000);
-    
+    i3=i3*1200/9728902.0+4985980*1200/9728902.0;
     i3a=i3*10;
     
     //i3a = sine64[contI] - 4799;
@@ -354,19 +368,13 @@ void rt_OneStep(void)
     pinr=0;
     
     var=0;
-    
-    //-----------Grafica---------------------
-    //in+=0.0001;
-    //fprintf(temp, "%3.2f %3.2f %3.2f %3.2f %3.2f %3.2f \n",i1,i2,i3,Vload,Pm,Qm);
-    
-    //fprintf(temp, "%3.2f %3.2f %3.2f %3.2f \n",i3,vload3,Prefd,Qrefd);
-    
-    /* Indicate task complete */
-    OverrunFlag = false;
-    
-    /* Disable interrupts here */
-    /* Restore FPU context here (if necessary) */
-    /* Enable interrupts here */
+
+  /* Indicate task complete */
+  OverrunFlag = false;
+
+  /* Disable interrupts here */
+  /* Restore FPU context here (if necessary) */
+  /* Enable interrupts here */
 }
 
 /*
@@ -378,7 +386,7 @@ void rt_OneStep(void)
 int_T main(int_T argc, const char *argv[])
 {
     
-    //====================================================================
+  //====================================================================
     //--------------------------------------
 	//----- CREATE A FIFO / NAMED PIPE -----
 	//--------------------------------------
@@ -503,27 +511,27 @@ int_T main(int_T argc, const char *argv[])
         //printf("Cannot initialize the MCP3204 ADC.\n");
         //printf("%s\n",error);
         //exit(1);
-    //}
+    //} 
     
-    /* Unused arguments */
-    (void)(argc);
-    (void)(argv);
-    
-    /* Initialize model */
-    renovables_initialize();
-    
-    /* get current time */
+  /* Unused arguments */
+  (void)(argc);
+  (void)(argv);
+
+  /* Initialize model */
+  renovables_initialize();
+
+  /* get current time */
     clock_gettime(0,&t);
     /* start after one second */
     t.tv_sec++;
     
-    /* Simulating the model step behavior (in non real-time) to
-     *  simulate model behavior at stop time.
-     */
-    while ((rtmGetErrorStatus(renovables_M) == (NULL)) && !rtmGetStopRequested
-            (renovables_M)) {
-        /* wait untill next shot */
-        clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
+  /* Simulating the model step behavior (in non real-time) to
+   *  simulate model behavior at stop time.
+   */
+  while ((rtmGetErrorStatus(renovables_M) == (NULL)) && !rtmGetStopRequested
+         (renovables_M)) {
+      
+    clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
         /* do the stuff */
         if(estado==0){
             estado=1;
@@ -532,21 +540,23 @@ int_T main(int_T argc, const char *argv[])
             estado=0;
         }
         digitalWrite (21, estado) ;
-        rt_OneStep();
-        t.tv_nsec+=interval;
+        
+    rt_OneStep();
+    t.tv_nsec+=interval;
         tsnorm(&t);
-    }
-    
-    /* Disable rt_OneStep() here */
-    
-    /* Terminate model */
-    renovables_terminate();
-    
-    //----- CLOSE THE FIFO -----
+  }
+
+  /* Disable rt_OneStep() here */
+
+  /* Terminate model */
+  renovables_terminate();
+  
+  //----- CLOSE THE FIFO -----
 	fclose(fp); //input fifo 
     (void)close(our_output_fifo_filestream);
     
-    return 0;
+    
+  return 0;
 }
 
 /*
