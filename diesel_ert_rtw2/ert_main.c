@@ -184,6 +184,7 @@ void rt_OneStep(void)
     serialFlush(fd);
     
     memset(inputCharArray, 0, sizeof(inputCharArray));
+    
     while (conti) {
         inChar = serialGetchar(fd);
         if (inChar == 's') {
@@ -203,6 +204,8 @@ void rt_OneStep(void)
         }
         
     }
+    
+    serialFlush(fd);
     
     vload = atoi(inputCharArray);
     vload = vload / 10.0;
@@ -371,23 +374,24 @@ int_T main(int_T argc, const char *argv[])
     pinMode(0, OUTPUT);
     pinMode(1, OUTPUT);
     pinMode(3, OUTPUT);
+    pinMode(21, OUTPUT);
     //wiringPiISR(2, INT_EDGE_RISING, &lectura);
     pinMode(2, INPUT);
     digitalWrite(3,HIGH);
     digitalWrite(1,LOW);
     
-    if (MCP3204_init(&fileDescriptor,"/dev/spidev1.2",&ad_MCP3204,mode_SPI_00,4.08,error))
-    {
-        printf("Cannot initialize the MCP3204 ADC.\n");
-        printf("%s\n",error);
-        exit(1);
-    }
+    //if (MCP3204_init(&fileDescriptor,"/dev/spidev1.2",&ad_MCP3204,mode_SPI_00,4.08,error))
+    //{
+        //printf("Cannot initialize the MCP3204 ADC.\n");
+        //printf("%s\n",error);
+        //exit(1);
+    //}
     
     delay(1500);
     
     /* Initialize model */
     diesel_initialize();
-    
+    int estado=0;
     /* get current time */
     clock_gettime(0,&t);
     /* start after one second */
@@ -399,6 +403,14 @@ int_T main(int_T argc, const char *argv[])
      */
     while ((rtmGetErrorStatus(diesel_M) == (NULL)) && !rtmGetStopRequested
             (diesel_M)) {
+        clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
+        //if(estado==0){
+            //estado=1;
+            
+        //}else{
+            //estado=0;
+        //}
+        //digitalWrite (21, estado);
         rt_OneStep();
         t.tv_nsec+=interval;
         tsnorm(&t);
