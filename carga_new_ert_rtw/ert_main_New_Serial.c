@@ -274,7 +274,7 @@ void rt_OneStep(void)
     
     set_i1(i1);
     set_i2(i2);
-    set_i3(i3);
+    set_i3(120*sin(2*3.14*60*tiempo));
     
     //set_i1((senw[i]-2048)*0.0391);
     //set_i2((senw[i]-2048)*0.0391);
