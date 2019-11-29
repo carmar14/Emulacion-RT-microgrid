@@ -454,7 +454,7 @@ int_T main(int_T argc, const char *argv[])
   while ((rtmGetErrorStatus(diesel_M) == (NULL)) && !rtmGetStopRequested
          (diesel_M)) {
      /* wait untill next shot */
-        //clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
+        clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
         /* do the stuff */
         /*
         if(estado==0){
