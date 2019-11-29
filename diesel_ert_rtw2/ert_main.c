@@ -1,13 +1,13 @@
-// compile with: "gcc ert_main_New_Serial.c diesel.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall"
+// compile with: "gcc ert_main.c diesel.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall"
 
 /*
  * File: ert_main.c
  *
  * Code generated for Simulink model 'diesel'.
  *
- * Model version                  : 1.15
+ * Model version                  : 1.25
  * Simulink Coder version         : 8.14 (R2018a) 06-Feb-2018
- * C/C++ source code generated on : Fri Oct  4 11:52:14 2019
+ * C/C++ source code generated on : Thu Nov 28 09:59:44 2019
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -29,8 +29,6 @@
 #include <stdint.h>
 //#include <ncurses.h>
 #include "libmcp3204.h"
-
-
 
 /*
  * Associating rt_OneStep with a real-time clock or interrupt service routine
@@ -67,7 +65,7 @@ double potencia=0.0;
 #define MSGISIZE 9
 
 //Comunicacion
-#include <stdbool.h> 
+#include <stdbool.h>
 
 int  bytes_read = 0;
 int pinr=0;
@@ -98,11 +96,11 @@ char inChar;
 char *vload_CA;
 
 int sine64[] = {4800,5270,5736,6193,6636,7062,7466,7844,8193,8510,8790,9032,9234,9392,9507,9576,
-				9599,9576,9507,9392,9234,9032,8790,8510,8193,7844,7466,7062,6636,6193,5736,5270,
-				4800,4329,3863,3406,2963,2537,2133,1755,1406,1089,809,567,365,207,92,23,
-				0,23,92,207,365,567,809,1089,1406,1755,2133,2537,2963,3406,3863,4329
-               };
-int contI = 0;   
+9599,9576,9507,9392,9234,9032,8790,8510,8193,7844,7466,7062,6636,6193,5736,5270,
+4800,4329,3863,3406,2963,2537,2133,1755,1406,1089,809,567,365,207,92,23,
+0,23,92,207,365,567,809,1089,1406,1755,2133,2537,2963,3406,3863,4329
+};
+int contI = 0;
 
 //===============================================================
 //-------Variables para graficar
@@ -159,26 +157,25 @@ static inline void tsnorm(struct timespec *ts)
 }
 //------------------------------------------------------------------
 
+
 void rt_OneStep(void);
 void rt_OneStep(void)
 {
-  static boolean_T OverrunFlag = false;
-
-  /* Disable interrupts here */
-
-  /* Check for overrun */
-  if (OverrunFlag) {
-    rtmSetErrorStatus(diesel_M, "Overrun");
-    return;
-  }
-
-  OverrunFlag = true;
-
-  /* Save FPU context here (if necessary) */
-  /* Re-enable timer or interrupt here */
-  /* Set model inputs here */
-  
-  var=1;
+    static boolean_T OverrunFlag = false;
+    
+    /* Disable interrupts here */
+    
+    /* Check for overrun */
+    if (OverrunFlag) {
+        rtmSetErrorStatus(diesel_M, "Overrun");
+        return;
+    }
+    
+    OverrunFlag = true;
+    
+    /* Save FPU context here (if necessary) */
+    /* Re-enable timer or interrupt here */
+    /* Set model inputs here */
     
     // ============================= recibe Serial===========================
     
@@ -188,63 +185,28 @@ void rt_OneStep(void)
     
     memset(inputCharArray, 0, sizeof(inputCharArray));
     while (conti) {
-      inChar = serialGetchar(fd);
-      if (inChar == 's') {
-        j = 0;
-        while (!stringComplete) {
-          while (serialDataAvail (fd) > 0  && conti) {
-            inChar = serialGetchar(fd);
-            if (inChar == 'e') {
-              stringComplete = true;
-              conti = false;
-            } else {
-              inputCharArray[j] = inChar;
-              j++;
+        inChar = serialGetchar(fd);
+        if (inChar == 's') {
+            j = 0;
+            while (!stringComplete) {
+                while (serialDataAvail (fd) > 0  && conti) {
+                    inChar = serialGetchar(fd);
+                    if (inChar == 'e') {
+                        stringComplete = true;
+                        conti = false;
+                    } else {
+                        inputCharArray[j] = inChar;
+                        j++;
+                    }
+                }
             }
-          }
         }
-      }
-
+        
     }
     
     vload = atoi(inputCharArray);
     vload = vload / 10.0;
     
-    //=======================================================================
-    
-    digitalWrite (0, 1) ;
-    
-    //printf("Trama de arduino: %s\n",read_buffer);
-    
-    /*if (var==1){
-     * int q=0;
-     * //Acomodar en arreglo de caracteres los datos recibidos
-     * for(q=0; q<7;q++){
-     * var1s[q]=read_buffer[q+1]; //Primer dato
-     * //var2s[q]=read_buffer[q+10]; //Segundo dato
-     * //var3s[q]=read_buffer[q+18]; //Tercer dato
-     * }
-     * var1=atoi(var1s);//Primer dato en numero
-     * //var2=atof(var2s)/10.0; //Segundo dato en numero
-     * //var3=atof(var3s)/10.0; //Segundo dato en numero
-     *
-     * //var3=atof(var3s)/10.0; //Segundo dato en numero
-     * //printf ("El numero1  es :%d \n",var1);
-     * //printf ("El numero2  es :%3.2f \n",var2);
-     * //printf ("El numero3  es :%3.2f \n",var3);
-     */
-    
-    //double k=(2*170)/2248.0;
-    //double vx=-170-(502*2*170)/2248.0;
-    //k=500/873.0;
-    //vx=787.51;
-    //double k=(2220+2150)/4095;
-    //double vx=-2150;
-    
-    Pref_d=500;
-    Qref_d=3500;
-    //Vload=var1*k+vx;
-    //Vload=170*sin(2*3.14*60*tiempo);
     tiempo=tiempo+0.0001;
     if (tiempo>=0.017) tiempo =0;
     //Vload=Vload/10.0;
@@ -256,27 +218,27 @@ void rt_OneStep(void)
     set_Vload(vload);
     //set_par(par);
     set_flujo(flujo);
-
-  /* Step the model for base rate */
-  
-  
-  diesel_step();
-
-  /* Get model outputs here */
-  
-  //-----salidas-------
+    
+    /* Step the model for base rate */
+    diesel_step();
+    
+    /* Get model outputs here */
+    
+    //-----salidas-------
     Idie=get_I_die();
     duty_cycle=get_duty();
     potencia=get_Potencia();
+    vdc=get_dc();
     
     printf("La corriente del inversor 3 es: %3.2f \n",Idie);
     printf("La tension de la carga es : %3.2f \n",vload);
     printf("El duty cycle dc es: %3.2f \n",duty_cycle);
     printf("La potencia entregada a la carga es: %3.2f \n",potencia);
+    printf("El bus dc es de: %3.2f \n",vdc);
     
 //     if (min>Idie) min=Idie;
 //     if (max<Idie) max=Idie;
-//     
+//
 //     printf("Valor minimo: %3.2f \n", min);
 //     printf("Valor maximo: %3.2f \n", max);
     
@@ -286,10 +248,6 @@ void rt_OneStep(void)
     write(our_input_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================
     
-    
-    //-------------UDP-envio----------------------
-    //sendm(Idie);
-    //sendm(duty_cycle);
     
     //----------Serial----------------------
     //-----------Escritura-envio---------------------
@@ -317,25 +275,12 @@ void rt_OneStep(void)
     serialFlush(fd);
     tcflush(fd, TCIOFLUSH);
     
+    /* Indicate task complete */
+    OverrunFlag = false;
     
-    
-    
-    pinr=0;
-    
-    var=0;
-    
-    //-----------Grafica---------------------
-    //in+=0.0001;
-    //fprintf(temp, "%3.2f %3.2f %3.2f %3.2f %3.2f %3.2f \n",i1,i2,i3,Vload,Pm,Qm);
-    //fprintf(temp, "%3.2f %3.2f \n",Idie,vload);
-    //}
-
-  /* Indicate task complete */
-  OverrunFlag = false;
-
-  /* Disable interrupts here */
-  /* Restore FPU context here (if necessary) */
-  /* Enable interrupts here */
+    /* Disable interrupts here */
+    /* Restore FPU context here (if necessary) */
+    /* Enable interrupts here */
 }
 
 /*
@@ -346,30 +291,30 @@ void rt_OneStep(void)
  */
 int_T main(int_T argc, const char *argv[])
 {
-  
+    
     //====================================================================
     //--------------------------------------
-	//----- CREATE A FIFO / NAMED PIPE -----
-	//--------------------------------------
-
-	printf("Making FIFO...\n");
-	result = mkfifo(OUR_INPUT_FIFO_NAME, 0777);		//(This will fail if the fifo already exists in the system from the app previously running, this is fine)
-	if (result == 0)
-	{
-		//FIFO CREATED
-		printf("New FIFO created: %s\n", OUR_INPUT_FIFO_NAME);
-	}
-
-	printf("Process %d opening FIFO %s\n", getpid(), OUR_INPUT_FIFO_NAME);
-	our_input_fifo_filestream = open(OUR_INPUT_FIFO_NAME, (O_WRONLY | O_NONBLOCK));
-					//Possible flags:
-					//	O_RDONLY - Open for reading only.
-					//	O_WRONLY - Open for writing only.
-					//	O_NDELAY / O_NONBLOCK (same function) - Enables nonblocking mode. When set read requests on the file can return immediately with a failure status
-					//											if there is no input immediately available (instead of blocking). Likewise, write requests can also return
-					//											immediately with a failure status if the output can't be written immediately.
-	if (our_input_fifo_filestream != -1)
-		printf("Opened FIFO: %i\n", our_input_fifo_filestream);
+    //----- CREATE A FIFO / NAMED PIPE -----
+    //--------------------------------------
+    
+    printf("Making FIFO...\n");
+    result = mkfifo(OUR_INPUT_FIFO_NAME, 0777);		//(This will fail if the fifo already exists in the system from the app previously running, this is fine)
+    if (result == 0)
+    {
+        //FIFO CREATED
+        printf("New FIFO created: %s\n", OUR_INPUT_FIFO_NAME);
+    }
+    
+    printf("Process %d opening FIFO %s\n", getpid(), OUR_INPUT_FIFO_NAME);
+    our_input_fifo_filestream = open(OUR_INPUT_FIFO_NAME, (O_WRONLY | O_NONBLOCK));
+    //Possible flags:
+    //	O_RDONLY - Open for reading only.
+    //	O_WRONLY - Open for writing only.
+    //	O_NDELAY / O_NONBLOCK (same function) - Enables nonblocking mode. When set read requests on the file can return immediately with a failure status
+    //											if there is no input immediately available (instead of blocking). Likewise, write requests can also return
+    //											immediately with a failure status if the output can't be written immediately.
+    if (our_input_fifo_filestream != -1)
+        printf("Opened FIFO: %i\n", our_input_fifo_filestream);
     //====================================================================
     
     //Para RT
@@ -395,11 +340,12 @@ int_T main(int_T argc, const char *argv[])
         printf("using realtime, priority: %d\n",interval);
     }
     
+    
     /* Unused arguments */
-  (void)(argc);
-  (void)(argv);
-  
-  //Grafica
+    (void)(argc);
+    (void)(argv);
+    
+    //Grafica
     
     
     temp = fopen("data.temp", "w");
@@ -438,48 +384,35 @@ int_T main(int_T argc, const char *argv[])
     }
     
     delay(1500);
-
-  /* Initialize model */
-  diesel_initialize();
+    
+    /* Initialize model */
+    diesel_initialize();
     
     /* get current time */
-    clock_gettime(0,&t); 
+    clock_gettime(0,&t);
     /* start after one second */
     t.tv_sec++;
     
-
-  /* Simulating the model step behavior (in non real-time) to
-   *  simulate model behavior at stop time.
-   */
-  while ((rtmGetErrorStatus(diesel_M) == (NULL)) && !rtmGetStopRequested
-         (diesel_M)) {
-     /* wait untill next shot */
-        //clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
-        /* do the stuff */
-        /*
-        if(estado==0){
-            estado=1;
-            
-        }else{
-            estado=0;
-        }
-        digitalWrite (0, estado) ;
-        */
+    
+    /* Simulating the model step behavior (in non real-time) to
+     *  simulate model behavior at stop time.
+     */
+    while ((rtmGetErrorStatus(diesel_M) == (NULL)) && !rtmGetStopRequested
+            (diesel_M)) {
         rt_OneStep();
         t.tv_nsec+=interval;
         tsnorm(&t);
-  }
-
-  /* Disable rt_OneStep() here */
-
-  /* Terminate model */
-  diesel_terminate();
-  
-  //----- CLOSE THE FIFO -----
+    }
+    
+    /* Disable rt_OneStep() here */
+    
+    /* Terminate model */
+    diesel_terminate();
+    
+     //----- CLOSE THE FIFO -----
 	(void)close(our_input_fifo_filestream);
     
-    
-  return 0;
+    return 0;
 }
 
 /*
