@@ -207,13 +207,14 @@ void rt_OneStep(void)
     OverrunFlag = true;
     
     
-    Prefd=5000;//500;
-    Qrefd=8000;//3500;//2430;//3403;
+    Prefd=500;//500;
+    Qrefd=3500;//3500;//2430;//3403;
     
     // ============================= recibe Serial===========================
     
     stringComplete = false;
     conti = true;
+    //serialFlush(fd3);
     serialFlush(fd3);
     printf("Pre Serial\n");
     memset(inputCharArray, 0, sizeof(inputCharArray));
@@ -239,7 +240,7 @@ void rt_OneStep(void)
 
     }
     printf("Post serial\n");
-    
+    //serialFlush(fd3);
     vload3 = atoi(inputCharArray);
     vload3 = vload3 / 10.0;
     
@@ -300,7 +301,6 @@ void rt_OneStep(void)
     printf("La temperatura es: %3.2f \n",TaC);
     printf("La potencia activa referencia es: %3.2f \n",Prefd);
     printf("La potencia reactiva referencia es: %3.2f \n",Qrefd);
-    printf("La dato es: %d \n",var3);
     printf("LA potencia P medida es:  %3.2f \n",Pm2);
     printf("LA potencia Q medida es:  %3.2f \n",Qm2);
     printf("El duty cycle es:  %3.2f \n",duty_cyle);
@@ -346,6 +346,7 @@ void rt_OneStep(void)
     //while(pinr==0){
     serialPuts(fd3,buffer3);
     serialFlush(fd3);
+    tcflush(fd3, TCIOFLUSH);
     //pinr=digitalRead(2);
     //printf("El dato pin es: %d \n",pinr);
     //}

@@ -37,7 +37,7 @@ static void commIN_Rasp(void* arg) {
     EnAltA = map(EnAlt, -6000, 6000, 0, 4095);
     analogWrite(DAC1, EnAltA);
 
-    vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_PERIOD_MS));
+    vTaskDelayUntil(&xLastWakeTime, (2 / portTICK_PERIOD_MS));
   }
 
 }
@@ -52,7 +52,7 @@ static void commOut_Rasp(void* arg) {
     SerialUSB.print('s');
     SerialUSB.print(loadVolt);
     SerialUSB.println('e');
-    vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_PERIOD_MS));
+    vTaskDelayUntil(&xLastWakeTime, (2 / portTICK_PERIOD_MS));
   }
 }
 
@@ -67,7 +67,7 @@ static void commIN_Load(void* arg) {
       Serial.flush();
     }
 
-    vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_PERIOD_MS));
+    vTaskDelayUntil(&xLastWakeTime, (2 / portTICK_PERIOD_MS));
   }
 }
 
@@ -76,7 +76,7 @@ static void commOut_Load(void* arg) {
   xLastWakeTime = xTaskGetTickCount();
   while (1) {
     Serial3.println(EnAlt);
-    vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_PERIOD_MS));
+    vTaskDelayUntil(&xLastWakeTime, (2 / portTICK_PERIOD_MS));
   }
 }
 
