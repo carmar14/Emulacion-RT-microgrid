@@ -1,4 +1,4 @@
-// compile with "gcc ert_main_New_Serial.c renovables.c renovables_data.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall -lpthread
+// compile with "gcc ert_main.c renovables.c renovables_data.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall -lpthread
 
 /*
  * File: ert_main.c
@@ -74,6 +74,8 @@ char buffera[BUFFER_SIZE];
 char *rDoS;
 
 //------Entradas-------
+double min=0.0;
+double max=100;
 double ipv=0.0;
 double vload3=0.0;
 double Prefd=0.0;
@@ -299,16 +301,26 @@ void rt_OneStep(void)
     duty_cyle=get_duty_cycle();
     potencia=get_Potencia();
     
-    printf("La irradianza es: %3.2f \n",Suns);
-    printf("La temperatura es: %3.2f \n",TaC);
+    if (i3>max){
+        max=i3;
+    }
+        
+    if (i3<min){
+        min=i3;
+    }
+    
+    //printf("La irradianza es: %3.2f \n",Suns);
+    //printf("La temperatura es: %3.2f \n",TaC);
+    printf("La minima es: %3.2f \n",min);
+    printf("La maxima es: %3.2f \n",max);
     printf("La potencia activa referencia es: %3.2f \n",Prefd);
     printf("La potencia reactiva referencia es: %3.2f \n",Qrefd);
     printf("LA potencia P medida es:  %3.2f \n",Pm2);
     printf("LA potencia Q medida es:  %3.2f \n",Qm2);
-    printf("El duty cycle es:  %3.2f \n",duty_cyle);
-    printf("La corriente de panel solar es: %3.2f \n",ipv);
+    //printf("El duty cycle es:  %3.2f \n",duty_cyle);
+    //printf("La corriente de panel solar es: %3.2f \n",ipv);
     printf("La corriente del inversor 3 es: %3.2f \n",i3);
-    printf("El estado de la bateria es: %3.2f \n",soc);
+    //printf("El estado de la bateria es: %3.2f \n",soc);
     printf ("La tensión en la carga es :%3.2f \n",vload3);
     
     //-----------Ataque----------------
@@ -332,7 +344,7 @@ void rt_OneStep(void)
     write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================
     //delay(1000);
-    
+    i3=i3*1200/9728902.0+4985980*1200/9728902.0;
     i3a=i3*10;
     
     //i3a = sine64[contI] - 4799;

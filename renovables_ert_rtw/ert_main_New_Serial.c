@@ -78,8 +78,8 @@ double ipv=0.0;
 double vload3=0.0;
 double Prefd=0.0;
 double Qrefd=0.0;
-double solarrad;
-double tempout;
+double solarrad=1000;
+double tempout=25;
 double potencia=0.0;
 MCP3204 ad_MCP3204;
 int fileDescriptor;
@@ -208,7 +208,7 @@ void rt_OneStep(void)
     
     
     Prefd=500;//500;
-    Qrefd=3500;//3500;//2430;//3403;
+    Qrefd=300;//3500;//2430;//3403;
     
     // ============================= recibe Serial===========================
     
@@ -241,8 +241,8 @@ void rt_OneStep(void)
     }
     printf("Post serial\n");
     //serialFlush(fd3);
-    vload3 = atoi(inputCharArray);
-    vload3 = vload3 / 10.0;
+    int vload3i = atoi(inputCharArray);
+    vload3 = vload3i / 10.0;
     
     //=======================================================================
     
