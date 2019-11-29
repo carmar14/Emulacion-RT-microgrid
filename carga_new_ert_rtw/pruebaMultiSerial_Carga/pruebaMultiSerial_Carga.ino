@@ -41,7 +41,7 @@ static void commIN_Rasp(void* arg) {
     loadVoltA=map(loadVolt,-4800,4800,0,4095);
     analogWrite(DAC0,loadVoltA);    
 
-    vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_PERIOD_MS));
+    vTaskDelayUntil(&xLastWakeTime, (2 / portTICK_PERIOD_MS));
   }
 
 }
@@ -61,7 +61,7 @@ static void commOut_Rasp(void* arg) {
     SerialUSB.print(EnAlt);
     SerialUSB.print(',');
     SerialUSB.println('e');
-    vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_PERIOD_MS));
+    vTaskDelayUntil(&xLastWakeTime, (2 / portTICK_PERIOD_MS));
   }
 }
 
@@ -77,7 +77,7 @@ static void commIN_1(void* arg) {
       Serial1.flush();
     }
 
-    vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_PERIOD_MS));
+    vTaskDelayUntil(&xLastWakeTime, (2 / portTICK_PERIOD_MS));
   }
 }
 
@@ -93,7 +93,7 @@ static void commIN_2(void* arg) {
       Serial2.flush();
     }
 
-    vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_PERIOD_MS));
+    vTaskDelayUntil(&xLastWakeTime, (2 / portTICK_PERIOD_MS));
   }
 }
 
@@ -109,7 +109,7 @@ static void commIN_3(void* arg) {
       Serial3.flush();
     }
 
-    vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_PERIOD_MS));
+    vTaskDelayUntil(&xLastWakeTime, (2 / portTICK_PERIOD_MS));
   }
 }
 
@@ -119,7 +119,7 @@ static void commOut_all(void* arg) {
   xLastWakeTime = xTaskGetTickCount();
   while (1) {
     Serial.println(loadVolt);
-    vTaskDelayUntil(&xLastWakeTime, (10 / portTICK_PERIOD_MS));
+    vTaskDelayUntil(&xLastWakeTime, (2 / portTICK_PERIOD_MS));
   }
 }
 
