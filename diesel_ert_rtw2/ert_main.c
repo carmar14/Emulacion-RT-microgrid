@@ -208,6 +208,7 @@ void rt_OneStep(void)
     serialFlush(fd);
     
     vload = atoi(inputCharArray);
+    //printf("La tension de la carga1 es : %3.2f \n",vload);
     vload = vload / 10.0;
     
     tiempo=tiempo+0.0001;
@@ -404,13 +405,13 @@ int_T main(int_T argc, const char *argv[])
     while ((rtmGetErrorStatus(diesel_M) == (NULL)) && !rtmGetStopRequested
             (diesel_M)) {
         clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
-        //if(estado==0){
-            //estado=1;
+        if(estado==0){
+            estado=1;
             
-        //}else{
-            //estado=0;
-        //}
-        //digitalWrite (21, estado);
+        }else{
+            estado=0;
+        }
+        digitalWrite (21, estado);
         rt_OneStep();
         t.tv_nsec+=interval;
         tsnorm(&t);

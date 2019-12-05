@@ -221,7 +221,7 @@ void rt_OneStep(void)
       }
 
     }
-    //serialFlush(fd);
+    serialFlush(fd);
     
     vload = atoi(inputCharArray);
     
