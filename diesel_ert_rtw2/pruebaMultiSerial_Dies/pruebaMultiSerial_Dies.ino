@@ -33,8 +33,8 @@ static void commIN_Rasp(void* arg) {
       SerialUSB.flush();
     }
 
-    //DiesA=map(Dies,-40000,40000,0,4095);
-    DiesA=map(Dies,-15000,15000,0,4095);
+    DiesA=map(Dies,-40000,40000,0,4095);
+    //DiesA=map(Dies,-15000,15000,0,4095);
     analogWrite(DAC1,DiesA);
         
 
