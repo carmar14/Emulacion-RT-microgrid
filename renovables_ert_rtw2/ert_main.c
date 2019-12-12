@@ -492,6 +492,9 @@ int_T main(int_T argc, const char *argv[])
     serialClose(fd3);
     fd3=serialOpen ("/dev/ttyACM0", 115200);
     
+    serialPuts(fd3,buffer3);
+    serialFlush(fd3);
+    
     sleep(1);
     
     //------------GPIO---------------------
