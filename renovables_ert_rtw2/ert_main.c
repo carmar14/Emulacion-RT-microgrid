@@ -294,7 +294,7 @@ void rt_OneStep(void)
 
   /* Get model outputs here */
   
-  i3=get_I_pv();
+    i3=get_I_pv();
     soc=get_SOC();
     Pm2=get_Pm();
     Qm2=get_Qm();
@@ -344,7 +344,7 @@ void rt_OneStep(void)
     write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================
     //delay(1000);
-    i3=i3*1200/9728902.0+4985980*1200/9728902.0;
+    //i3=i3*1200/9728902.0+4985980*1200/9728902.0;
     i3a=i3*10;
     
     //i3a = sine64[contI] - 4799;
@@ -491,6 +491,9 @@ int_T main(int_T argc, const char *argv[])
     fd3=serialOpen ("/dev/ttyACM0", 115200);
     serialClose(fd3);
     fd3=serialOpen ("/dev/ttyACM0", 115200);
+    
+    serialPuts(fd3,buffer3);
+    serialFlush(fd3);
     
     sleep(1);
     

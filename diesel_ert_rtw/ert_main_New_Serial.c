@@ -207,9 +207,9 @@ void rt_OneStep(void)
 
     }
     
-    vload = atoi(inputCharArray);
+    vload = atof(inputCharArray);
     vload = vload / 10.0;
-    
+    printf("Tension en Carga recibida: %f  ",vload);
     //=======================================================================
     
     digitalWrite (0, 1) ;
@@ -245,26 +245,27 @@ void rt_OneStep(void)
     Qref_d=3500;
     //Vload=var1*k+vx;
     //Vload=170*sin(2*3.14*60*tiempo);
-    tiempo=tiempo+0.0001;
-    if (tiempo>=0.017) tiempo =0;
+    //tiempo=tiempo+0.0001;
+    //if (tiempo>=0.017) tiempo =0;
     //Vload=Vload/10.0;
     par=0.1;//1.4;
     flujo=1000;
     
     //set_Pref_d(Pref_d);
     //set_Qref_d(Qref_d);
+    printf("Tension en Carga seteada: %f \n",vload);
     set_Vload(vload);
     //set_par(par);
     set_flujo(flujo);
 
-  /* Step the model for base rate */
-  
-  
-  diesel_step();
+    /* Step the model for base rate */
 
-  /* Get model outputs here */
-  
-  //-----salidas-------
+
+    diesel_step();
+
+    /* Get model outputs here */
+
+    //-----salidas-------
     Idie=get_I_die();
     duty_cycle=get_duty();
     potencia=get_Potencia();
@@ -296,11 +297,12 @@ void rt_OneStep(void)
     //Pma=Pm*10;
     //Qma=Qm*10;
     i2a=Idie*10;
-    caudala=caudal*10;
+    //caudala=caudal*10;
     
-    //i2a = vload * 10;
+    //i2a = vload * 50;
     
     //i2a = (sine64[contI] - 4799) ;
+    //i2a = i2a * 5;
     //contI++;
     //if (contI > 64 - 1) contI = 0;
     
@@ -311,14 +313,9 @@ void rt_OneStep(void)
     //while(pinr==0){
     serialPuts(fd,buffer);
     serialFlush(fd);
-    //pinr=digitalRead(2);
-    //printf("El dato pin es: %d \n",pinr);
-    //}
+    
     serialFlush(fd);
     tcflush(fd, TCIOFLUSH);
-    
-    
-    
     
     pinr=0;
     
@@ -378,6 +375,8 @@ int_T main(int_T argc, const char *argv[])
     /* default interval = 50000ns = 50us
      * cycle duration = 100us
      */
+    printf("Iniciando \n");
+     
     int interval=4*1000000;		//en ns   ->  20000=20us     *4  100
     
     if(argc>=2 && atoi(argv[1])>0)
@@ -402,11 +401,11 @@ int_T main(int_T argc, const char *argv[])
   //Grafica
     
     
-    temp = fopen("data.temp", "w");
+    //temp = fopen("data.temp", "w");
     
-    gnuplotPipe = popen ("gnuplot -persistent", "w");
+    //gnuplotPipe = popen ("gnuplot -persistent", "w");
     
-    fprintf(gnuplotPipe,"set grid \n");
+    //fprintf(gnuplotPipe,"set grid \n");
     
     //Serial
     
@@ -414,6 +413,8 @@ int_T main(int_T argc, const char *argv[])
     serialClose(fd);
     fd=serialOpen ("/dev/ttyACM0", 115200);
     
+    serialFlush(fd);
+    tcflush(fd, TCIOFLUSH);
     
     sleep(1);
     
@@ -424,7 +425,7 @@ int_T main(int_T argc, const char *argv[])
     wiringPiSetup();
     pinMode(0, OUTPUT);
     pinMode(1, OUTPUT);
-    pinMode(3, OUTPUT);
+    pinMode(21, OUTPUT);
     //wiringPiISR(2, INT_EDGE_RISING, &lectura);
     pinMode(2, INPUT);
     digitalWrite(3,HIGH);
@@ -437,10 +438,11 @@ int_T main(int_T argc, const char *argv[])
         exit(1);
     }
     
+    int estado = 0;
     delay(1500);
 
-  /* Initialize model */
-  diesel_initialize();
+    /* Initialize model */
+    diesel_initialize();
     
     /* get current time */
     clock_gettime(0,&t); 
@@ -456,15 +458,15 @@ int_T main(int_T argc, const char *argv[])
      /* wait untill next shot */
         clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
         /* do the stuff */
-        /*
+        
         if(estado==0){
             estado=1;
             
         }else{
             estado=0;
         }
-        digitalWrite (0, estado) ;
-        */
+        digitalWrite (21, estado) ;
+        
         rt_OneStep();
         t.tv_nsec+=interval;
         tsnorm(&t);
