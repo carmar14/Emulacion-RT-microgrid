@@ -1,4 +1,4 @@
-//compile using "gcc ert_main_New_Serial.c carga_new.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c -lm -lwiringPi -lrt -Wall"
+//compile using "gcc ert_main_New_Serial_SineTest.c carga_new.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c -lm -lwiringPi -lrt -Wall"
 /*               
  * File: ert_main.c
  *

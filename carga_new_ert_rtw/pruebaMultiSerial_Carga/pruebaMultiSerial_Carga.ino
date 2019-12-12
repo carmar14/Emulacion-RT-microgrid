@@ -16,6 +16,13 @@ void setup() {
 
   analogWriteResolution(12);
 
+  loadVolt = 0;
+  loadVoltA = 0;
+  Bio = 0;
+  Dies = 0;
+  EnAlt = 0;
+
+
   xTaskCreate(commIN_Rasp, NULL, configMINIMAL_STACK_SIZE , NULL, 1, NULL);
   xTaskCreate(commOut_Rasp, NULL, configMINIMAL_STACK_SIZE , NULL, 1, NULL);
   xTaskCreate(commIN_1, NULL, configMINIMAL_STACK_SIZE , NULL, 1, NULL);

@@ -323,6 +323,8 @@ void rt_OneStep(void)
     Vloada=Vload*10;
     Pma=Pm*10;
     Qma=Qm*10;
+    
+    //Vloada = i2;
 
     //Vloada = EnAlt+Dies+Bio;
     
@@ -430,6 +432,8 @@ int_T main(int_T argc, const char *argv[])
     serialClose(fd);
     fd=serialOpen ("/dev/ttyACM0", 115200);
     
+    serialFlush(fd);
+    tcflush(fd, TCIOFLUSH);
     
     sleep(1);
     
