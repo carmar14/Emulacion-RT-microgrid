@@ -205,7 +205,7 @@ void rt_OneStep(void)
         
     }
     
-    serialFlush(fd);
+    //serialFlush(fd);
     
     vload = atoi(inputCharArray);
     //printf("La tension de la carga1 es : %3.2f \n",vload);
@@ -219,7 +219,8 @@ void rt_OneStep(void)
     
     //set_Pref_d(Pref_d);
     //set_Qref_d(Qref_d);
-    set_Vload(vload);
+    //set_Vload(vload); 
+    set_Vload(0.01*sin(2*3.14*60*tiempo));
     //set_par(par);
     set_flujo(flujo);
     
@@ -270,13 +271,14 @@ void rt_OneStep(void)
     //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
     //sprintf(buffer,"v%07d\n",i2a);
     sprintf(buffer,"%d\n",i2a);
+    //sprintf(buffer,"%d\n",vload);
     //while(pinr==0){
     serialPuts(fd,buffer);
     serialFlush(fd);
     //pinr=digitalRead(2);
     //printf("El dato pin es: %d \n",pinr);
     //}
-    serialFlush(fd);
+    //serialFlush(fd);
     tcflush(fd, TCIOFLUSH);
     
     /* Indicate task complete */
@@ -365,6 +367,7 @@ int_T main(int_T argc, const char *argv[])
     fd=serialOpen ("/dev/ttyACM0", 115200);
     
     
+    
     sleep(1);
     
     //Inicializar comunicacion UDP---------------------------------------------------------
@@ -411,7 +414,7 @@ int_T main(int_T argc, const char *argv[])
         }else{
             estado=0;
         }
-        digitalWrite (21, estado);
+        //digitalWrite (21, estado);
         rt_OneStep();
         t.tv_nsec+=interval;
         tsnorm(&t);
