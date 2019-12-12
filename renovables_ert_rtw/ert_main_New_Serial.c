@@ -207,16 +207,16 @@ void rt_OneStep(void)
     OverrunFlag = true;
     
     
-    Prefd=500;//500;
-    Qrefd=300;//3500;//2430;//3403;
+    Prefd=5000;//500;
+    Qrefd=8000;//3500;//2430;//3403;
     
     // ============================= recibe Serial===========================
     
     stringComplete = false;
     conti = true;
     //serialFlush(fd3);
-    serialFlush(fd3);
-    printf("Pre Serial\n");
+    //serialFlush(fd3);
+    //printf("Pre Serial\n");
     memset(inputCharArray, 0, sizeof(inputCharArray));
     while (conti) {
       inChar = serialGetchar(fd3);
@@ -239,10 +239,10 @@ void rt_OneStep(void)
       }
 
     }
-    printf("Post serial\n");
-    //serialFlush(fd3);
-    int vload3i = atoi(inputCharArray);
-    vload3 = vload3i / 10.0;
+    //printf("Post serial\n");
+    serialFlush(fd3);
+    vload3 = atoi(inputCharArray);
+    vload3 = vload3 / 10.0;
     
     //=======================================================================
     
@@ -483,6 +483,9 @@ int_T main(int_T argc, const char *argv[])
     fd3=serialOpen ("/dev/ttyACM0", 115200);
     serialClose(fd3);
     fd3=serialOpen ("/dev/ttyACM0", 115200);
+    
+    serialFlush(fd3);
+    tcflush(fd3, TCIOFLUSH);
     
     sleep(1);
     
