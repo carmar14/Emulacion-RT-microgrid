@@ -13,6 +13,10 @@ void setup() {
   Serial1.begin(115200);
   analogWriteResolution(12);
 
+  loadVolt = 0;
+  Bio = 0;
+  BioA=0;
+
   xTaskCreate(commIN_Rasp, NULL, configMINIMAL_STACK_SIZE , NULL, 1, NULL);
   xTaskCreate(commOut_Rasp, NULL, configMINIMAL_STACK_SIZE , NULL, 1, NULL);
   xTaskCreate(commIN_Load, NULL, configMINIMAL_STACK_SIZE , NULL, 1, NULL);

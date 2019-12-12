@@ -227,7 +227,7 @@ void rt_OneStep(void)
     
     //=======================================================================
     vload = vload / 10.0;
-    
+    printf("Tension leida: %f\n",vload);
     tiempo=tiempo+0.0001;
     if (tiempo>0.0167) tiempo=0;
     
@@ -450,6 +450,9 @@ int_T main(int_T argc, const char *argv[])
     serialClose(fd);
     fd=serialOpen ("/dev/ttyACM0", 115200);
     
+    serialFlush(fd);
+    tcflush(fd, TCIOFLUSH);
+    
     sleep(1);
     
     //------------GPIO---------------------
@@ -480,7 +483,7 @@ int_T main(int_T argc, const char *argv[])
     /* Simulating the model step behavior (in non real-time) to
      *  simulate model behavior at stop time.
      */
-    sleep(5);
+    sleep(1);
     /* get current time */
     clock_gettime(0,&t);
     /* start after one second */
