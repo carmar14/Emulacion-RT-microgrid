@@ -28,7 +28,7 @@
 #include <termios.h>
 #include <wiringPi.h>
 //#include <ncurses.h>
-#include "libmcp3204.h"
+//#include "libmcp3204.h"
 
 /*
  * Associating rt_OneStep with a real-time clock or interrupt service routine
