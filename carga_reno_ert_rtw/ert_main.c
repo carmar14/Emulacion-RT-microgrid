@@ -92,7 +92,7 @@ double Prefd=0.0;
 double Qrefd=0.0;
 double solarrad;
 double tempout;
-double potencia=0.0;
+//double potencia=0.0;
 int fileDescriptor;
 char error[55];
 
@@ -132,7 +132,9 @@ int fd;
 int Vloada=0;
 int Pma=0;
 int Qma=0;
-char buffer[8];
+int i3a=0;
+char buffer3[8];
+char buffer2[8];
 
 bool stringComplete = false;  // whether the string is complete
 bool conti = true;
@@ -160,7 +162,7 @@ double in=0;
 
 
 int i;
-int k;
+//int k;
 
 // 39 datos
 // Dt = 427us (idealmente) para 60Hz
@@ -190,11 +192,16 @@ int senw[] = {2048,	2377,	2697,	3000,	3278,
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define OUR_INPUT_FIFO_NAME "/tmp/dataC"
+#define OUR_INPUT_FIFO_NAME "/tmp/dataInPV"
+#define OUR_OUTPUT_FIFO_NAME "/tmp/dataOutPV"
 
+int our_output_fifo_filestream = -1;
 int our_input_fifo_filestream = -1;
-int result;
+int result, result2;
 char bufferPipe[128];
+FILE *fp;
+char * pch;
+int counter = 0;
 //=========================================================
 
 //----------------------------Para RT------------------------------
@@ -416,7 +423,7 @@ void rt_OneStep(void)
     
     memset(buffer,0,sizeof(buffer));
     
-    sprintf(buffer,"%d\n",Vloada);
+    sprintf(buffer,"s%d,%d,e\n",Vloada,i3a);
     
     serialPuts(fd,buffer);
     
@@ -543,12 +550,12 @@ int_T main(int_T argc, const char *argv[])
     
     //Serial
     
-    fd3=serialOpen ("/dev/ttyACM0", 115200);
-    serialClose(fd3);
-    fd3=serialOpen ("/dev/ttyACM0", 115200);
+    fd=serialOpen ("/dev/ttyACM0", 115200);
+    serialClose(fd);
+    fd=serialOpen ("/dev/ttyACM0", 115200);
     
-    serialPuts(fd3,buffer3);
-    serialFlush(fd3);
+    serialPuts(fd,buffer);
+    serialFlush(fd);
     
     sleep(1);
     
