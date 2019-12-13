@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'carga_reno'.
  *
- * Model version                  : 1.20
+ * Model version                  : 1.21
  * Simulink Coder version         : 8.14 (R2018a) 06-Feb-2018
- * C/C++ source code generated on : Fri Dec 13 10:02:20 2019
+ * C/C++ source code generated on : Fri Dec 13 10:39:26 2019
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -844,6 +844,11 @@ void carga_reno_step(void)
   carga_reno_B.Gain7 = ((carga_reno_X.Integrator4_CSTATE - carga_reno_Y.Vload) -
                         0.0012 * carga_reno_X.Integrator5_CSTATE) *
     45454.545454545456;
+
+  /* Outport: '<Root>/i2' incorporates:
+   *  Integrator: '<Root>/Integrator5'
+   */
+  carga_reno_Y.i2 = carga_reno_X.Integrator5_CSTATE;
   if (rtmIsMajorTimeStep(carga_reno_M)) {
     /* DiscreteTransferFcn: '<S1>/Delay90(z)I' incorporates:
      *  Integrator: '<Root>/Integrator5'
