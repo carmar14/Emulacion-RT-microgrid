@@ -339,7 +339,7 @@ void rt_OneStep(void)
     
     //Carga
     set_i1(i1);
-    set_i2(i3);
+    set_i3(i3);
     //Renovables
     set_Idc_PV(ipv);
     set_Pref(Prefd);

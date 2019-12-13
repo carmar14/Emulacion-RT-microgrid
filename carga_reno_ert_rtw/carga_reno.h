@@ -328,7 +328,7 @@ extern void set_Idc_PV(double);
 extern void set_Pref(double);	
 extern void set_Qref(double);
 extern void set_i1(double);
-extern void set_i2(double);
+extern void set_i3(double);
 
 //-----Funciones para obtener valores de las salidas-------
 	
