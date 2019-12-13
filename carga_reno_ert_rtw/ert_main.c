@@ -421,11 +421,11 @@ void rt_OneStep(void)
     
     //Vloada = EnAlt+Dies+Bio;
     
-    memset(buffer,0,sizeof(buffer));
+    memset(buffer2,0,sizeof(buffer2));
     
-    sprintf(buffer,"s%d,%d,e\n",Vloada,i3a);
+    sprintf(buffer2,"s%d,%d,e\n",Vloada,i3a);
     
-    serialPuts(fd,buffer);
+    serialPuts(fd,buffer2);
     
     serialFlush(fd);
     tcflush(fd, TCIOFLUSH);
@@ -554,7 +554,7 @@ int_T main(int_T argc, const char *argv[])
     serialClose(fd);
     fd=serialOpen ("/dev/ttyACM0", 115200);
     
-    serialPuts(fd,buffer);
+    serialPuts(fd,buffer2);
     serialFlush(fd);
     
     sleep(1);
