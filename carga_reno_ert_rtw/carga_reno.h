@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'carga_reno'.
  *
- * Model version                  : 1.20
+ * Model version                  : 1.21
  * Simulink Coder version         : 8.14 (R2018a) 06-Feb-2018
- * C/C++ source code generated on : Fri Dec 13 10:02:20 2019
+ * C/C++ source code generated on : Fri Dec 13 10:39:26 2019
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -251,6 +251,7 @@ typedef struct {
   real_T Poren;                        /* '<Root>/Poren' */
   real_T soc;                          /* '<Root>/soc' */
   real_T duty_cycle;                   /* '<Root>/duty_cycle' */
+  real_T i2;                           /* '<Root>/i2' */
 } ExtY_carga_reno_T;
 
 /* Real-time Model Data Structure */
@@ -340,6 +341,7 @@ extern double get_Potencia(void);
 extern double get_Pm(void);
 extern double get_Qm(void);
 extern double get_Vload(void);
+
 
 /* Real-time Model object */
 extern RT_MODEL_carga_reno_T *const carga_reno_M;

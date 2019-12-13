@@ -92,7 +92,7 @@ double Prefd=0.0;
 double Qrefd=0.0;
 double solarrad;
 double tempout;
-double potencia=0.0;
+//double potencia=0.0;
 int fileDescriptor;
 char error[55];
 
@@ -128,11 +128,13 @@ int var3=0;
 char var1s[7];
 char var2s[7];
 char var3s[7];
-int fd;
+int fd3;
 int Vloada=0;
 int Pma=0;
 int Qma=0;
-char buffer[8];
+int i3a=0;
+char buffer3[8];
+char buffer2[8];
 
 bool stringComplete = false;  // whether the string is complete
 bool conti = true;
@@ -160,7 +162,7 @@ double in=0;
 
 
 int i;
-int k;
+//int k;
 
 // 39 datos
 // Dt = 427us (idealmente) para 60Hz
@@ -190,11 +192,16 @@ int senw[] = {2048,	2377,	2697,	3000,	3278,
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define OUR_INPUT_FIFO_NAME "/tmp/dataC"
+#define OUR_INPUT_FIFO_NAME "/tmp/dataInPV"
+#define OUR_OUTPUT_FIFO_NAME "/tmp/dataOutPV"
 
+int our_output_fifo_filestream = -1;
 int our_input_fifo_filestream = -1;
-int result;
+int result, result2;
 char bufferPipe[128];
+FILE *fp;
+char * pch;
+int counter = 0;
 //=========================================================
 
 //----------------------------Para RT------------------------------
@@ -237,23 +244,26 @@ void rt_OneStep(void)
     /* Save FPU context here (if necessary) */
     /* Re-enable timer or interrupt here */
     /* Set model inputs here */
-    
+    //printf("Pre-Serial\n");
     // ============================= recibe Serial===========================
     //================Falta cuadrar esto========================
     stringComplete = false;
     conti = true;
-    serialFlush(fd);
+    //serialFlush(fd3);
     
     memset(inputCharArray, 0, sizeof(inputCharArray));
-    //if (serialDataAvail (fd))
+    //printf("Pre-Serial\n");
+    //if (serialDataAvail (fd3))
     //{
     while (conti) {
-        inChar = serialGetchar(fd);
+        inChar = serialGetchar(fd3);
+        //printf("char obtained: %c\n",inChar);
         if (inChar == 's') {
             j = 0;
+            //printf("encuentra s\n");
             while (!stringComplete) {
-                while (serialDataAvail (fd) > 0  && conti) {
-                    inChar = serialGetchar(fd);
+                while (serialDataAvail (fd3) > 0  && conti) {
+                    inChar = serialGetchar(fd3);
                     if (inChar == 'e') {
                         stringComplete = true;
                         conti = false;
@@ -264,9 +274,8 @@ void rt_OneStep(void)
                 }
             }
         }
-        
     }
-    serialFlush(fd);
+    serialFlush(fd3);
     ptr = strtok(inputCharArray, delim);
     Bio_CA = ptr;
     Bio = atoi(Bio_CA);
@@ -274,14 +283,14 @@ void rt_OneStep(void)
     ptr = strtok(NULL, delim);
     Dies_CA = ptr;
     Dies = atoi(Dies_CA);
-    ptr = strtok(NULL, delim);
+    //ptr = strtok(NULL, delim);
     //EnAlt_CA = ptr; // Esto ya no iria
     //EnAlt = atoi(EnAlt_CA); // Esto ya no iria
     //}
     
     
     //=======================================================================
-    
+    //printf("Post-Serial\n");
     
     //=======================================================================
     Prefd=500;//500;
@@ -332,7 +341,7 @@ void rt_OneStep(void)
     
     //Carga
     set_i1(i1);
-    set_i2(i3);
+    set_i3(i3);
     //Renovables
     set_Idc_PV(ipv);
     set_Pref(Prefd);
@@ -405,23 +414,23 @@ void rt_OneStep(void)
     //----------Serial----------------------
     //-----------Escritura-envio---------------------
     
-    Vloada=Vload*10;
+    Vloada=Vload*10.0;
     Pma=Pm*10;
     Qma=Qm*10;
-    i3a=i3*10; //Falta enviarlo el dato por serial
+    i3a=i3*10.0; 
     
     //Vloada = i2;
     
     //Vloada = EnAlt+Dies+Bio;
     
-    memset(buffer,0,sizeof(buffer));
+    memset(buffer2,0,sizeof(buffer2));
     
-    sprintf(buffer,"%d\n",Vloada);
+    sprintf(buffer2,"s%d,%d,e\n",Vloada,i3a);
     
-    serialPuts(fd,buffer);
+    serialPuts(fd3,buffer2);
     
-    serialFlush(fd);
-    tcflush(fd, TCIOFLUSH);
+    serialFlush(fd3);
+    tcflush(fd3, TCIOFLUSH);
     
     
     
@@ -517,7 +526,7 @@ int_T main(int_T argc, const char *argv[])
     }
     fgets(buffer, BUFFER_SIZE, input_file);	//First line for the labels
     
-    
+    printf("Openeing ataque DoS\n");
     input_DoS= fopen(DoS, "r");
     if (input_DoS == NULL){
         fprintf(stderr, "Unable to open file %s\n",DoS);
@@ -534,7 +543,7 @@ int_T main(int_T argc, const char *argv[])
     
     //Grafica
     
-    
+    printf("Openeing data temp\n");
     temp = fopen("data.temp", "w");
     
     gnuplotPipe = popen ("gnuplot -persistent", "w");
@@ -542,21 +551,21 @@ int_T main(int_T argc, const char *argv[])
     fprintf(gnuplotPipe,"set grid \n");
     
     //Serial
-    
+    printf("Openeing serial port\n");
     fd3=serialOpen ("/dev/ttyACM0", 115200);
     serialClose(fd3);
     fd3=serialOpen ("/dev/ttyACM0", 115200);
     
-    serialPuts(fd3,buffer3);
     serialFlush(fd3);
+    tcflush(fd3, TCIOFLUSH);
     
     sleep(1);
-    
+    printf("Setting pin mode\n");
     //------------GPIO---------------------
     wiringPiSetup();
     pinMode(0, OUTPUT);
     pinMode(1, OUTPUT);
-    pinMode(3, OUTPUT);
+    pinMode(21, OUTPUT);
     //wiringPiISR(2, INT_EDGE_RISING, &lectura);
     pinMode(2, INPUT);
     digitalWrite(3,HIGH);
@@ -576,8 +585,9 @@ int_T main(int_T argc, const char *argv[])
     (void)(argv);
     
     /* Initialize model */
+    printf("Initializing model\n");
     carga_reno_initialize();
-    
+    printf("Starting\n");
     /* get current time */
     clock_gettime(0,&t);
     /* start after one second */
@@ -586,9 +596,12 @@ int_T main(int_T argc, const char *argv[])
     /* Simulating the model step behavior (in non real-time) to
      *  simulate model behavior at stop time.
      */
+    
     while ((rtmGetErrorStatus(carga_reno_M) == (NULL)) && !rtmGetStopRequested
             (carga_reno_M)) {
+		
         clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
+        
         /* do the stuff */
         if(estado==0){
             estado=1;
@@ -599,6 +612,7 @@ int_T main(int_T argc, const char *argv[])
         digitalWrite (21, estado) ;
         
         rt_OneStep();
+        
         t.tv_nsec+=interval;
         tsnorm(&t);
     }
