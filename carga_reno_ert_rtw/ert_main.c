@@ -417,7 +417,7 @@ void rt_OneStep(void)
     Vloada=Vload*10.0;
     Pma=Pm*10;
     Qma=Qm*10;
-    i3a=i3*10.0; 
+    i3a=i2*10.0; 
     
     //Vloada = i2;
     
