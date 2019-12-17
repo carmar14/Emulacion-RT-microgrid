@@ -125,6 +125,7 @@ try:
             temp = TEMP.get_value()
             
             if((pref1 != pref) or (qref1 != qref) or (temp1 != temp) or (irr1 !=irr)):
+                print(PipeString)
                 print("Pref {}  Qref {} Irr {} Temp {}".format(pref,qref,irr,temp))
                 string = str(pref)+'\t'+str(qref)+'\t'+str(irr)+'\t'+str(temp)+'\n'
                 os.write(PipeIn2, str.encode(string))

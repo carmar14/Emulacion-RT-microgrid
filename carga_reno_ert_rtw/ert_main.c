@@ -198,7 +198,7 @@ int senw[] = {2048,	2377,	2697,	3000,	3278,
 int our_output_fifo_filestream = -1;
 int our_input_fifo_filestream = -1;
 int result, result2;
-char bufferPipe[128];
+char bufferPipe[256];
 FILE *fp;
 char * pch;
 int counter = 0;
@@ -400,7 +400,8 @@ void rt_OneStep(void)
     //=============== Pipes Envio ======================== (Falta ajustar)
     memset(bufferPipe,0,sizeof(bufferPipe));
     sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",Pm,Qm,Vload,i2,soc,Pm2,Qm2,duty_cyle);
-    write(our_input_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
+    //printf(bufferPipe);
+    write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================
     
     //----------Serial----------------------
