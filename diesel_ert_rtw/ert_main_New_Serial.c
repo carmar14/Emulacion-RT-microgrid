@@ -209,7 +209,7 @@ void rt_OneStep(void)
     
     vload = atof(inputCharArray);
     vload = vload / 10.0;
-    printf("Tension en Carga recibida: %f  ",vload);
+    //printf("Tension en Carga recibida: %f  ",vload);
     //=======================================================================
     
     digitalWrite (0, 1) ;
@@ -253,7 +253,7 @@ void rt_OneStep(void)
     
     //set_Pref_d(Pref_d);
     //set_Qref_d(Qref_d);
-    printf("Tension en Carga seteada: %f \n",vload);
+    //printf("Tension en Carga seteada: %f \n",vload);
     set_Vload(vload);
     //set_par(par);
     set_flujo(flujo);
@@ -415,7 +415,7 @@ int_T main(int_T argc, const char *argv[])
     
     serialFlush(fd);
     tcflush(fd, TCIOFLUSH);
-    
+    printf("Puerto Serial reseteado\n");
     sleep(1);
     
     //Inicializar comunicacion UDP---------------------------------------------------------
