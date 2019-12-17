@@ -227,7 +227,7 @@ void rt_OneStep(void)
     
     //=======================================================================
     vload = vload / 10.0;
-    printf("Tension leida: %f\n",vload);
+    //printf("Tension leida: %f\n",vload);
     tiempo=tiempo+0.0001;
     if (tiempo>0.0167) tiempo=0;
     
@@ -275,14 +275,14 @@ void rt_OneStep(void)
     }
     
     printf("El vload es : %3.2f \n",vload);
-    printf("La potencia Pref es: %3.2f \n",pref);
-    printf("La potencia Qref es: %3.2f \n", qref);
-    printf("La potencia P medida es: %3.2f \n",Pm1);
-    printf("La potencia Q medida es: %3.2f \n", Qm1);
-    printf("La corriente del inversor 1 es: %3.2f \n",i1);
-    printf("El duty de bio es: %3.2f \n",duty_cycle);
-    printf("El valor minimo de corriente : %3.2f \n",valor_min);
-    printf("El valor maximo de corriente : %3.2f \n",valor_max);
+    //printf("La potencia Pref es: %3.2f \n",pref);
+    //printf("La potencia Qref es: %3.2f \n", qref);
+    //printf("La potencia P medida es: %3.2f \n",Pm1);
+    //printf("La potencia Q medida es: %3.2f \n", Qm1);
+    //printf("La corriente del inversor 1 es: %3.2f \n",i1);
+    //printf("El duty de bio es: %3.2f \n",duty_cycle);
+    //printf("El valor minimo de corriente : %3.2f \n",valor_min);
+    //printf("El valor maximo de corriente : %3.2f \n",valor_max);
     
     
     //-----------Ataque----------------
@@ -317,6 +317,7 @@ void rt_OneStep(void)
     memset(buffer,0,sizeof(buffer));
     //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
     sprintf(buffer,"%d\n",i1a);
+    //sprintf(buffer,"%d\n",1800);
     
     serialPuts(fd,buffer);
     serialFlush(fd);
