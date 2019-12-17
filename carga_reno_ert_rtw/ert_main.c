@@ -88,8 +88,8 @@ double i3=0.0;
 //Renovables
 double ipv=0.0;
 //double vload3=0.0;
-double Prefd=0.0;
-double Qrefd=0.0;
+double Pi_reno=0.0;
+double Qi_reno=0.0;
 double solarrad;
 double tempout;
 //double potencia=0.0;
@@ -293,15 +293,15 @@ void rt_OneStep(void)
     //printf("Post-Serial\n");
     
     //=======================================================================
-    Prefd=500;//500;
-    Qrefd=3500;//3500;//2430;//3403;
+    //Pi_reno=500;//500;
+    //Qi_reno=3500;//3500;//2430;//3403;
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
     //printf("CB counter %d\n",counter);
     if(fgets(bufferPipe,sizeof(bufferPipe),fp) != NULL)
     {
-        Prefd = strtof(bufferPipe,&pch);
-        Qrefd = strtof(pch,&pch);
+        Pi_reno = strtof(bufferPipe,&pch);
+        Qi_reno = strtof(pch,&pch);
         solarrad = strtof(pch,&pch);
         tempout = strtof(pch,&pch);
         
@@ -320,17 +320,19 @@ void rt_OneStep(void)
     I0= I0_T1*pow((TaK/T1),(3/n))*exp(-q*Vg/(n*k)*((1/TaK)-(1/T1)));
     Vt_Ta = A * k * TaK / q;
     Vc = Va/Ns;
-    printf("Aqui estoy\n");
+    //printf("Aqui estoy\n");
     
     for (int j=1;j<=5;j++){
         Ia=Ia- (IL - Ia - I0*( exp((Vc+Ia*Rs)/Vt_Ta) -1))/(-1 - (I0*( exp((Vc+Ia*Rs)/Vt_Ta) -1))*Rs/Vt_Ta);
     }
     
-    ipv=1.5;//500;   //Proveniente de la fuente de generación PV
-    //ipv=Ia;
+    //ipv=1.5;//500;   //Proveniente de la fuente de generación PV
+    ipv=Ia;
     
     i1=Bio/10.0;
     i3=Dies/10.0;
+    //i1=Bio;
+    //i3=Dies;
     
     //i3=EnAlt/10.0;
     
@@ -344,8 +346,8 @@ void rt_OneStep(void)
     set_i3(i3);
     //Renovables
     set_Idc_PV(ipv);
-    set_Pref(Prefd);
-    set_Qref(Qrefd);
+    set_Pref(Pi_reno);
+    set_Qref(Qi_reno);
     
     /* Step the model for base rate */
     carga_reno_step();
@@ -365,21 +367,12 @@ void rt_OneStep(void)
     Qm2=get_Qm2();
     duty_cyle=get_duty_cycle();
     
-    
-//     if (i3>max){
-//         max=i3;
-//     }
-//
-//     if (i3<min){
-//         min=i3;
-//     }
-    
     //printf("La irradianza es: %3.2f \n",Suns);
     //printf("La temperatura es: %3.2f \n",TaC);
 //     printf("La minima es: %3.2f \n",min);
 //     printf("La maxima es: %3.2f \n",max);
-    //printf("La potencia activa referencia es: %3.2f \n",Prefd);
-    //printf("La potencia reactiva referencia es: %3.2f \n",Qrefd);
+    //printf("La potencia activa referencia es: %3.2f \n",Pi_reno);
+    //printf("La potencia reactiva referencia es: %3.2f \n",Qi_reno);
     //printf("LA potencia P medida es:  %3.2f \n",Pm2);
     //printf("LA potencia Q medida es:  %3.2f \n",Qm2);
     //printf("El duty cycle es:  %3.2f \n",duty_cyle);
@@ -406,7 +399,7 @@ void rt_OneStep(void)
     
     //=============== Pipes Envio ======================== (Falta ajustar)
     memset(bufferPipe,0,sizeof(bufferPipe));
-    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\n",Pm,Qm,Vload,potencia);
+    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",Pm,Qm,Vload,i2,soc,Pm2,Qm2,duty_cyle);
     write(our_input_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================
     
@@ -414,9 +407,11 @@ void rt_OneStep(void)
     //-----------Escritura-envio---------------------
     
     Vloada=Vload*10.0;
+    //Vloada=Vload;
     Pma=Pm*10;
     Qma=Qm*10;
     i3a=i2*10.0; 
+    //i3a=i2; 
     
     //Vloada = i2;
     
