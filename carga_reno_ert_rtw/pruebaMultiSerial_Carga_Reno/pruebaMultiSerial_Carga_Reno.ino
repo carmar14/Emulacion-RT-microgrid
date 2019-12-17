@@ -53,7 +53,7 @@ static void commIN_Rasp(void* arg) {
       conti = true;
       //inputString = "";
       memset(inputCharArray, 0, sizeof(inputCharArray));
-      while (conti && SerialUSB.available()) {
+      while (conti) {
         char inChar = (char)SerialUSB.read();
         if (inChar == 's') {
           j = 0;
@@ -75,16 +75,18 @@ static void commIN_Rasp(void* arg) {
       //SerialUSB.flush();
       ptr = strtok(inputCharArray, delim);
       vload_CA = ptr;
-      loadVolt = vload_CA.toInt();
+      loadVolt = vload_CA.toFloat();
       ptr = strtok(NULL, delim);
       reno_CA = ptr;
-      EnAlt = reno_CA.toInt();
+      EnAlt = reno_CA.toFloat();
     }
     //digitalWrite(LED_BUILTIN, LOW);
     loadVoltA = map(loadVolt, -6000, 6000, 0, 4095);
     analogWrite(DAC0, loadVoltA);
     EnAltA = map(loadVolt, -4800, 4800, 0, 4095);
     analogWrite(DAC1, EnAltA);
+    //analogWrite(DAC1, 0);
+    //analogWrite(DAC0, 0);
 
     vTaskDelayUntil(&xLastWakeTime, (2 / portTICK_PERIOD_MS));
   }
