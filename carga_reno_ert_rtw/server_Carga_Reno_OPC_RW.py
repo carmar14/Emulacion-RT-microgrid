@@ -44,33 +44,48 @@ node = server.get_objects_node()
 
 Param = node.add_object(addspace, "Parameters")
 
-IPV = Param.add_variable(addspace, "iPV",0)
-SOC = Param.add_variable(addspace, "SOC",0)
-
-PREF = Param.add_variable(addspace, "Pref",0) 
-QREF = Param.add_variable(addspace, "Qref",0)
-
-PM = Param.add_variable(addspace, "Pm",0) 
+PM = Param.add_variable(addspace, "Pm",0)
 QM = Param.add_variable(addspace, "Qm",0)
-DC = Param.add_variable(addspace, "DuC",0)
-POTENCIA = Param.add_variable(addspace, "Potencia",0)
+VLOAD = Param.add_variable(addspace, "Vload",0)
 
+LREF = Param.add_variable(addspace, "Lref",0)
 KB = Param.add_variable(addspace, "Kb",0)
+KD = Param.add_variable(addspace, "Kd",0)
+
+SOC = Param.add_variable(addspace, "SOC",0)
+IPV = Param.add_variable(addspace, "iPV",0)
 IRR = Param.add_variable(addspace, "Irr",0) 
 TEMP= Param.add_variable(addspace, "Temp",0)
 
+DC = Param.add_variable(addspace, "DuC",0)
+PREF = Param.add_variable(addspace, "Pref",0) 
+QREF = Param.add_variable(addspace, "Qref",0)
+PM2 = Param.add_variable(addspace, "Pm",0) 
+QM2 = Param.add_variable(addspace, "Qm",0)
 
-IPV.set_writable()
-SOC.set_writable()
-PREF.set_writable()
-QREF.set_writable()
+
 PM.set_writable()
 QM.set_writable()
-DC.set_writable()
-POTENCIA.set_writable()
+VLOAD.set_writable()
+
+LREF.set_writable()
 KB.set_writable()
+KD.set_writable()
+
+SOC.set_writable()
+IPV.set_writable()
 IRR.set_writable()
 TEMP.set_writable()
+
+DC.set_writable()
+PREF.set_writable()
+QREF.set_writable()
+PM2.set_writable()
+QM2.set_writable()
+
+KB.set_value(1)
+IRR.set_value(1000)
+TEMP.set_value(25)
 
 server.start()
 print("Server started at ()".format(url))
@@ -90,8 +105,9 @@ try:
     print("Program running...")
     pref = 500
     qref = 3500
-    irr=0
-    temp=0
+    irr=1000
+    temp=25
+    
     while True:
         time.sleep(0.05)    
         try:
@@ -107,7 +123,7 @@ try:
             qref = QREF.get_value()
             irr = IRR.get_value()
             temp = TEMP.get_value()
-            kb= KB.get_value()
+            
             if((pref1 != pref) or (qref1 != qref) or (temp1 != temp) or (irr1 !=irr)):
                 print("Pref {}  Qref {} Irr {} Temp {}".format(pref,qref,irr,temp))
                 string = str(pref)+'\t'+str(qref)+'\t'+str(irr)+'\t'+str(temp)+'\n'
@@ -116,21 +132,28 @@ try:
                 #print ("Empty String!")
                 continue;
             else:
-                ipv = float(PipeString[0])
-                soc = float(PipeString[1])
-                pm = float(PipeString[2])
-                qm = float(PipeString[3])
-                dc = float(PipeString[4])
-                potencia = float(PipeString[5])
+                Pm = float(PipeString[0])
+                Qm = float(PipeString[1])
+                Vload = float(PipeString[2])
+                
+                ipv = float(PipeString[3])
+                soc = float(PipeString[4])
+                pm2 = float(PipeString[5])
+                qm2 = float(PipeString[6])
+                dc = float(PipeString[7])
                 #data4 = PipeString[3]
                 #print('Received: "{0}\"'.format(PipeString))
                 #print('Received: Ipv:{}\tsoc:{}'.format(ipv,soc))
+                PM.set_value(Pm)
+                QM.set_value(Qm)
+                VLOAD.set_value(Vload)
+                
                 IPV.set_value(ipv)
                 SOC.set_value(soc)
-                PM.set_value(pm)
-                QM.set_value(qm)
+                PM2.set_value(pm2)
+                QM2.set_value(qm2)
                 DC.set_value(dc)
-                POTENCIA.set_value(potencia)
+                
         except OSError as err:
             if err.errno == 11:
                 print("Nothing there")

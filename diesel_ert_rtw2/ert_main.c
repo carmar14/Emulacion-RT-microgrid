@@ -261,7 +261,7 @@ void rt_OneStep(void)
     i2a=Idie;
    
     
-    //i2a = vload * 10;
+    //i2a = vload * 10.0;
     
     //i2a = (sine64[contI] - 4799) ;
     //contI++;
