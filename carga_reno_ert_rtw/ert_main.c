@@ -417,7 +417,7 @@ void rt_OneStep(void)
     Vloada=Vload*10.0;
     Pma=Pm*10;
     Qma=Qm*10;
-    i3a=i3*10.0; 
+    i3a=i2*10.0; 
     
     //Vloada = i2;
     
@@ -426,13 +426,14 @@ void rt_OneStep(void)
     memset(buffer2,0,sizeof(buffer2));
     
     sprintf(buffer2,"s%d,%d,e\n",Vloada,i3a);
+    //sprintf(buffer2,"s%d,%d,e\n",-3000,-3500);
     
     serialPuts(fd3,buffer2);
     
     serialFlush(fd3);
     tcflush(fd3, TCIOFLUSH);
     
-    
+    printf("post pipes\n");
     
     /* Indicate task complete */
     OverrunFlag = false;
