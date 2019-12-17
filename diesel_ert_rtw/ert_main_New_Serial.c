@@ -270,10 +270,10 @@ void rt_OneStep(void)
     duty_cycle=get_duty();
     potencia=get_Potencia();
     
-    printf("La corriente del inversor 3 es: %3.2f \n",Idie);
+    //printf("La corriente del inversor 3 es: %3.2f \n",Idie);
     printf("La tension de la carga es : %3.2f \n",vload);
     printf("El duty cycle dc es: %3.2f \n",duty_cycle);
-    printf("La potencia entregada a la carga es: %3.2f \n",potencia);
+    //printf("La potencia entregada a la carga es: %3.2f \n",potencia);
     
 //     if (min>Idie) min=Idie;
 //     if (max<Idie) max=Idie;
@@ -296,7 +296,8 @@ void rt_OneStep(void)
     //-----------Escritura-envio---------------------
     //Pma=Pm*10;
     //Qma=Qm*10;
-    i2a=Idie*10;
+    //i2a=Idie*10;
+    i2a=Idie;
     //caudala=caudal*10;
     
     //i2a = vload * 50;
@@ -310,6 +311,7 @@ void rt_OneStep(void)
     //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
     //sprintf(buffer,"v%07d\n",i2a);
     sprintf(buffer,"%d\n",i2a);
+    //sprintf(buffer,"%d\n",30000);
     //while(pinr==0){
     serialPuts(fd,buffer);
     serialFlush(fd);

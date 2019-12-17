@@ -378,17 +378,16 @@ void rt_OneStep(void)
     //printf("La temperatura es: %3.2f \n",TaC);
 //     printf("La minima es: %3.2f \n",min);
 //     printf("La maxima es: %3.2f \n",max);
-    printf("La potencia activa referencia es: %3.2f \n",Prefd);
-    printf("La potencia reactiva referencia es: %3.2f \n",Qrefd);
-    printf("LA potencia P medida es:  %3.2f \n",Pm2);
-    printf("LA potencia Q medida es:  %3.2f \n",Qm2);
-    printf("La corriente del inversor 3 es: %3.2f \n",i3);
-    printf("El duty cycle es:  %3.2f \n",duty_cyle);
+    //printf("La potencia activa referencia es: %3.2f \n",Prefd);
+    //printf("La potencia reactiva referencia es: %3.2f \n",Qrefd);
+    //printf("LA potencia P medida es:  %3.2f \n",Pm2);
+    //printf("LA potencia Q medida es:  %3.2f \n",Qm2);
+    //printf("El duty cycle es:  %3.2f \n",duty_cyle);
     
     
-    printf("La potencia P medida en la carga es: %3.2f \n",Pm);
-    printf("La potencia Q medida en la carga es: %3.2f \n",Qm);
-    printf("Voltaje : %3.2f \n",Vload);
+    //printf("La potencia P medida en la carga es: %3.2f \n",Pm);
+    //printf("La potencia Q medida en la carga es: %3.2f \n",Qm);
+    //printf("Voltaje : %3.2f \n",Vload);
     printf ("i1: %f i2: %f i3: %f\n",i1,i2,i3);
     
     //-----------Ataque----------------

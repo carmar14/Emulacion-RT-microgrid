@@ -219,8 +219,8 @@ void rt_OneStep(void)
     
     //set_Pref_d(Pref_d);
     //set_Qref_d(Qref_d);
-    //set_Vload(vload); 
-    set_Vload(0.01*sin(2*3.14*60*tiempo));
+    set_Vload(vload); 
+    //set_Vload(0.01*sin(2*3.14*60*tiempo));
     //set_par(par);
     set_flujo(flujo);
     
@@ -238,7 +238,7 @@ void rt_OneStep(void)
     printf("La corriente del inversor 3 es: %3.2f \n",Idie);
     printf("La tension de la carga es : %3.2f \n",vload);
     printf("El duty cycle dc es: %3.2f \n",duty_cycle);
-    printf("La potencia entregada a la carga es: %3.2f \n",potencia);
+    //printf("La potencia entregada a la carga es: %3.2f \n",potencia);
     printf("El bus dc es de: %3.2f \n",vdc);
     
 //     if (min>Idie) min=Idie;
@@ -258,8 +258,8 @@ void rt_OneStep(void)
     //-----------Escritura-envio---------------------
     //Pma=Pm*10;
     //Qma=Qm*10;
-    i2a=Idie*10;
-    caudala=caudal*10;
+    i2a=Idie;
+   
     
     //i2a = vload * 10;
     
