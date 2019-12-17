@@ -75,10 +75,10 @@ static void commIN_Rasp(void* arg) {
       //SerialUSB.flush();
       ptr = strtok(inputCharArray, delim);
       vload_CA = ptr;
-      loadVolt = vload_CA.toFloat();
+      loadVolt = vload_CA.toInt();
       ptr = strtok(NULL, delim);
       reno_CA = ptr;
-      EnAlt = reno_CA.toFloat();
+      EnAlt = reno_CA.toInt();
     }
     //digitalWrite(LED_BUILTIN, LOW);
     loadVoltA = map(loadVolt, -6000, 6000, 0, 4095);
