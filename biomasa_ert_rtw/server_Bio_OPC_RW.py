@@ -103,9 +103,9 @@ try:
                 continue;
             else:
                 iBio = float(PipeString[0])
+                dc = float(PipeString[1])
                 pm = float(PipeString[2])
                 qm = float(PipeString[3])
-                dc = float(PipeString[1])
                 potencia=float(PipeString[4])
                 #soc = float(PipeString[1])
                 #data4 = PipeString[3]
