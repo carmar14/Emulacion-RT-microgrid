@@ -1,0 +1,31 @@
+Bio
+   Ibio       
+   Po_bio
+   Qo_bio
+   Pi_bio (ref)
+   Pi_bio
+   DuC_bio
+
+Diesel
+   Idies
+   Potencia  (aparente)
+   DuC_dies
+
+Carga_Reno
+   SOC
+   Ipv
+   Irrad
+   Temp
+   DuC_reno
+   Po_reno
+   Qo_reno
+   Pi_reno (ref)
+   Qi_reno
+   
+   Lref (demanda)
+   KB (penaliz Bio)
+   KD (penaliz Dies)
+   
+   Pm (pot medida en carga)
+   Qm (pot React medida en carga)
+   Vload
