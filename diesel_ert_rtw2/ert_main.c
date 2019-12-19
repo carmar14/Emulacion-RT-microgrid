@@ -329,7 +329,7 @@ int_T main(int_T argc, const char *argv[])
     /* default interval = 50000ns = 50us
      * cycle duration = 100us
      */
-    int interval=4*1000000;		//en ns   ->  20000=20us     *4  100
+    int interval=10*1000000;		//en ns   ->  20000=20us     *4  100
     
     if(argc>=2 && atoi(argv[1])>0)
     {

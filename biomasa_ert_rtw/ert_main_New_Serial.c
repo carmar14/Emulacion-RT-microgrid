@@ -417,7 +417,7 @@ int_T main(int_T argc, const char *argv[])
     
     printf("Iniciando \n");
     
-    int interval=4*1000000;		// 4 en ns   ->  20000=20us   100
+    int interval=10*1000000;		// 4 en ns   ->  20000=20us   100
     
     if(argc>=2 && atoi(argv[1])>0)
     {
