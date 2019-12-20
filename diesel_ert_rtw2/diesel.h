@@ -327,7 +327,8 @@ extern double get_I_die(void);
 extern double get_Potencia(void);
 extern double get_duty(void);
 extern double get_dc(void);
-
+extern double get_Po(void);
+extern double get_Qo(void);
 
 
 /* Real-time Model object */

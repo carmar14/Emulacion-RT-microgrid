@@ -1,4 +1,4 @@
-// compile with: "gcc ert_main.c diesel.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall"
+// compile with: "gcc ert_main_double.c diesel.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c  -lm -lwiringPi -lrt -Wall"
 
 /*
  * File: ert_main.c
@@ -54,8 +54,6 @@ int fileDescriptor;
 char error[55];
 
 //------Salidas--------
-double Po = 0.0;
-double Qo = 0.0;
 double Idie=0.0;
 double caudal=0.0;
 double vdc=0.0;
@@ -82,7 +80,7 @@ char var2s[7];
 char var3s[7];
 int fd;
 
-int i2a=0;
+double i2a=0;
 int caudala=0;
 char buffer[8];
 char buffer2[8];
@@ -209,7 +207,7 @@ void rt_OneStep(void)
     
     //serialFlush(fd);
     
-    vload = atoi(inputCharArray);
+    vload = atof(inputCharArray);
     //printf("La tension de la carga1 es : %3.2f \n",vload);
     vload = vload / 10.0;
     
@@ -236,20 +234,17 @@ void rt_OneStep(void)
     duty_cycle=get_duty();
     potencia=get_Potencia();
     vdc=get_dc();
-    Po = get_Po();
-    Qo = get_Qo();
     
     printf("La corriente del inversor 3 es: %3.2f \n",Idie);
     printf("La tension de la carga es : %3.2f \n",vload);
     printf("El duty cycle dc es: %3.2f \n",duty_cycle);
-    //printf("Po: %3.2f  Qo: %3.2f\n",Po,Qo);
     //printf("La potencia entregada a la carga es: %3.2f \n",potencia);
     printf("El bus dc es de: %3.2f \n",vdc);
     
     //Datos para probar
     fprintf(temp, "%3.2f\n",Idie);
     
-    
+    printf("post temp\n");
 //     if (min>Idie) min=Idie;
 //     if (max<Idie) max=Idie;
 //
@@ -258,16 +253,16 @@ void rt_OneStep(void)
     
     //=============== Pipes Envio ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
-    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",Idie,duty_cycle,potencia,Po,Qo);
+    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\n",Idie,duty_cycle,potencia);
     write(our_input_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================
-    
+    printf("Post pipes\n");
     
     //----------Serial----------------------
     //-----------Escritura-envio---------------------
     //Pma=Pm*10;
     //Qma=Qm*10;
-    i2a=Idie/2;
+    i2a=Idie*10;
    
     
     //i2a = vload * 10.0;
@@ -279,17 +274,19 @@ void rt_OneStep(void)
     memset(buffer,0,sizeof(buffer));
     //sprintf(buffer,"p%07dq%07dv%07ds%07d\n",Pma,Qma,Vloada,soca);
     //sprintf(buffer,"v%07d\n",i2a);
-    sprintf(buffer,"%d\n",i2a);
+    //sprintf(buffer,"%f\n",i2a);
+    sprintf(buffer,"%f\n",20.54);
     //sprintf(buffer,"%d\n",vload);
     //while(pinr==0){
     serialPuts(fd,buffer);
+    printf("Post serial pre flush\n");
     serialFlush(fd);
     //pinr=digitalRead(2);
     //printf("El dato pin es: %d \n",pinr);
     //}
     //serialFlush(fd);
     tcflush(fd, TCIOFLUSH);
-    
+    printf("Post serial\n");
     /* Indicate task complete */
     OverrunFlag = false;
     

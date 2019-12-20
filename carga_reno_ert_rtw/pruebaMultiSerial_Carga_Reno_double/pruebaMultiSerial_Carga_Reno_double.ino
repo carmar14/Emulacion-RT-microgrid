@@ -2,9 +2,10 @@
 
 #define SERIAL_BUFFER_SIZE 24
 
-int loadVolt = 0;
+double loadVolt = 0;
 int loadVoltA = 0;
-int Bio = 0, Dies = 0, EnAlt = 0,EnAltA = 0;
+int Bio = 0, EnAlt = 0,EnAltA = 0;
+double Dies = 0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -19,7 +20,7 @@ void setup() {
   loadVolt = 0;
   loadVoltA = 0;
   Bio = 0;
-  Dies = 0;
+  Dies = 0.0;
   EnAlt = 0;
   EnAltA = 0;
   pinMode(LED_BUILTIN, OUTPUT);
@@ -75,15 +76,15 @@ static void commIN_Rasp(void* arg) {
       //SerialUSB.flush();
       ptr = strtok(inputCharArray, delim);
       vload_CA = ptr;
-      loadVolt = vload_CA.toInt();
+      loadVolt = vload_CA.toDouble();
       ptr = strtok(NULL, delim);
       reno_CA = ptr;
       EnAlt = reno_CA.toInt();
     }
     //digitalWrite(LED_BUILTIN, LOW);
-    loadVoltA = map(loadVolt, -6000, 6000, 0, 4095);
+    loadVoltA = map((int)loadVolt, -6000, 6000, 0, 4095);
     analogWrite(DAC0, loadVoltA);
-    EnAltA = map(EnAlt, -4800, 4800, 0, 4095);
+    EnAltA = map(loadVolt, -4800, 4800, 0, 4095);
     analogWrite(DAC1, EnAltA);
     //analogWrite(DAC1, 0);
     //analogWrite(DAC0, 0);
@@ -130,13 +131,15 @@ static void commIN_1(void* arg) {
 
 
 static void commIN_2(void* arg) {
+  String dieselStr = "";
   TickType_t xLastWakeTime;
   xLastWakeTime = xTaskGetTickCount();
 
   while (1) {
 
     if (Serial2.available()) {
-      Dies = Serial2.parseInt();
+      dieselStr = Serial2.readStringUntil('\n');
+      Dies = dieselStr.toDouble();
       Serial2.flush();
     }
 
