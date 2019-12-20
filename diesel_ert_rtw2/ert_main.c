@@ -258,7 +258,7 @@ void rt_OneStep(void)
     //-----------Escritura-envio---------------------
     //Pma=Pm*10;
     //Qma=Qm*10;
-    i2a=Idie;
+    i2a=Idie*10;
    
     
     //i2a = vload * 10.0;
@@ -329,7 +329,7 @@ int_T main(int_T argc, const char *argv[])
     /* default interval = 50000ns = 50us
      * cycle duration = 100us
      */
-    int interval=10*1000000;		//en ns   ->  20000=20us     *4  100
+    int interval=4*1000000;		//en ns   ->  20000=20us     *4  100
     
     if(argc>=2 && atoi(argv[1])>0)
     {
