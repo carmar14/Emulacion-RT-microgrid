@@ -1,4 +1,4 @@
-// compile with "gcc ert_main.c carga_reno.c carga_reno_data.c rt_nonfinite.c rtGetInf.c rtGetNaN.c -lm -lwiringPi -lrt -Wall -lpthread
+// compile with "gcc ert_main_double.c carga_reno.c carga_reno_data.c rt_nonfinite.c rtGetInf.c rtGetNaN.c -lm -lwiringPi -lrt -Wall -lpthread
 
 
 /*
@@ -129,7 +129,7 @@ char var1s[7];
 char var2s[7];
 char var3s[7];
 int fd3;
-int Vloada=0;
+double Vloada=0;
 int Pma=0;
 int Qma=0;
 int i3a=0;
@@ -146,7 +146,8 @@ char inChar;
 char *Bio_CA;
 char *Dies_CA;
 char *EnAlt_CA;
-int Bio = 0,Dies = 0,EnAlt = 0;
+int Bio = 0,EnAlt = 0;
+double Dies = 0;
 
 //===============================================================
 //-------Variables para graficar
@@ -282,7 +283,7 @@ void rt_OneStep(void)
     //vload = atoi(inputCharArray);
     ptr = strtok(NULL, delim);
     Dies_CA = ptr;
-    Dies = atoi(Dies_CA);
+    Dies = atof(Dies_CA);
     //ptr = strtok(NULL, delim);
     //EnAlt_CA = ptr; // Esto ya no iria
     //EnAlt = atoi(EnAlt_CA); // Esto ya no iria
@@ -293,8 +294,8 @@ void rt_OneStep(void)
     //printf("Post-Serial\n");
     
     //=======================================================================
-    //Pi_reno=5000;//500;
-    //Qi_reno=8000;//3500;//2430;//3403;
+    Pi_reno=5000;//500;
+    Qi_reno=8000;//3500;//2430;//3403;
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
     //printf("CB counter %d\n",counter);
@@ -371,8 +372,8 @@ void rt_OneStep(void)
     //printf("La temperatura es: %3.2f \n",TaC);
 //     printf("La minima es: %3.2f \n",min);
 //     printf("La maxima es: %3.2f \n",max);
-    printf("La potencia activa referencia es: %3.2f \n",Pi_reno);
-    printf("La potencia reactiva referencia es: %3.2f \n",Qi_reno);
+    //printf("La potencia activa referencia es: %3.2f \n",Pi_reno);
+    //printf("La potencia reactiva referencia es: %3.2f \n",Qi_reno);
     //printf("LA potencia P medida es:  %3.2f \n",Pm2);
     //printf("LA potencia Q medida es:  %3.2f \n",Qm2);
     printf("El duty cycle es:  %3.2f \n",duty_cyle);
@@ -382,7 +383,6 @@ void rt_OneStep(void)
     //printf("La potencia Q medida en la carga es: %3.2f \n",Qm);
     //printf("Voltaje : %3.2f \n",Vload);
     printf ("i1: %f i2: %f i3: %f\n",i1,i2,i3);
-    
     
     //Probar datos
     fprintf(temp, "%3.2f %3.2f \n",i2,Vload);
@@ -424,7 +424,7 @@ void rt_OneStep(void)
     
     memset(buffer2,0,sizeof(buffer2));
     
-    sprintf(buffer2,"s%d,%d,e\n",Vloada,i3a);
+    sprintf(buffer2,"s%f,%d,e\n",Vloada,i3a);
     //sprintf(buffer2,"s%d,%d,e\n",-3000,-3500);
     
     serialPuts(fd3,buffer2);
@@ -432,7 +432,7 @@ void rt_OneStep(void)
     serialFlush(fd3);
     tcflush(fd3, TCIOFLUSH);
     
-    //printf("post pipes\n");
+    printf("post pipes\n");
     
     /* Indicate task complete */
     OverrunFlag = false;

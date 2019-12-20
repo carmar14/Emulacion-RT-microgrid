@@ -207,76 +207,7 @@ void rt_OneStep(void)
     var=0;
     
     var=1;
-    //printf("Trama de arduino: %s\n",read_buffer);
     
-    //Lectura ADC
-    
-    //if (MCP3204_convert(fileDescriptor,singleEnded,CH0,&ad_MCP3204,error))
-    //{
-        //printf("Error during conversion1.\n");
-        //printf("%s\n",error);
-        //exit(1);
-    //}
-    
-    
-    //var1=MCP3204_getValue(ad_MCP3204);
-    //printf("Valor adc1: %d \n", var1);
-    
-    
-    ////var1=MCP3204_analogValue(ad_MCP3204);
-    
-    //if (MCP3204_convert(fileDescriptor,singleEnded,CH1,&ad_MCP3204,error))
-    //{
-        //printf("Error during conversion.\n");
-        //printf("%s\n",error);
-        //exit(1);
-    //}
-    
-    
-    //var2=MCP3204_getValue(ad_MCP3204);
-    ////var2=MCP3204_analogValue(ad_MCP3204);
-    ////var3=var2;
-    
-    //if (MCP3204_convert(fileDescriptor,singleEnded,CH2,&ad_MCP3204,error))
-    //{
-        //printf("Error during conversion.\n");
-        //printf("%s\n",error);
-        //exit(1);
-    //}
-    
-    //var3=MCP3204_getValue(ad_MCP3204);
-    
-    
-    ////--------------------Estas eran las anteriores------------------------//
-    
-    //double k1=(2*50)/2207.0;
-    //double vx1=-50-(556*2*50)/2207.0;
-    //double k2=(2*150)/2203.0;//(2*50)/2203.0;
-    //double vx2=-150-(543*2*150)/2203.0;//-50-(543*2*50)/2203.0;
-    //double k3=(2*90)/2207.0;
-    //double vx3=-90-(556*2*90)/2207.0;
-    
-    //k1=2000/1651.0;
-    //k2=600/1660.0;
-    //k3=8000/1651.0;
-    //vx1=-1673.5;
-    //vx2=-496.27;
-    //vx3=-6694.1;
-    
-     //* double k2=(2*300)/2203.0;
-     //* double vx2=-300-(543*2*300)/2203.0;
-     //* double k3=(2*50)/2207.0;
-     //* double vx3=-50-(556*2*50)/2207.0;
-     //*/
-    
-    ////printf ("i1: %d i2: %d i3: %d\n",var1,var2,var3);
-    //i1=(var1*k1)+vx1; //bio
-    ////i1=i1/10.0;
-    //i2=(var2*k2)+vx2; // diesel
-    ////i2=i2/10.0;
-    ////i1=40*sin(2*3.14*60*tiempo);
-    ////i2=40*sin(2*3.14*60*tiempo);
-    //i3=var3*k3+vx3;//90*sin(2*3.14*60*tiempo);//(var3*k3)+vx3;  //renovables
     
     // ============================= recibe Serial===========================
     
