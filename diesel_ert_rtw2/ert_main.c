@@ -258,7 +258,7 @@ void rt_OneStep(void)
     //-----------Escritura-envio---------------------
     //Pma=Pm*10;
     //Qma=Qm*10;
-    i2a=Idie;
+    i2a=Idie*10;
    
     
     //i2a = vload * 10.0;

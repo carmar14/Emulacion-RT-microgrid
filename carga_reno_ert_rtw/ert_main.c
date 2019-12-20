@@ -293,8 +293,8 @@ void rt_OneStep(void)
     //printf("Post-Serial\n");
     
     //=======================================================================
-    //Pi_reno=500;//500;
-    //Qi_reno=3500;//3500;//2430;//3403;
+    Pi_reno=5000;//500;
+    Qi_reno=8000;//3500;//2430;//3403;
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
     //printf("CB counter %d\n",counter);
@@ -326,8 +326,8 @@ void rt_OneStep(void)
         Ia=Ia- (IL - Ia - I0*( exp((Vc+Ia*Rs)/Vt_Ta) -1))/(-1 - (I0*( exp((Vc+Ia*Rs)/Vt_Ta) -1))*Rs/Vt_Ta);
     }
     
-    //ipv=1.5;//500;   //Proveniente de la fuente de generación PV
-    ipv=Ia;
+    ipv=1.5;//500;   //Proveniente de la fuente de generación PV
+    //ipv=Ia;
     
     i1=Bio/10.0;
     i3=Dies/10.0;
@@ -375,8 +375,8 @@ void rt_OneStep(void)
     //printf("La potencia reactiva referencia es: %3.2f \n",Qi_reno);
     //printf("LA potencia P medida es:  %3.2f \n",Pm2);
     //printf("LA potencia Q medida es:  %3.2f \n",Qm2);
-    //printf("El duty cycle es:  %3.2f \n",duty_cyle);
-    
+    printf("El duty cycle es:  %3.2f \n",duty_cyle);
+     
     
     //printf("La potencia P medida en la carga es: %3.2f \n",Pm);
     //printf("La potencia Q medida en la carga es: %3.2f \n",Qm);
