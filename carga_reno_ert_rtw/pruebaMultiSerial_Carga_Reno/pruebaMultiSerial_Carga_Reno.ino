@@ -4,7 +4,7 @@
 
 int loadVolt = 0;
 int loadVoltA = 0;
-int Bio = 0, Dies = 0, EnAlt = 0,EnAltA = 0;;
+int Bio = 0, Dies = 0, EnAlt = 0,EnAltA = 0;
 
 void setup() {
   // put your setup code here, to run once:
