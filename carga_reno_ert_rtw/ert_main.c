@@ -371,10 +371,12 @@ void rt_OneStep(void)
     //printf("La temperatura es: %3.2f \n",TaC);
 //     printf("La minima es: %3.2f \n",min);
 //     printf("La maxima es: %3.2f \n",max);
-    printf("La potencia activa referencia es: %3.2f \n",Pi_reno);
-    printf("La potencia reactiva referencia es: %3.2f \n",Qi_reno);
-    //printf("LA potencia P medida es:  %3.2f \n",Pm2);
-    //printf("LA potencia Q medida es:  %3.2f \n",Qm2);
+    //printf("La potencia activa referencia panel es: %3.2f \n",Pi_reno);
+    //printf("La potencia reactiva referencia panel es: %3.2f \n",Qi_reno);
+    //printf("La potencia activa referencia carga es: %3.2f \n",972.8);
+    //printf("La potencia reactiva referencia carga es: %3.2f \n",115400.0);
+    printf("LA potencia P medida es:  %3.2f \n",Pm2);
+    printf("LA potencia Q medida es:  %3.2f \n",Qm2);
     printf("El duty cycle es:  %3.2f \n",duty_cyle);
      
     
