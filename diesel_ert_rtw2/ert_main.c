@@ -268,6 +268,7 @@ void rt_OneStep(void)
     //Pma=Pm*10;
     //Qma=Qm*10;
     i2a=Idie/2;
+    i2a=Idie/2.88;
    
     
     //i2a = vload * 10.0;
