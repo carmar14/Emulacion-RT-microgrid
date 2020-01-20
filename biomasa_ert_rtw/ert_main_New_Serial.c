@@ -119,7 +119,7 @@ int contI = 0;
 //char * commandsForGnuplot[] = {"set title \"TITLEEEEE\"", "plot 'data.temp'"};
 //double xvals[NUM_POINTS];//= {1.0, 2.0, 3.0, 4.0, 5.0};
 //double yvals[NUM_POINTS];// = {5.0 ,3.0, 1.0, 3.0, 5.0};
-//FILE * temp;
+FILE * temp;
 //FILE *	gnuplotPipe;
 //double in=0;
 //===============================================================
@@ -233,8 +233,8 @@ void rt_OneStep(void)
     
     //pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
     //qref=var3*k3+vx3;
-    pref=400;//500;   antes estaba en -400
-    qref=5000;//3500;//2430;//3403;
+    //pref=400;//500;   antes estaba en -400
+    //qref=5000;//3500;//2430;//3403;
     
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
@@ -275,14 +275,18 @@ void rt_OneStep(void)
     }
     
     printf("El vload es : %3.2f \n",vload);
-    //printf("La potencia Pref es: %3.2f \n",pref);
-    //printf("La potencia Qref es: %3.2f \n", qref);
-    //printf("La potencia P medida es: %3.2f \n",Pm1);
-    //printf("La potencia Q medida es: %3.2f \n", Qm1);
+    printf("La potencia Pref es: %3.2f \n",pref);
+    printf("La potencia Qref es: %3.2f \n", qref);
+    printf("La potencia P medida es: %3.2f \n",Pm1);
+    printf("La potencia Q medida es: %3.2f \n", Qm1);
     //printf("La corriente del inversor 1 es: %3.2f \n",i1);
     printf("El duty de bio es: %3.2f \n",duty_cycle);
     //printf("El valor minimo de corriente : %3.2f \n",valor_min);
     //printf("El valor maximo de corriente : %3.2f \n",valor_max);
+    
+    //Probar dato
+    
+    fprintf(temp, "%3.2f \n",i1);
     
     
     //-----------Ataque----------------
@@ -439,7 +443,7 @@ int_T main(int_T argc, const char *argv[])
     //Grafica
     
     
-    //temp = fopen("data.temp", "w");
+    temp = fopen("data.temp", "w");
     
     //gnuplotPipe = popen ("gnuplot -persistent", "w");
     

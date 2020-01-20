@@ -16,6 +16,12 @@
 #include "diesel.h"
 #include "diesel_private.h"
 
+//Cosas que hizo Andres
+double Qo_Yo = 0.0;
+double Po_Yo = 0.0;
+//real_T rtb_phi;
+//real_T rtb_Product1;
+
 /* Block signals (default storage) */
 B_diesel_T diesel_B;
 
@@ -61,7 +67,12 @@ double get_dc(void) {
     return diesel_Y.bus_dc; 
 }
 
-
+double get_Po(void){
+  return Po_Yo;
+}
+double get_Qo(void){
+  return Qo_Yo;
+}
 /*
  * Time delay interpolation routine
  *
@@ -703,12 +714,13 @@ void diesel_step(void)
      *  Trigonometry: '<S5>/Trigonometric Function2'
      */
     rtb_Product1 = rtb_coswt * cos(rtb_phi);
+    Po_Yo = rtb_Product1;
 
     /* Product: '<S5>/Product3' incorporates:
      *  Trigonometry: '<S5>/Trigonometric Function2'
      */
     rtb_phi = rtb_coswt * sin(rtb_phi);
-
+    Qo_Yo = rtb_phi;
     /* Outport: '<Root>/potencia' incorporates:
      *  MATLAB Function: '<Root>/MATLAB Function'
      */

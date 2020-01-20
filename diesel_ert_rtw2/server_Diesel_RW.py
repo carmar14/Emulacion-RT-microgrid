@@ -38,10 +38,14 @@ Param = node.add_object(addspace, "Parameters")
 IDIE = Param.add_variable(addspace, "iDies",0)
 DUTY = Param.add_variable(addspace, "DiesDuty",0)
 POTENCIA= Param.add_variable(addspace, "Potencia",0)
+PO = Param.add_variable(addspace, "Po_Dies",0)
+QO = Param.add_variable(addspace, "Qo_Dies",0)
 
 IDIE.set_writable()
 DUTY.set_writable()
 POTENCIA.set_writable()
+PO.set_writable()
+QO.set_writable()
 
 server.start()
 print("Server started at ()".format(url))
@@ -69,12 +73,16 @@ try:
                 Idie = float(PipeString[0])
                 Duty_cycle = float(PipeString[1])
                 potencia = float(PipeString[2])
+                po_diesel = float(PipeString[3])
+                qo_diesel = float(PipeString[4])
                 #data4 = PipeString[3]
                 #print('Received: "{0}\"'.format(PipeString))
                 #print('Received: Idie:{}\tDuty Cycle:{}\tCaudal:{}'.format(Idie,Duty_cycle,Caudal))
                 IDIE.set_value(Idie)
                 DUTY.set_value(Duty_cycle)
                 POTENCIA.set_value(potencia)
+                PO.set_value(po_diesel)
+                QO.set_value(qo_diesel)
                 #VDC.set_value(Vdc)
         except OSError as err:
             if err.errno == 11:
