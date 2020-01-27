@@ -293,8 +293,8 @@ void rt_OneStep(void)
     //printf("Post-Serial\n");
     
     //=======================================================================
-    //Pi_reno=5000;//500;
-    //Qi_reno=8000;//3500;//2430;//3403;
+    Pi_reno=5000;//500;
+    Qi_reno=8000;//3500;//2430;//3403;
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
     //printf("CB counter %d\n",counter);
@@ -371,8 +371,8 @@ void rt_OneStep(void)
     //printf("La temperatura es: %3.2f \n",TaC);
 //     printf("La minima es: %3.2f \n",min);
 //     printf("La maxima es: %3.2f \n",max);
-    //printf("La potencia activa referencia panel es: %3.2f \n",Pi_reno);
-    //printf("La potencia reactiva referencia panel es: %3.2f \n",Qi_reno);
+    printf("La potencia activa referencia panel es: %3.2f \n",Pi_reno);
+    printf("La potencia reactiva referencia panel es: %3.2f \n",Qi_reno);
     //printf("La potencia activa referencia carga es: %3.2f \n",972.8);
     //printf("La potencia reactiva referencia carga es: %3.2f \n",115400.0);
     printf("LA potencia P medida es:  %3.2f \n",Pm2);
