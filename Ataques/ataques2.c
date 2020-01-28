@@ -5,6 +5,16 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdio.h>   
+
+//===============================================================
+//--------------Para RT-----------------
+#include <time.h>
+#include <sched.h>
+//#include <wiringPi.h>
+
+#define NSEC_PER_SEC    1000000000
+
+//--------------------------------------
         
 //===================  Para Pipes =========================
 #include <fcntl.h>
@@ -21,6 +31,29 @@ FILE *fp;
 char * pch;
 int counter = 0;
 //=========================================================
+
+//----------------------------Para RT------------------------------
+/* using clock_nanosleep of librt */
+extern int clock_nanosleep(clockid_t __clock_id, int __flags,
+        __const struct timespec *__req,
+        struct timespec *__rem);
+
+/* the struct timespec consists of nanoseconds
+ * and seconds. if the nanoseconds are getting
+ * bigger than 1000000000 (= 1 second) the
+ * variable containing seconds has to be
+ * incremented and the nanoseconds decremented
+ * by 1000000000.
+ */
+static inline void tsnorm(struct timespec *ts)
+{
+    while (ts->tv_nsec >= NSEC_PER_SEC) {
+        ts->tv_nsec -= NSEC_PER_SEC;
+        ts->tv_sec++;
+    }
+}
+//------------------------------------------------------------------
+
 
 int main(int argc, const char *argv[])
 {
@@ -81,13 +114,7 @@ int main(int argc, const char *argv[])
      * cycle duration = 100us
      */
      
-     //=============== Pipes Envio ========================
-    memset(bufferPipe,0,sizeof(bufferPipe));
-    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",i1,duty_cycle,Pm1,Qm1,potencia);
-    write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
-    //======================================================
-    
-    
+     
     
     printf("Iniciando \n");
     
@@ -114,6 +141,10 @@ int main(int argc, const char *argv[])
     (void)(argc);
     (void)(argv);
     
+     /* get current time */
+    clock_gettime(0,&t);
+    /* start after one second */
+    t.tv_sec++;
    
     /* Simulating the model step behavior (in non real-time) to
      *  simulate model behavior at stop time.
@@ -128,6 +159,9 @@ int main(int argc, const char *argv[])
         sprintf(bufferPipe,"%3.2f\n",123456789535353543.3);
         write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
         //======================================================
+        
+        t.tv_nsec+=interval;
+        tsnorm(&t);
     }
     
     /* Disable rt_OneStep() here */

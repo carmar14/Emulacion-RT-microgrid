@@ -44,25 +44,14 @@ node = server.get_objects_node()
 
 Param = node.add_object(addspace, "Parameters")
 
-IBIO = Param.add_variable(addspace, "iBio",0)
+IBIOa = Param.add_variable(addspace, "iBioa",0)
 #SOC = Param.add_variable(addspace, "SOC",0)
 
-PREF = Param.add_variable(addspace, "Pref",0) 
-QREF = Param.add_variable(addspace, "Qref",0)
-PM = Param.add_variable(addspace, "Pm",0) 
-QM = Param.add_variable(addspace, "Qm",0)
-DC = Param.add_variable(addspace, "DuC",0)
-POTENCIA = Param.add_variable(addspace, "Potencia",0)
 
 
-IBIO.set_writable()
-#SOC.set_writable()
-PREF.set_writable()
-QREF.set_writable()
-PM.set_writable()
-QM.set_writable()
-DC.set_writable()
-POTENCIA.set_writable()
+
+IBIOa.set_writable()
+
 
 server.start()
 print("Server started at ()".format(url))
@@ -81,8 +70,7 @@ try:
     PipeIn2 = os.open(pipe_name2, os.O_WRONLY)
     print("Pipe 2 running...")
     print("Program running...")
-    pref = 500
-    qref = 3500
+    
     while True:
         time.sleep(0.05)    
         try:
@@ -102,20 +90,10 @@ try:
                 #print ("Empty String!")
                 continue;
             else:
-                iBio = float(PipeString[0])
-                dc = float(PipeString[1])
-                pm = float(PipeString[2])
-                qm = float(PipeString[3])
-                potencia=float(PipeString[4])
-                #soc = float(PipeString[1])
-                #data4 = PipeString[3]
-                #print('Received: "{0}\"'.format(PipeString))
-                #print('Received: IBio:{}\tpm:{}\tqm:{}'.format(iBio,pm,qm))
-                IBIO.set_value(iBio)
-                PM.set_value(pm)
-                QM.set_value(qm)
-                DC.set_value(dc)
-                POTENCIA.set_value(potencia)
+                iBioa = float(PipeString[0])
+                
+                IBIOa.set_value(iBioa)
+                
                     
         except OSError as err:
             if err.errno == 11:
