@@ -1,4 +1,4 @@
-/* compile using  "gcc ert_main.c biomasa_data.c biomasa.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c -lm -lwiringPi -lrt -Wall"  */
+/* compile using  "gcc -o b.out ert_main.c biomasa_data.c biomasa.c rt_nonfinite.c rtGetInf.c rtGetNaN.c libmcp3204.c -lm -lwiringPi -lrt -Wall"  */
 
 
 /*
