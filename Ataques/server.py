@@ -44,13 +44,34 @@ node = server.get_objects_node()
 
 Param = node.add_object(addspace, "Parameters")
 
+IBIO = Param.add_variable(addspace, "iBio",0)
+#SOC = Param.add_variable(addspace, "SOC",0)
+
+PREF = Param.add_variable(addspace, "Pref",0) 
+QREF = Param.add_variable(addspace, "Qref",0)
+PM = Param.add_variable(addspace, "Pm",0) 
+QM = Param.add_variable(addspace, "Qm",0)
+DC = Param.add_variable(addspace, "DuC",0)
+POTENCIA = Param.add_variable(addspace, "Potencia",0)
 IBIOa = Param.add_variable(addspace, "iBioa",0)
+
+
+IBIO.set_writable()
+#SOC.set_writable()
+PREF.set_writable()
+QREF.set_writable()
+PM.set_writable()
+QM.set_writable()
+DC.set_writable()
+POTENCIA.set_writable()
+IBIOa.set_writable()
+
 #SOC = Param.add_variable(addspace, "SOC",0)
 
 
 
 
-IBIOa.set_writable()
+
 
 
 server.start()
@@ -78,14 +99,7 @@ try:
             #PipeString = PipeIn.readline()[:-1]
             PipeString = PipeIn.readline().split()
 
-            pref1 = pref
-            qref1 = qref
-            pref = PREF.get_value()
-            qref = QREF.get_value()
-            if((pref1 != pref) or (qref1 != qref) ):
-                print("Pref {}  Qref {}".format(pref,qref))
-                string = str(pref)+'\t'+str(qref)+'\n'
-                os.write(PipeIn2, str.encode(string))
+            
             if not PipeString:
                 #print ("Empty String!")
                 continue;

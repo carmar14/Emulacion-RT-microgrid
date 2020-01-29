@@ -67,6 +67,7 @@ const char *DoS = "ataqueDoS";
 FILE *input_DoS;
 char buffera[BUFFER_SIZE];
 char *rDoS;
+double num=0.0;
 
 //------Salidas--------
 double i1=0.0;
@@ -155,6 +156,9 @@ static inline void tsnorm(struct timespec *ts)
 
 
 void rt_OneStep(void);
+void tarea(void);
+
+
 void rt_OneStep(void)
 {
     static boolean_T OverrunFlag = false;
@@ -306,6 +310,23 @@ void rt_OneStep(void)
     /* Restore FPU context here (if necessary) */
     /* Enable interrupts here */
 }
+
+//======================Tarea enfocada en el ataque DoS para saturacion de la red
+void tarea(){
+    
+    
+        num=num+0.000001;
+        /* wait untill next shot */
+        //clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
+        /* do the stuff */
+        //=============== Pipes Envio ========================
+        memset(bufferPipe,0,sizeof(bufferPipe));
+        sprintf(bufferPipe,"%3.2f\n",num);
+        printf("El numero es %3.2f\n",num);
+        write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
+        
+    
+    }
 
 /*
  * The example "main" function illustrates what is required by your
@@ -470,6 +491,8 @@ int_T main(int_T argc, const char *argv[])
         digitalWrite (21, estado) ;
         
         rt_OneStep();
+        //tarea();
+        
         t.tv_nsec+=interval;
         tsnorm(&t);
     }

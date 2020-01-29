@@ -72,6 +72,7 @@ const char *DoS = "ataqueDoS";
 FILE *input_DoS;
 char buffera[BUFFER_SIZE];
 char *rDoS;
+double num=0.0;
 
 //------Entradas-------
 double ipv=0.0;
@@ -151,6 +152,7 @@ int counter = 0;
 
 
 void rt_OneStep(void);
+
 
 //----------------------------Para RT------------------------------
 /* using clock_nanosleep of librt */
@@ -423,6 +425,11 @@ void rt_OneStep(void)
     /* Enable interrupts here */
 }
 
+
+
+
+
+
 /*
  * The example "main" function illustrates what is required by your
  * application code to initialize, execute, and terminate the generated code.
@@ -589,6 +596,7 @@ int_T main(int_T argc, const char *argv[])
         }
         digitalWrite (21, estado) ;
         rt_OneStep();
+        
         t.tv_nsec+=interval;
         tsnorm(&t);
     }

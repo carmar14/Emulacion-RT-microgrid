@@ -53,6 +53,7 @@ PM = Param.add_variable(addspace, "Pm",0)
 QM = Param.add_variable(addspace, "Qm",0)
 DC = Param.add_variable(addspace, "DuC",0)
 POTENCIA = Param.add_variable(addspace, "Potencia",0)
+#IBIOa = Param.add_variable(addspace, "iBioa",0)
 
 
 IBIO.set_writable()
@@ -63,6 +64,7 @@ PM.set_writable()
 QM.set_writable()
 DC.set_writable()
 POTENCIA.set_writable()
+#IBIOa.set_writable()
 
 server.start()
 print("Server started at ()".format(url))
@@ -97,7 +99,7 @@ try:
             if((pref1 != pref) or (qref1 != qref) ):
                 print("Pref {}  Qref {}".format(pref,qref))
                 string = str(pref)+'\t'+str(qref)+'\n'
-                os.write(PipeIn2, str.encode(string))
+                os.write(PipeIn2,str.encode(string))
             if not PipeString:
                 #print ("Empty String!")
                 continue;
@@ -107,6 +109,9 @@ try:
                 pm = float(PipeString[2])
                 qm = float(PipeString[3])
                 potencia=float(PipeString[4])
+                #iBioa = float(PipeString[5])
+                
+                
                 #soc = float(PipeString[1])
                 #data4 = PipeString[3]
                 #print('Received: "{0}\"'.format(PipeString))
@@ -116,6 +121,7 @@ try:
                 QM.set_value(qm)
                 DC.set_value(dc)
                 POTENCIA.set_value(potencia)
+                #IBIOa.set_value(iBioa)
                     
         except OSError as err:
             if err.errno == 11:

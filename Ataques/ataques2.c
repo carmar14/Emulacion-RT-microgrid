@@ -153,19 +153,22 @@ int main(int argc, const char *argv[])
     /* Simulating the model step behavior (in non real-time) to
      *  simulate model behavior at stop time.
      */
+     
+    double num=0.0;
     while (1) {
-        
+        num=num+0.000001;
         /* wait untill next shot */
         //clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
         /* do the stuff */
         //=============== Pipes Envio ========================
         memset(bufferPipe,0,sizeof(bufferPipe));
-        sprintf(bufferPipe,"%3.2f\n",123456789535353543.3);
+        sprintf(bufferPipe,"%3.2f\n",num);
+        printf("El numero es %3.2f\n",num);
         write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
         //======================================================
         
-        t.tv_nsec+=interval;
-        tsnorm(&t);
+        //t.tv_nsec+=interval;
+        //tsnorm(&t);
     }
     
     /* Disable rt_OneStep() here */
