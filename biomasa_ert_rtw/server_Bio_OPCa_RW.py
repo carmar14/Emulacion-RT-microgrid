@@ -102,6 +102,18 @@ try:
     PipeIn2 = os.open(pipe_name2, os.O_WRONLY)
     print("Pipe 2 running...")
     print("Program running...")
+    
+    print("Esperando abrir")
+    PipeIn3 = open(pipe_name3, 'r')
+    print("Pipe 3 running...")
+    fd2 = PipeIn3.fileno()
+    flag2 = fcntl.fcntl(fd2, fcntl.F_GETFL)
+    fcntl.fcntl(fd2, fcntl.F_SETFL, flag2 | os.O_NONBLOCK)
+    flag2 = fcntl.fcntl(fd2, fcntl.F_GETFL)
+    PipeIn4 = os.open(pipe_name4, os.O_WRONLY)
+    print("Pipe 4 running...")
+    print("Program running...")
+    
     pref = 500
     qref = 3500
     while True:
@@ -110,7 +122,7 @@ try:
             #PipeString = os.read(PipeIn, bufferSize)
             #PipeString = PipeIn.readline()[:-1]
             PipeString = PipeIn.readline().split()
-            PipeString2 = PipeIn.readline().split()
+            PipeString2 = PipeIn3.readline().split()
 
             pref1 = pref
             qref1 = qref
