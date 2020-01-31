@@ -208,8 +208,8 @@ void rt_OneStep(void)
     
     //pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
     //qref=var3*k3+vx3;
-    pref=400;//500;   antes estaba en -400
-    qref=5000;//3500;//2430;//3403;
+    //pref=400;//500;   antes estaba en -400
+    //qref=5000;//3500;//2430;//3403;
     
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
@@ -273,8 +273,8 @@ void rt_OneStep(void)
     
     //=============== Pipes Envio ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
-    //sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",i1,duty_cycle,Pm1,Qm1,potencia);
-    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",1.0,2.0,3.0,4.0,5.0);
+    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",i1,duty_cycle,Pm1,Qm1,potencia);
+    //sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",1.0,2.0,3.0,4.0,5.0);
     write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================
     
