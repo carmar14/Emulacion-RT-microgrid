@@ -156,7 +156,7 @@ int main(int argc, const char *argv[])
      
     double num=0.0;
     while (1) {
-        num=num+0.000001;
+        num=num+10;
         /* wait untill next shot */
         //clock_nanosleep(0, TIMER_ABSTIME, &t, NULL);
         /* do the stuff */
