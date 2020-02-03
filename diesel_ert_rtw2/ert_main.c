@@ -53,6 +53,14 @@ MCP3204 ad_MCP3204;
 int fileDescriptor;
 char error[55];
 
+//Ataques
+#define BUFFER_SIZE 1024
+const char *DoS = "ataqueDoS";
+FILE *input_DoS;
+char buffera[BUFFER_SIZE];
+char *rDoS;
+double num=0.0;
+
 //------Salidas--------
 double Po = 0.0;
 double Qo = 0.0;
@@ -255,6 +263,25 @@ void rt_OneStep(void)
 //
 //     printf("Valor minimo: %3.2f \n", min);
 //     printf("Valor maximo: %3.2f \n", max);
+
+    //-----------Ataque----------------
+    input_DoS= fopen(DoS, "r");
+    fgets(buffera, BUFFER_SIZE, input_DoS);
+    //printf("El valor del ataque String es: %s\n",buffera);
+    
+    int ai=atoi(buffera);
+    if (ai ==1) {
+        //int ata=0
+        for (int ata=0; ata<100000;ata=ata+1){
+            printf("atacando");
+            }
+        //printf("El valor del ataque es: %d\n",ai);
+    }
+    
+    fclose(input_DoS);
+    //printf("La corriente del inversor modificada es: %3.2f \n",i1);
+    
+    //---------------Ataque----------------
     
     //=============== Pipes Envio ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
@@ -355,6 +382,17 @@ int_T main(int_T argc, const char *argv[])
         interval=atoi(argv[2]);
         printf("using realtime, priority: %d\n",interval);
     }
+    
+    //-------Ataques-------------
+    //====================================================================
+    
+    input_DoS= fopen(DoS, "r");
+    if (input_DoS == NULL){
+        fprintf(stderr, "Unable to open file %s\n",DoS);
+    }
+    
+    
+    //-------Ataques-------------
     
     
     /* Unused arguments */
