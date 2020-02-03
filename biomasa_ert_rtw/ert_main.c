@@ -385,8 +385,6 @@ int_T main(int_T argc, const char *argv[])
     
     //====================================================================
     
-    
-    
     input_DoS= fopen(DoS, "r");
     if (input_DoS == NULL){
         fprintf(stderr, "Unable to open file %s\n",DoS);
