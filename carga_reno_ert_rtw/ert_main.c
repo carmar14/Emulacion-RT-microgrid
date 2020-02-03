@@ -293,8 +293,8 @@ void rt_OneStep(void)
     //printf("Post-Serial\n");
     
     //=======================================================================
-    Pi_reno=5000;//500;
-    Qi_reno=8000;//3500;//2430;//3403;
+    //Pi_reno=5000;//500;
+    //Qi_reno=8000;//3500;//2430;//3403;
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
     //printf("CB counter %d\n",counter);

@@ -92,6 +92,7 @@ print("Server started at ()".format(url))
 
 try:
     #PipeIn = os.open(pipe_name, os.O_RDONLY | os.O_NONBLOCK)
+    
     print("Esperando abrir")
     PipeIn = open(pipe_name, 'r')
     print("Pipe 1 running...")
@@ -132,16 +133,23 @@ try:
                 print("Pref {}  Qref {}".format(pref,qref))
                 string = str(pref)+'\t'+str(qref)+'\n'
                 os.write(PipeIn2,str.encode(string))
-            if not PipeString:
+            if not PipeString or not PipeString2:
                 #print ("Empty String!")
                 continue;
             else:
                 iBio = float(PipeString[0])
+                print("Corriente {} ".format(iBio))
                 dc = float(PipeString[1])
+                print("ciclo util {} ".format(dc))
                 pm = float(PipeString[2])
+                print("pm {} ".format(pm))
                 qm = float(PipeString[3])
+                print("qm {} ".format(qm))
                 potencia=float(PipeString[4])
+                print("potencia {} ".format(potencia))
                 iBioa = float(PipeString2[0])
+                #iBioa = float(34)
+                print(iBioa)
                 
                 
                 #soc = float(PipeString[1])
