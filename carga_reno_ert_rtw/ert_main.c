@@ -293,8 +293,8 @@ void rt_OneStep(void)
     //printf("Post-Serial\n");
     
     //=======================================================================
-    //Pi_reno=5000;//500;
-    //Qi_reno=8000;//3500;//2430;//3403;
+    Pi_reno=5000;//500;
+    Qi_reno=8000;//3500;//2430;//3403;
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
     //printf("CB counter %d\n",counter);
@@ -390,15 +390,23 @@ void rt_OneStep(void)
     fprintf(temp, "%3.2f %3.2f \n",i2,Vload);
     
     //-----------Ataque----------------
+    input_DoS= fopen(DoS, "r");
     fgets(buffera, BUFFER_SIZE, input_DoS);
     //printf("El valor del ataque String es: %s\n",buffera);
     
     int ai=atoi(buffera);
     if (ai ==1) {
-        Vload=0.0;
-        printf("El valor del ataque es: %d\n",ai);
+        //int ata=0
+        for (int ata=0; ata<100000;ata=ata+1){
+            printf("atacando");
+            }
+        //printf("El valor del ataque es: %d\n",ai);
     }
-    printf("La valor de tensión modificada es: %3.2f \n",Vload);
+    
+    fclose(input_DoS);
+    //printf("La corriente del inversor modificada es: %3.2f \n",i1);
+    
+    //---------------Ataque---------------
     
 //     if (min>Vload) min=Vload;
 //     if (max<Vload) max=Vload;
