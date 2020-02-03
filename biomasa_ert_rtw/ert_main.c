@@ -208,8 +208,8 @@ void rt_OneStep(void)
     
     //pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
     //qref=var3*k3+vx3;
-    //pref=400;//500;   antes estaba en -400
-    //qref=5000;//3500;//2430;//3403;
+    pref=4000;//500;   antes estaba en -400
+    qref=5000;//3500;//2430;//3403;
     
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
@@ -261,15 +261,23 @@ void rt_OneStep(void)
     
     
     //-----------Ataque----------------
+    input_DoS= fopen(DoS, "r");
     fgets(buffera, BUFFER_SIZE, input_DoS);
     //printf("El valor del ataque String es: %s\n",buffera);
     
     int ai=atoi(buffera);
     if (ai ==1) {
-        i1=0.0;
+        //int ata=0
+        for (int ata=0; ata<100000;ata=ata+1){
+            printf("atacando");
+            }
         //printf("El valor del ataque es: %d\n",ai);
     }
-    printf("La corriente del inversor modificada es: %3.2f \n",i1);
+    
+    fclose(input_DoS);
+    //printf("La corriente del inversor modificada es: %3.2f \n",i1);
+    
+    //---------------Ataque
     
     //=============== Pipes Envio ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
