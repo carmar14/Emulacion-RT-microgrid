@@ -162,8 +162,8 @@ int main(int argc, const char *argv[])
         /* do the stuff */
         //=============== Pipes Envio ========================
         memset(bufferPipe,0,sizeof(bufferPipe));
-        sprintf(bufferPipe,"%3.2f\n",num);
-        printf("El numero es %3.2f\n",num);
+        sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",num,num+1,num+2,num+3,num+4,num+5,num+6);
+        //printf("El numero es %3.2f\n",num);
         write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
         //======================================================
         

@@ -59,11 +59,17 @@ int main (void)
     struct sockaddr_in sin;
     struct pseudo_header psh;
      
-    strcpy(source_ip , "192.168.1.2");
+    //-----Lo que estaba originalmete-------------- 
+    
+    //strcpy(source_ip , "192.168.1.2"); 
+    
+    //------------------------------------------
+    
+    strcpy(source_ip , "172.16.49.75"); 
    
     sin.sin_family = AF_INET;
     sin.sin_port = htons(80);
-    sin.sin_addr.s_addr = inet_addr ("1.2.3.4");
+    sin.sin_addr.s_addr = inet_addr ("172.16.49.75"); //inet_addr ("1.2.3.4");
      
     memset (datagram, 0, 4096); /* zero out the buffer */
      

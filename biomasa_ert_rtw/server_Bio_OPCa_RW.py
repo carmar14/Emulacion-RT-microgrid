@@ -73,6 +73,12 @@ QM = Param.add_variable(addspace, "Qm",0)
 DC = Param.add_variable(addspace, "DuC",0)
 POTENCIA = Param.add_variable(addspace, "Potencia",0)
 IBIOa = Param.add_variable(addspace, "iBioa",0)
+IBIOa1 = Param.add_variable(addspace, "iBioa1",0)
+IBIOa2 = Param.add_variable(addspace, "iBioa2",0)
+IBIOa3 = Param.add_variable(addspace, "iBioa3",0)
+IBIOa4 = Param.add_variable(addspace, "iBioa4",0)
+IBIOa5 = Param.add_variable(addspace, "iBioa5",0)
+IBIOa6 = Param.add_variable(addspace, "iBioa6",0)
 
 
 IBIO.set_writable()
@@ -84,6 +90,12 @@ QM.set_writable()
 DC.set_writable()
 POTENCIA.set_writable()
 IBIOa.set_writable()
+IBIOa1.set_writable()
+IBIOa2.set_writable()
+IBIOa3.set_writable()
+IBIOa4.set_writable()
+IBIOa5.set_writable()
+IBIOa6.set_writable()
 
 server.start()
 print("Server started at ()".format(url))
@@ -148,6 +160,13 @@ try:
                 potencia=float(PipeString[4])
                 print("potencia {} ".format(potencia))
                 iBioa = float(PipeString2[0])
+                iBioa1 = float(PipeString2[1])
+                iBioa2 = float(PipeString2[2])
+                iBioa3 = float(PipeString2[3])
+                iBioa4 = float(PipeString2[4])
+                iBioa5 = float(PipeString2[5])
+                iBioa6 = float(PipeString2[6])
+                
                 #iBioa = float(34)
                 print(iBioa)
                 
@@ -162,6 +181,12 @@ try:
                 DC.set_value(dc)
                 POTENCIA.set_value(potencia)
                 IBIOa.set_value(iBioa)
+                IBIOa1.set_value(iBioa1)
+                IBIOa2.set_value(iBioa2)
+                IBIOa3.set_value(iBioa3)
+                IBIOa4.set_value(iBioa4)
+                IBIOa5.set_value(iBioa5)
+                IBIOa6.set_value(iBioa6) 
                     
         except OSError as err:
             if err.errno == 11:
