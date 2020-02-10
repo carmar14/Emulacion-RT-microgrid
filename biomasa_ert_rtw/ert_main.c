@@ -80,6 +80,9 @@ double potencia=0.0;
 #define MSGISIZE 9
 
 //Comunicacion
+
+#include <stdbool.h>
+
 int  bytes_read = 0;
 int pinr=0;
 int var=0;
@@ -94,6 +97,15 @@ char var3s[7];
 int fd;
 int i1a=0;
 char buffer[8];
+
+bool stringComplete = false;  // whether the string is complete
+bool conti = true;
+char inputCharArray[125];
+char delim[] = ",";
+char *ptr;
+int j = 0;
+char inChar;
+char *vload_CA;
 
 //===============================================================
 //-------Variables para graficar
@@ -179,37 +191,50 @@ void rt_OneStep(void)
     
     /* Step the model for base rate */
     
-    var=1;
+    // ============================= recibe Serial===========================
     
-    if (MCP3204_convert(fileDescriptor,singleEnded,CH0,&ad_MCP3204,error))
-    {
-        printf("Error during conversion1.\n");
-        printf("%s\n",error);
-        exit(1);
+    stringComplete = false;
+    conti = true;
+    serialFlush(fd);
+    
+    memset(inputCharArray, 0, sizeof(inputCharArray));
+    
+    while (conti) {
+        inChar = serialGetchar(fd);
+        if (inChar == 's') {
+            j = 0;
+            while (!stringComplete) {
+                while (serialDataAvail (fd) > 0  && conti) {
+                    inChar = serialGetchar(fd);
+                    if (inChar == 'e') {
+                        stringComplete = true;
+                        conti = false;
+                    } else {
+                        inputCharArray[j] = inChar;
+                        j++;
+                    }
+                }
+            }
+        }
+        
     }
     
+    //serialFlush(fd);
     
-    var1=MCP3204_getValue(ad_MCP3204);  //Vload
-    
-    
-    
-    
-    double k=(2*170)/2248.0;
-    double vx=-170-(502*2*170)/2248.0;
-    k=500/873;
-    vx=-787.51;
+    vload = atoi(inputCharArray);
+    //printf("La tension de la carga1 es : %3.2f \n",vload);
+    vload = vload / 10.0;
     
     
-    //vdc=500;   //Proveniente de la fuente de generación
-    //vload=170*sin(2*3.14*60*tiempo);//var1*k+vx; //Proveniente de la carga
-    vload=var1*k+vx;
+    
+    
     tiempo=tiempo+0.0001;
     if (tiempo>0.0167) tiempo=0;
     
     //pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
     //qref=var3*k3+vx3;
-    pref=4000;//500;   antes estaba en -400
-    qref=5000;//3500;//2430;//3403;
+    //pref=5000;//500;   antes estaba en -400
+    //qref=8000;//3500;//2430;//3403;
     
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
