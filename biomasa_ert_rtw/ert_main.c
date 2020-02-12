@@ -233,8 +233,8 @@ void rt_OneStep(void)
     
     //pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
     //qref=var3*k3+vx3;
-    pref=850;//500;   antes estaba en -400  5000
-    qref=1000;//3500;//2430;//3403;  8000
+    //pref=850;//500;   antes estaba en -400  5000
+    //qref=1000;//3500;//2430;//3403;  8000
     
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
@@ -434,7 +434,7 @@ int_T main(int_T argc, const char *argv[])
     
     printf("Iniciando \n");
     
-    int interval=100*1000000;		// 4 en ns   ->  20000=20us   100
+    int interval=4*1000000;		// 4 en ns   ->  20000=20us   100
     
     if(argc>=2 && atoi(argv[1])>0)
     {
