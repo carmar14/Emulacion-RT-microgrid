@@ -293,8 +293,8 @@ void rt_OneStep(void)
     //printf("Post-Serial\n");
     
     //=======================================================================
-    //Pi_reno=5000;//500;
-    //Qi_reno=8000;//3500;//2430;//3403;
+    Pi_reno=850;//500; //5000
+    Qi_reno=800;//3500;//2430;//3403; //8000
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
     //printf("CB counter %d\n",counter);
@@ -375,15 +375,15 @@ void rt_OneStep(void)
     printf("La potencia reactiva referencia panel es: %3.2f \n",Qi_reno);
     //printf("La potencia activa referencia carga es: %3.2f \n",972.8);
     //printf("La potencia reactiva referencia carga es: %3.2f \n",115400.0);
-    printf("LA potencia P medida es:  %3.2f \n",Pm2);
-    printf("LA potencia Q medida es:  %3.2f \n",Qm2);
+    printf("LA potencia P de reno medida es:  %3.2f \n",Pm2);
+    printf("LA potencia Q de reno medida es:  %3.2f \n",Qm2);
     printf("El duty cycle es:  %3.2f \n",duty_cyle);
      
     
-    //printf("La potencia P medida en la carga es: %3.2f \n",Pm);
-    //printf("La potencia Q medida en la carga es: %3.2f \n",Qm);
-    //printf("Voltaje : %3.2f \n",Vload);
-    printf ("i1: %f i2: %f i3: %f\n",i1,i2,i3);
+    printf("La potencia P medida en la carga es: %3.2f \n",Pm);
+    printf("La potencia Q medida en la carga es: %3.2f \n",Qm);
+    printf("Voltaje : %3.2f \n",Vload);
+    //printf ("i1: %f i2: %f i3: %f\n",i1,i2,i3);
     
     
     //Probar datos

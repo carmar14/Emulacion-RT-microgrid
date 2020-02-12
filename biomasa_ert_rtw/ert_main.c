@@ -233,8 +233,8 @@ void rt_OneStep(void)
     
     //pref=var2*k2+vx2;//500.0;  //Proveniente del control terciario
     //qref=var3*k3+vx3;
-    //pref=5000;//500;   antes estaba en -400
-    //qref=8000;//3500;//2430;//3403;
+    //pref=850;//500;   antes estaba en -400  5000
+    //qref=1000;//3500;//2430;//3403;  8000
     
     //=============== Pipes Lectura ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
@@ -281,8 +281,8 @@ void rt_OneStep(void)
     printf("La potencia Q medida es: %3.2f \n", Qm1);
     printf("La corriente del inversor 1 es: %3.2f \n",i1);
     printf("El duty de bio es: %3.2f \n",duty_cycle);
-    printf("El valor minimo de corriente : %3.2f \n",valor_min);
-    printf("El valor maximo de corriente : %3.2f \n",valor_max);
+    //printf("El valor minimo de corriente : %3.2f \n",valor_min);
+    //printf("El valor maximo de corriente : %3.2f \n",valor_max);
     
     
     //-----------Ataque----------------
