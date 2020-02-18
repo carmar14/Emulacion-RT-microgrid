@@ -112,6 +112,7 @@ double soc=0.0;
 double Pm2=0.0;
 double Qm2=0.0;
 double duty_cyle=0.0;
+double u2=0.0;
 
 
 //Comunicacion   ------------Falta cuadrar esta parte de la comunicacion con el arduino
@@ -366,6 +367,7 @@ void rt_OneStep(void)
     Pm2=get_Pm2();
     Qm2=get_Qm2();
     duty_cyle=get_duty_cycle();
+    u2=get_u2();
     
     //printf("La irradianza es: %3.2f \n",Suns);
     //printf("La temperatura es: %3.2f \n",TaC);
@@ -413,7 +415,9 @@ void rt_OneStep(void)
     
     //=============== Pipes Envio ======================== (Falta ajustar)
     memset(bufferPipe,0,sizeof(bufferPipe));
-    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",Pm,Qm,Vload,i2,soc,Pm2,Qm2,duty_cyle);
+    //sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",Pm,Qm,Vload,i2,soc,Pm2,Qm2,duty_cyle);
+    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",Pm,Qm,Vload,i2,soc,Pm2,Qm2,u2);
+    
     //printf(bufferPipe);
     write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================

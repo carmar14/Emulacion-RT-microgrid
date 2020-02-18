@@ -252,6 +252,7 @@ typedef struct {
   real_T soc;                          /* '<Root>/soc' */
   real_T duty_cycle;                   /* '<Root>/duty_cycle' */
   real_T i2;                           /* '<Root>/i2' */
+  real_T u2;
 } ExtY_carga_reno_T;
 
 /* Real-time Model Data Structure */
@@ -341,6 +342,7 @@ extern double get_Potencia(void);
 extern double get_Pm(void);
 extern double get_Qm(void);
 extern double get_Vload(void);
+extern double get_u2(void);
 
 
 /* Real-time Model object */

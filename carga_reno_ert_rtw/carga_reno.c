@@ -107,6 +107,10 @@ double get_Vload(void){
 	 
 }
 
+double get_u2(void){
+  return carga_reno_Y.u2;
+}
+
 /*
  * Time delay interpolation routine
  *
@@ -964,6 +968,12 @@ void carga_reno_step(void)
    *  Product: '<Root>/Product1'
    *  Sum: '<Root>/Sum6'
    */
+   
+   //Programador
+   carga_reno_Y.u2=2.0 * look1_binlxpw(carga_reno_Y.soc,
+    carga_reno_ConstP.uDLookupTable2_bp01Data,
+    carga_reno_ConstP.uDLookupTable2_tableData, 8U) * carga_reno_B.Gain16;
+   
   carga_reno_B.Gain5 = ((2.0 * look1_binlxpw(carga_reno_Y.soc,
     carga_reno_ConstP.uDLookupTable2_bp01Data,
     carga_reno_ConstP.uDLookupTable2_tableData, 8U) * carga_reno_B.Gain16 -
