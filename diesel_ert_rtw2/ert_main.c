@@ -71,6 +71,7 @@ double min=5000;
 double max=0.0;
 double duty_cycle=0.0;
 double potencia=0.0;
+double u3=0.0;
 
 #define MSGISIZE 9
 
@@ -246,6 +247,7 @@ void rt_OneStep(void)
     vdc=get_dc();
     Po = get_Po();
     Qo = get_Qo();
+    u3=get_u3();
     
     printf("La corriente del inversor 3 es: %3.2f \n",Idie);
     printf("La tension de la carga es : %3.2f \n",vload);
@@ -285,7 +287,8 @@ void rt_OneStep(void)
     
     //=============== Pipes Envio ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
-    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",Idie,duty_cycle,potencia,Po,Qo);
+    //sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",Idie,duty_cycle,potencia,Po,Qo);
+    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",Idie,u3,potencia,Po,Qo);
     write(our_input_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================
     

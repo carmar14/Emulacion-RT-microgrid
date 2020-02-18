@@ -251,6 +251,7 @@ typedef struct {
   real_T i3;                           /* '<Root>/i3' */
   real_T duty_cycle;                   /* '<Root>/duty_cycle' */
   real_T bus_dc;                       /* '<Root>/bus_dc' */
+  real_T u3;
 } ExtY_diesel_T;
 
 /* Real-time Model Data Structure */
@@ -329,6 +330,7 @@ extern double get_duty(void);
 extern double get_dc(void);
 extern double get_Po(void);
 extern double get_Qo(void);
+extern double get_u3(void);
 
 
 /* Real-time Model object */

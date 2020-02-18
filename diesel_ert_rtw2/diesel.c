@@ -73,6 +73,11 @@ double get_Po(void){
 double get_Qo(void){
   return Qo_Yo;
 }
+
+double get_u3(void){
+  return diesel_Y.u3;
+}
+
 /*
  * Time delay interpolation routine
  *
@@ -806,6 +811,11 @@ void diesel_step(void)
      *  Product: '<Root>/Product3'
      *  Sum: '<Root>/Sum9'
      */
+     
+    //Programador
+    
+    diesel_Y.u3=2.0 * rtb_coswt * diesel_B.OutputDCVoltage; 
+     
     diesel_B.Gain10 = ((2.0 * rtb_coswt * diesel_B.OutputDCVoltage -
                         diesel_X.Integrator7_CSTATE) - 0.001 *
                        diesel_X.Integrator6_CSTATE) * 200.0;
