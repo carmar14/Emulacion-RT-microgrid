@@ -328,6 +328,7 @@ typedef struct {
   real_T i1;                           /* '<Root>/i1' */
   real_T Potencia_bio;                 /* '<Root>/Potencia_bio' */
   real_T duty_cycle;                   /* '<Root>/duty_cycle' */
+  real_T u1; 
 } ExtY_biomasa_T;
 
 /* Real-time Model Data Structure */
@@ -408,6 +409,7 @@ extern double get_Pm(void);
 extern double get_Qm(void);
 extern double get_duty_cycle(void);	
 extern double get_Potencia(void);	
+extern double get_u1(void);
 
 
 /* Real-time Model object */

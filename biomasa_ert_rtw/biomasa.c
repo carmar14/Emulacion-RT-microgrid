@@ -84,6 +84,9 @@ double get_Potencia(void) {
     return biomasa_Y.Potencia_bio; 
 }
 
+double get_u1(void){
+    return biomasa_Y.u1;
+}
 /*
  * Time delay interpolation routine
  *
@@ -664,6 +667,12 @@ void biomasa_step(void)
    *  Product: '<Root>/Product'
    *  Sum: '<Root>/Sum3'
    */
+   
+   
+   //Programador
+   
+   biomasa_Y.u1=paux * biomasa_B.Gain15; 
+   
   biomasa_B.Gain = ((paux * biomasa_B.Gain15 - biomasa_X.Integrator1_CSTATE) -
                     0.1 * biomasa_X.Integrator_CSTATE) * 25.0;
 

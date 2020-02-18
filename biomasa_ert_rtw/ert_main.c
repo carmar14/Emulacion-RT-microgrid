@@ -75,6 +75,7 @@ double duty_cycle=0.0;
 double Pm1=0.0;
 double Qm1=0.0;
 double potencia=0.0;
+double u1=0.0;
 
 
 #define MSGISIZE 9
@@ -265,6 +266,7 @@ void rt_OneStep(void)
     Pm1=get_Pm();
     Qm1=get_Qm();
     potencia=get_Potencia();
+    u1=get_u1();
     
     //Verificando valores maximos y minimos
     if (i1 > valor_max){
@@ -306,7 +308,8 @@ void rt_OneStep(void)
     
     //=============== Pipes Envio ========================
     memset(bufferPipe,0,sizeof(bufferPipe));
-    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",i1,duty_cycle,Pm1,Qm1,potencia);
+    //sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",i1,duty_cycle,Pm1,Qm1,potencia);
+    sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",i1,u1,Pm1,Qm1,potencia);
     //sprintf(bufferPipe,"%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n",1.0,2.0,3.0,4.0,5.0);
     write(our_output_fifo_filestream, (void*)bufferPipe, strlen(bufferPipe));
     //======================================================
@@ -415,7 +418,7 @@ int_T main(int_T argc, const char *argv[])
     flags |= O_NONBLOCK;
     fcntl(fdO, F_SETFL, flags);
     printf("FIFO 2 opened...");
-    
+    printf("testing\n");
     //====================================================================
     
     input_DoS= fopen(DoS, "r");
@@ -468,7 +471,7 @@ int_T main(int_T argc, const char *argv[])
     fd=serialOpen ("/dev/ttyACM0", 115200);
     serialClose(fd);
     fd=serialOpen ("/dev/ttyACM0", 115200);
-    
+    printf("Arduino com set... \n");
     sleep(1);
     
     //------------GPIO---------------------
