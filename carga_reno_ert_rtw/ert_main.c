@@ -389,7 +389,7 @@ void rt_OneStep(void)
     
     
     //Probar datos
-    fprintf(temp, "%3.2f %3.2f \n",i2,Vload);
+    fprintf(temp, "%3.2f %3.2f %3.2f \n",u2,i2,Vload);
     
     //-----------Ataque----------------
     input_DoS= fopen(DoS, "r");
