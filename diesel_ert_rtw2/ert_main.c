@@ -257,7 +257,7 @@ void rt_OneStep(void)
     printf("El bus dc es de: %3.2f \n",vdc);
     
     //Datos para probar
-    fprintf(temp, "%3.2f\n",Idie);
+    fprintf(temp, "%3.2f %3.2f\n",u3,Idie);
     
     
 //     if (min>Idie) min=Idie;
